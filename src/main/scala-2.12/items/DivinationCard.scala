@@ -2,7 +2,7 @@ package items
 
 import structures.Position
 
-class Divination (
+class DivinationCard(
                    position: Position,
                    rarity: String,
                    base: String,

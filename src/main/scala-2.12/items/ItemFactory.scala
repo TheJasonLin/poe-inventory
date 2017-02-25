@@ -45,7 +45,7 @@ object ItemFactory {
     if (base == "Gem") {
       return new Gem(position, rarity, base, name)
     } else if (base == "Divination Card") {
-      return new Divination(position, rarity, base, name)
+      return new DivinationCard(position, rarity, base, name)
     }
     var itemOption: Option[Item] = None
 
