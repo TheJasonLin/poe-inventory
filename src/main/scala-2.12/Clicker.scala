@@ -2,6 +2,8 @@ import java.awt.datatransfer.{Clipboard, DataFlavor}
 import java.awt.{Robot, Toolkit}
 import java.awt.event.{InputEvent, KeyEvent}
 
+import structures.PixelPosition
+
 object Clicker {
   val robot: Robot = new Robot()
   val clipboard: Clipboard = Toolkit.getDefaultToolkit.getSystemClipboard
@@ -13,8 +15,8 @@ object Clicker {
     * @return if the color changed after the click
     */
   def click(pixelPosition: PixelPosition, ctrlMod: Boolean = false): Boolean = {
-    val x = pixelPosition.getX
-    val y = pixelPosition.getY
+    val x = pixelPosition.x
+    val y = pixelPosition.y
     val colorPreClick = robot.getPixelColor(x, y)
 //    println("Pre Click Color: " + colorPreClick.toString)
     robot.mouseMove(x, y)
@@ -31,8 +33,8 @@ object Clicker {
   }
 
   def getItemInfo(pixelPosition: PixelPosition): String = {
-    val x = pixelPosition.getX
-    val y = pixelPosition.getY
+    val x = pixelPosition.x
+    val y = pixelPosition.y
     robot mouseMove(x, y)
     Thread sleep 50
     robot keyPress KeyEvent.VK_CONTROL
@@ -42,6 +44,7 @@ object Clicker {
     robot keyRelease KeyEvent.VK_C
     Thread sleep 50
     robot keyRelease KeyEvent.VK_CONTROL
-    clipboard.getData(DataFlavor.stringFlavor).asInstanceOf[String]
+    val clipboardText = clipboard.getData(DataFlavor.stringFlavor).asInstanceOf[String]
+    clipboardText
   }
 }

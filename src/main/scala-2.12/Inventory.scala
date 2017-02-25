@@ -1,6 +1,9 @@
 import java.awt.{Color, Robot}
 import java.awt.event.{InputEvent, KeyEvent}
 
+import items.{Item, ItemFactory}
+import structures.{PixelPosition, Position}
+
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 
@@ -18,22 +21,24 @@ object Inventory {
 
   val robot: Robot = new Robot()
 
+  val items: ListBuffer[Item] = new ListBuffer[Item]
+
   def sendItemToStash(position: Position): Boolean = {
     Clicker.click(getPixels(position), ctrlMod = true)
   }
 
   def sendItemToStash(item: Item): Boolean = {
-    Clicker.click(getPixels(item.getPosition), ctrlMod = true)
+    Clicker.click(getPixels(item.position), ctrlMod = true)
   }
 
-  def isBlack(color: Color): Boolean = {
+  def isEmptyColor(color: Color): Boolean = {
     color.getBlue < 16 && color.getRed < 16 && color.getGreen < 16
   }
 
   def isItemPresent(position: Position): Boolean = {
     val pixels = getPixels(position)
-    val color = robot.getPixelColor(pixels.getX, pixels.getY)
-    !isBlack(color)
+    val color = robot.getPixelColor(pixels.x, pixels.y)
+    !isEmptyColor(color)
   }
 
   def getOccupiedPositions(): Seq[Position] = {
@@ -55,11 +60,21 @@ object Inventory {
 
   def getItem(position: Position): Item = {
     val itemInfo: String = Clicker.getItemInfo(getPixels(position))
-    new Item(position, itemInfo)
+    ItemFactory.create(position, itemInfo)
+  }
+
+  def readInventory(): Unit = {
+    // get all occupied positions
+    val occupiedPositions = getOccupiedPositions()
+    // iterate over positions, scraping the items. If a multi-cell item is found, mark its other positions as visited
+    occupiedPositions.foreach((position) => {
+      Clicker.getItemInfo(getPixels(position))
+    })
+
   }
 
   def getPixels(position: Position): PixelPosition = {
-    new PixelPosition(xBase + position.getColumn * xCellOffset, yBase + position.getRow * yCellOffset)
+    new PixelPosition(xBase + position.column * xCellOffset, yBase + position.row * yCellOffset)
   }
 
   def getWidth(): Int = {

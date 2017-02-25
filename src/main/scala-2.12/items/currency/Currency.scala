@@ -1,7 +1,19 @@
-package Items
+package items.currency
+
+import items.Item
+import structures.Position
+
+class Currency(
+              position: Position,
+              rarity: String,
+              base: String,
+              name: Option[String]
+              ) extends Item (position, rarity, base, name) {
+
+}
 
 object Currency {
-  val currencies  = Array(
+  val bases = Array(
     "Armourer's Scrap",
     "Blacksmith's Whetstone",
     "Orb of augmentation",
@@ -34,9 +46,14 @@ object Currency {
     "Cartographer's Chisel",
     "Apprentice Cartographer's Sextant",
     "Journeyman Cartographer's Sextant",
-    "Master Cartographer's Sextant"
+    "Master Cartographer's Sextant",
+    "Alchemy Shard",
+    "Alteration Shard",
+    "Scroll Fragment",
+    "Transmutation Shard",
+    "Eternal Orb"
   )
   def is(name: String): Boolean = {
-    currencies.indexOf(name) >= 0
+    bases.indexOf(name) >= 0
   }
 }

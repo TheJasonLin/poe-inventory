@@ -1,5 +1,9 @@
 import java.awt.Robot
 
+import items.Item
+import items.currency.{BasicCurrency, Currency}
+import structures.Position
+
 object InventoryManager {
   val robot: Robot = new Robot()
 
@@ -13,7 +17,7 @@ object InventoryManager {
   def emptyInventory(): Unit = {
 //    Stash.resetTab()
     Stash.activateCurrencyTab()
-    dumpCurrency()
+    dumpBasicCurrency()
 //    Stash.activateEssenceTab()
 //    dumpAll()
 //    Stash.activateDivinationTab()
@@ -28,13 +32,13 @@ object InventoryManager {
     })
   }
 
-  def dumpCurrency(): Unit = {
+  def dumpBasicCurrency(): Unit = {
     Inventory.getOccupiedPositions()
       .map((position: Position) => {
         Inventory.getItem(position)
       })
       .filter((item: Item) => {
-        item.isCurrency
+        item.isInstanceOf[BasicCurrency]
       })
       .foreach((item: Item) => {
         Inventory.sendItemToStash(item)
