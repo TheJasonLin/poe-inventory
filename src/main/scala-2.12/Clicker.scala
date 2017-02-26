@@ -18,7 +18,6 @@ object Clicker {
     val x = pixelPosition.x
     val y = pixelPosition.y
     val colorPreClick = robot.getPixelColor(x, y)
-//    println("Pre Click Color: " + colorPreClick.toString)
     robot.mouseMove(x, y)
     if(ctrlMod) robot keyPress KeyEvent.VK_CONTROL
     Thread sleep 50
@@ -28,7 +27,6 @@ object Clicker {
     Thread sleep 50
     if(ctrlMod) robot keyRelease KeyEvent.VK_CONTROL
     val colorPostClick = robot getPixelColor(x, y)
-//    println("Post Click Color: " + colorPreClick.toString)
     !colorPreClick.equals(colorPostClick)
   }
 
@@ -36,14 +34,15 @@ object Clicker {
     val x = pixelPosition.x
     val y = pixelPosition.y
     robot mouseMove(x, y)
-    Thread sleep 50
+    Thread sleep 10
     robot keyPress KeyEvent.VK_CONTROL
-    Thread sleep 50
+    Thread sleep 10
     robot keyPress KeyEvent.VK_C
-    Thread sleep 50
+    Thread sleep 10
     robot keyRelease KeyEvent.VK_C
-    Thread sleep 50
+    Thread sleep 10
     robot keyRelease KeyEvent.VK_CONTROL
+    Thread sleep 100
     val clipboardText = clipboard.getData(DataFlavor.stringFlavor).asInstanceOf[String]
     clipboardText
   }

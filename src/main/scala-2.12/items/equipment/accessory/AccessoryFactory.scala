@@ -1,15 +1,15 @@
 package items.equipment.accessory
 
-import structures.Position
-
 object AccessoryFactory {
-  def create(position: Position, rarity: String, base: String, name: Option[String]): Option[Belt] = {
+  def create(rarity: String, base: String, name: Option[String]): Option[Accessory] = {
     if (base.contains("Amulet")) {
-      Option(new Belt(position, rarity, base, name))
+      return Option(new Amulet(rarity, base, name))
     } else if (base.contains("Ring")) {
-      Option(new Ring(position, rarity, base, name))
+      return Option(new Ring(rarity, base, name))
     } else if (base.contains("Belt") || base.contains("Sash")) {
-      Option(new Belt(position, rarity, base, name))
+      return Option(new Belt(rarity, base, name))
+    } else if (base.contains("Quiver")) {
+      return Option(new Quiver(rarity, base, name))
     }
     None
   }

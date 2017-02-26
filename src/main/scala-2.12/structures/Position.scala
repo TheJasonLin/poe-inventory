@@ -1,10 +1,12 @@
 package structures
 
+import items.Item
+
 
 class Position(
                 val row: Int,
                 val column: Int
               ) {
-  var visited = false
+  var item: Option[Item] = None
 
 }

@@ -1,14 +1,11 @@
 package items.equipment.armour
 
-import structures.Position
-
 class Helmet(
-              position: Position,
               rarity: String,
               base: String,
               name: Option[String]
-            ) extends Armour(position, rarity, base, name) {
-
+            ) extends Armour(rarity, base, name) {
+  override def height(): Int = 2
 }
 
 object Helmet {

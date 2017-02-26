@@ -6,11 +6,11 @@ import structures.Position
 
 
 object ItemFactory {
-  def create(position: Position, clipboard: String): Item = {
+  def create(clipboard: String): Item = {
     val rarity = parseRarity(clipboard)
     val base = parseBase(clipboard)
     val name = parseName(clipboard)
-    create(position, rarity, base, name)
+    create(rarity, base, name)
   }
 
   def parseRarity(clipboard: String): String = {
@@ -41,20 +41,20 @@ object ItemFactory {
     lines(2) != "--------"
   }
 
-  private def create(position: Position, rarity: String, base: String, name: Option[String]): Item = {
-    if (base == "Gem") {
-      return new Gem(position, rarity, base, name)
-    } else if (base == "Divination Card") {
-      return new DivinationCard(position, rarity, base, name)
+  private def create(rarity: String, base: String, name: Option[String]): Item = {
+    if (rarity == "Gem") {
+      return new Gem(rarity, base, name)
+    } else if (rarity == "Divination Card") {
+      return new DivinationCard(rarity, base, name)
     }
     var itemOption: Option[Item] = None
 
-    itemOption = CurrencyFactory.create(position, rarity, base, name)
+    itemOption = CurrencyFactory.create(rarity, base, name)
     if(itemOption.isDefined) return itemOption.get
 
-    itemOption = EquipmentFactory.create(position, rarity, base, name)
+    itemOption = EquipmentFactory.create(rarity, base, name)
     if(itemOption.isDefined) return itemOption.get
 
-    new UnknownItem(position, rarity, base, name)
+    new UnknownItem(rarity, base, name)
   }
 }

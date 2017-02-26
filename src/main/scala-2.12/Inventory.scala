@@ -1,87 +1,53 @@
-import java.awt.{Color, Robot}
-import java.awt.event.{InputEvent, KeyEvent}
+import items.currency.{BasicCurrency, Essence}
+import items.{DivinationCard, Item}
+import structures.Position
 
-import items.{Item, ItemFactory}
-import structures.{PixelPosition, Position}
-
-import scala.collection.mutable.ListBuffer
-import scala.concurrent.Future
-
-object Inventory {
-  val xBase = Config.INVENTORY_TOP_LEFT_COORD._1
-  val yBase = Config.INVENTORY_TOP_LEFT_COORD._2
-  val xCeil = Config.INVENTORY_BOTTOM_RIGHT_COORD._1
-  val yCeil = Config.INVENTORY_BOTTOM_RIGHT_COORD._2
-  val pixelWidth = xCeil - xBase
-  val pixelHeight = yCeil - yBase
-  val width = Config.INVENTORY_WIDTH
-  val height = Config.INVENTORY_HEIGHT
-  val xCellOffset = pixelWidth / (width - 1)
-  val yCellOffset = pixelHeight / (height - 1)
-
-  val robot: Robot = new Robot()
-
-  val items: ListBuffer[Item] = new ListBuffer[Item]
-
-  def sendItemToStash(position: Position): Boolean = {
-    Clicker.click(getPixels(position), ctrlMod = true)
-  }
+object Inventory extends Container {
+  override def xBase = Config.INVENTORY_TOP_LEFT_COORD._1
+  override def yBase = Config.INVENTORY_TOP_LEFT_COORD._2
+  override def width = Config.INVENTORY_WIDTH
+  override def height = Config.INVENTORY_HEIGHT
+  val xCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._1
+  val yCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._2
+  val pixelWidth: Int = xCeil - xBase
+  val pixelHeight: Int = yCeil - yBase
+  override def xCellOffset: Int = pixelWidth / (width - 1)
+  override def yCellOffset: Int = pixelHeight / (height - 1)
 
   def sendItemToStash(item: Item): Boolean = {
-    Clicker.click(getPixels(item.position), ctrlMod = true)
-  }
-
-  def isEmptyColor(color: Color): Boolean = {
-    color.getBlue < 16 && color.getRed < 16 && color.getGreen < 16
-  }
-
-  def isItemPresent(position: Position): Boolean = {
-    val pixels = getPixels(position)
-    val color = robot.getPixelColor(pixels.x, pixels.y)
-    !isEmptyColor(color)
-  }
-
-  def getOccupiedPositions(): Seq[Position] = {
-    val occupiedPositions: ListBuffer[Position] = new ListBuffer[Position]
-
-    val rows: List[Int] = List.range(0, getHeight())
-    val columns: List[Int] = List.range(0, getWidth())
-
-    rows.foreach((row: Int) => {
-      columns.foreach((column: Int) => {
-        val position: Position = new Position(row, column)
-        if (Inventory.isItemPresent(position)) {
-          occupiedPositions += position
-        }
+    if (item.position.isEmpty) throw new IllegalArgumentException("Item has no position")
+    val sent: Boolean = Clicker.click(getPixels(item.position.get), ctrlMod = true)
+    // mark item as sent
+    if (sent) {
+      item.positions.foreach((position: Position) => {
+        position.item = None
       })
+      item.positions = List.empty[Position]
+    }
+    sent
+  }
+
+  def basicCurrencies: Seq[BasicCurrency] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[BasicCurrency]
+    }).map((item: Item) => {
+      item.asInstanceOf[BasicCurrency]
     })
-    occupiedPositions
   }
 
-  def getItem(position: Position): Item = {
-    val itemInfo: String = Clicker.getItemInfo(getPixels(position))
-    ItemFactory.create(position, itemInfo)
-  }
-
-  def readInventory(): Unit = {
-    // get all occupied positions
-    val occupiedPositions = getOccupiedPositions()
-    // iterate over positions, scraping the items. If a multi-cell item is found, mark its other positions as visited
-    occupiedPositions.foreach((position) => {
-      Clicker.getItemInfo(getPixels(position))
+  def essences: Seq[Essence] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[Essence]
+    }).map((item: Item) => {
+      item.asInstanceOf[Essence]
     })
-
   }
 
-  def getPixels(position: Position): PixelPosition = {
-    new PixelPosition(xBase + position.column * xCellOffset, yBase + position.row * yCellOffset)
-  }
-
-  def getWidth(): Int = {
-    width
-  }
-
-  def getHeight(): Int = {
-    height
+  def divinationCards: Seq[DivinationCard] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[DivinationCard]
+    }).map((item: Item) => {
+      item.asInstanceOf[DivinationCard]
+    })
   }
 }

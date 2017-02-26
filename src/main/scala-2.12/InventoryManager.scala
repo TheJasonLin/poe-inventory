@@ -1,47 +1,49 @@
-import java.awt.Robot
-
-import items.Item
-import items.currency.{BasicCurrency, Currency}
-import structures.Position
+import items.DivinationCard
+import items.currency.Currency
 
 object InventoryManager {
-  val robot: Robot = new Robot()
-
-  val rowCount: Int = Inventory.getHeight()
-  val columnCount: Int = Inventory.getWidth()
+  val rowCount: Int = Inventory.height
+  val columnCount: Int = Inventory.width
 
   val rows: List[Int] = List.range(0, rowCount)
   val columns: List[Int] = List.range(0, columnCount)
 
 
   def emptyInventory(): Unit = {
-//    Stash.resetTab()
+    Stash.resetTab()
+    Inventory.update()
     Stash.activateCurrencyTab()
-    dumpBasicCurrency()
-//    Stash.activateEssenceTab()
-//    dumpAll()
-//    Stash.activateDivinationTab()
-//    dumpAll()
+    Thread sleep 200
+    dumpCurrencies()
+    Stash.activateEssenceTab()
+    Thread sleep 200
+    dumpEssences()
+    Stash.activateDivinationTab()
+    Thread sleep 200
+    dumpDivinationCards()
   }
 
-  def dumpAll(): Unit = {
-    Inventory.getOccupiedPositions().foreach((position: Position) => {
-      val sent = Inventory.sendItemToStash(position)
-      if (sent) Thread sleep 200
-      else Thread sleep 50
+  def updateChaosTab(): Unit = {
+    Stash.resetTab()
+    Stash.activateChaosTab()
+    Stash.chaosTab.update()
+  }
+
+  private def dumpCurrencies(): Unit = {
+    Inventory.basicCurrencies.foreach((currency: Currency) => {
+      Inventory.sendItemToStash(currency)
     })
   }
 
-  def dumpBasicCurrency(): Unit = {
-    Inventory.getOccupiedPositions()
-      .map((position: Position) => {
-        Inventory.getItem(position)
-      })
-      .filter((item: Item) => {
-        item.isInstanceOf[BasicCurrency]
-      })
-      .foreach((item: Item) => {
-        Inventory.sendItemToStash(item)
-      })
+  private def dumpEssences(): Unit = {
+    Inventory.essences.foreach((essence) => {
+      Inventory.sendItemToStash(essence)
+    })
+  }
+
+  private def dumpDivinationCards(): Unit = {
+    Inventory.divinationCards.foreach((divinationCard: DivinationCard) => {
+      Inventory.sendItemToStash(divinationCard)
+    })
   }
 }

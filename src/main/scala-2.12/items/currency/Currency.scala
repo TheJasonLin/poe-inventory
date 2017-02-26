@@ -1,14 +1,12 @@
 package items.currency
 
 import items.Item
-import structures.Position
 
 class Currency(
-              position: Position,
-              rarity: String,
-              base: String,
-              name: Option[String]
-              ) extends Item (position, rarity, base, name) {
+                rarity: String,
+                base: String,
+                name: Option[String]
+              ) extends Item(rarity, base, name) {
 
 }
 
@@ -53,6 +51,7 @@ object Currency {
     "Transmutation Shard",
     "Eternal Orb"
   )
+
   def is(name: String): Boolean = {
     bases.indexOf(name) >= 0
   }

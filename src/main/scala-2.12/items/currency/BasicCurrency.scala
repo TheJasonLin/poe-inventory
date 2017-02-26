@@ -1,13 +1,10 @@
 package items.currency
 
-import structures.Position
-
 class BasicCurrency(
-                     position: Position,
                      rarity: String,
                      base: String,
                      name: Option[String]
-                   ) extends Currency(position, rarity, base, name) {
+                   ) extends Currency(rarity, base, name) {
 }
 
 object BasicCurrency {

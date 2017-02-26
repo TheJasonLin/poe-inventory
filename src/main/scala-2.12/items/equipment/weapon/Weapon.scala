@@ -1,11 +1,12 @@
-package items.equipment.armour
+package items.equipment.weapon
 
 import items.equipment.Equipment
 
-class Armour(
+class Weapon(
               rarity: String,
               base: String,
               name: Option[String]
             ) extends Equipment(rarity, base, name) {
-  override def width(): Int = 2
+
+  override def height(): Int = 3
 }

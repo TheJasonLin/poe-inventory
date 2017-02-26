@@ -1,14 +1,12 @@
 package items.equipment
 
 import items.Item
-import structures.Position
 
 class Equipment(
-                 position: Position,
                  rarity: String,
                  base: String,
                  name: Option[String]
-               ) extends Item (position, rarity, base, name) {
+               ) extends Item(rarity, base, name) {
 
 }
 

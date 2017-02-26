@@ -5,11 +5,13 @@ import scala.concurrent.ExecutionContext.Implicits.global
 object Main extends jintellitype.HotkeyListener {
   val EVENT_QUIT: Int = 1
   val EVENT_EMPTY_INVENTORY: Int = 2
+  val EVENT_UPDATE_CHAOS_TAB: Int = 3
 
   override def onHotKey(identifier: Int): Unit = {
     identifier match {
       case EVENT_QUIT => quit()
-      case EVENT_EMPTY_INVENTORY => emptyInventory()
+      case EVENT_EMPTY_INVENTORY => InventoryManager.emptyInventory()
+      case EVENT_UPDATE_CHAOS_TAB => InventoryManager.updateChaosTab()
       case otherEvent => println("Unexpected event: " + identifier)
     }
   }
@@ -27,9 +29,6 @@ object Main extends jintellitype.HotkeyListener {
     JIntellitype.getInstance().addHotKeyListener(this)
     JIntellitype.getInstance().registerHotKey(EVENT_QUIT, jintellitype.JIntellitypeConstants.MOD_CONTROL, 'Q')
     JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, jintellitype.JIntellitypeConstants.MOD_CONTROL, 'B')
-  }
-
-  def emptyInventory(): Unit = {
-    InventoryManager.emptyInventory()
+    JIntellitype.getInstance().registerHotKey(EVENT_UPDATE_CHAOS_TAB, jintellitype.JIntellitypeConstants.MOD_CONTROL, 'U')
   }
 }
