@@ -1,13 +1,10 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.collection.mutable
 
 object Stash {
-  var currentTab: Int = 0
   val robot = new Robot
-  val chaosTab: Tab = new Tab
-
   val helmetAllocation: Allocation = Config.HELMET_ALLOCATION
   val bootAllocation: Allocation = Config.BOOT_ALLOCATION
   val gloveAllocation: Allocation = Config.GLOVE_ALLOCATION
@@ -16,25 +13,20 @@ object Stash {
   val ringAllocation: Allocation = Config.RING_ALLOCATION
   val amuletAllocation: Allocation = Config.AMULET_ALLOCATION
   val beltAllocation: Allocation = Config.BELT_ALLOCATION
+  val tabs: Seq[Tab] = createTabs()
+  var currentTabIndex: Int = 0
 
   def activateCurrencyTab(): Unit = activateTab(Config.CURRENCY_TAB)
-  def activateEssenceTab(): Unit = activateTab(Config.ESSENCE_TAB)
-  def activateDivinationTab(): Unit = activateTab(Config.DIVINATION_TAB)
-
-  def resetTab(): Unit = {
-    for (_ <- 1 to 25) prevTab()
-    currentTab = 0
-  }
 
   def activateTab(tab: Int): Unit = {
-    while(currentTab < tab) {
+    while (currentTabIndex < tab) {
       nextTab()
-      Thread sleep 100
+      Thread sleep 250
     }
 
-    while(currentTab > tab) {
+    while (currentTabIndex > tab) {
       prevTab()
-      Thread sleep 100
+      Thread sleep 250
     }
   }
 
@@ -42,14 +34,52 @@ object Stash {
     robot.keyPress(KeyEvent.VK_RIGHT)
     Thread sleep 5
     robot.keyRelease(KeyEvent.VK_RIGHT)
-    currentTab += 1
+    currentTabIndex += 1
   }
 
   def prevTab(): Unit = {
     robot.keyPress(KeyEvent.VK_LEFT)
     Thread sleep 5
     robot.keyRelease(KeyEvent.VK_LEFT)
-    currentTab -= 1
+    currentTabIndex -= 1
+  }
+
+  def currentTab(): Option[Tab] = tabs.find((tab: Tab) => {
+    tab.index == currentTabIndex
+  })
+
+  def activateEssenceTab(): Unit = activateTab(Config.ESSENCE_TAB)
+
+  def activateDivinationTab(): Unit = activateTab(Config.DIVINATION_TAB)
+
+  def activateHelmetTab(): Unit = activateTab(helmetAllocation.tabIndex)
+  def activateBootTab(): Unit = activateTab(bootAllocation.tabIndex)
+  def activateGloveTab(): Unit = activateTab(gloveAllocation.tabIndex)
+  def activateBodyTab(): Unit = activateTab(bodyAllocation.tabIndex)
+  def activateWeaponTab(): Unit = activateTab(weaponAllocation.tabIndex)
+  def activateRingTab(): Unit = activateTab(ringAllocation.tabIndex)
+  def activateAmuletTab(): Unit = activateTab(amuletAllocation.tabIndex)
+  def activateBeltTab(): Unit = activateTab(beltAllocation.tabIndex)
+
+  def createTabs(): Seq[Tab] = {
+    val tabIndexes: mutable.HashSet[Int] = new mutable.HashSet[Int]
+    tabIndexes += helmetAllocation.tabIndex
+    tabIndexes += bootAllocation.tabIndex
+    tabIndexes += gloveAllocation.tabIndex
+    tabIndexes += bodyAllocation.tabIndex
+    tabIndexes += weaponAllocation.tabIndex
+    tabIndexes += ringAllocation.tabIndex
+    tabIndexes += amuletAllocation.tabIndex
+    tabIndexes += beltAllocation.tabIndex
+
+    tabIndexes.toList.map((index: Int) => {
+      new Tab(index)
+    })
+  }
+
+  def resetTab(): Unit = {
+    for (_ <- 1 to 25) prevTab()
+    currentTabIndex = 0
   }
 
 }

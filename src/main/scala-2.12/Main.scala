@@ -11,8 +11,7 @@ object Main extends jintellitype.HotkeyListener {
     identifier match {
       case EVENT_QUIT => quit()
       case EVENT_EMPTY_INVENTORY => InventoryManager.emptyInventory()
-      case EVENT_UPDATE_CHAOS_TAB => InventoryManager.updateChaosTab()
-      //      case EVENT_UPDATE_CHAOS_TAB => InventoryManager.updateChaosTab()
+      case EVENT_UPDATE_CHAOS_TAB => InventoryManager.dumpChaosEquipment()
       case otherEvent => println("Unexpected event: " + identifier)
     }
   }

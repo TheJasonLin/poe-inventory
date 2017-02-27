@@ -11,7 +11,7 @@ object Screen {
   val screenRect: Rectangle = new Rectangle(Toolkit.getDefaultToolkit.getScreenSize)
   var screen: Option[BufferedImage] = None
 
-  def update: Unit = {
+  def update(): Unit = {
     screen = Option(robot.createScreenCapture(screenRect))
   }
 

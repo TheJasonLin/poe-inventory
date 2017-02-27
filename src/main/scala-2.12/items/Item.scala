@@ -6,7 +6,7 @@ abstract class Item(val rarity: String, val base: String, val name: Option[Strin
   def width(): Int = 1
   def height(): Int = 1
 
-  var positions: List[Position] = List.empty[Position]
+  var positions: Seq[Position] = List.empty[Position]
   def position: Option[Position] = if(positions.isEmpty) None else Option(positions(0))
 
 

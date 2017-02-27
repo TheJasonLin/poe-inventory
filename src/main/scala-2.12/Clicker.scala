@@ -21,9 +21,7 @@ object Clicker {
     robot.mouseMove(x, y)
     if(ctrlMod) robot keyPress KeyEvent.VK_CONTROL
     Thread sleep 50
-    robot mousePress InputEvent.BUTTON1_MASK
-    Thread sleep 50
-    robot mouseRelease InputEvent.BUTTON1_MASK
+    click()
     Thread sleep 50
     if(ctrlMod) robot keyRelease KeyEvent.VK_CONTROL
     val colorPostClick = robot getPixelColor(x, y)
@@ -34,16 +32,46 @@ object Clicker {
     val x = pixelPosition.x
     val y = pixelPosition.y
     robot mouseMove(x, y)
-    Thread sleep 10
+    quickSleep()
     robot keyPress KeyEvent.VK_CONTROL
-    Thread sleep 10
+    quickSleep()
     robot keyPress KeyEvent.VK_C
-    Thread sleep 10
+    quickSleep()
     robot keyRelease KeyEvent.VK_C
-    Thread sleep 10
+    quickSleep()
     robot keyRelease KeyEvent.VK_CONTROL
     Thread sleep 100
     val clipboardText = clipboard.getData(DataFlavor.stringFlavor).asInstanceOf[String]
     clipboardText
   }
+
+  /**
+    * moves an item from source to destination
+    * @param source
+    * @param destination
+    * @return
+    */
+  def move(source: PixelPosition, destination: PixelPosition): Boolean = {
+    // move mouse to source
+    robot mouseMove(source.x, source.y)
+    quickSleep()
+    // pick up item at source
+    click()
+    Thread sleep 100
+    // move mouse to destination
+    robot mouseMove(destination.x, destination.y)
+    quickSleep()
+    // drop item off at destination
+    click()
+    Thread sleep 100
+    true
+  }
+
+  private def click(): Unit = {
+    robot mousePress InputEvent.BUTTON1_MASK
+    quickSleep
+    robot mouseRelease InputEvent.BUTTON1_MASK
+  }
+
+  private def quickSleep() = Thread sleep 10
 }
