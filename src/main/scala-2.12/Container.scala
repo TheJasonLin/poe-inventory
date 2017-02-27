@@ -1,6 +1,7 @@
 import java.awt.{Color, Robot}
 
 import items.{Item, ItemFactory}
+import screen.Screen
 import structures.{PixelPosition, Position}
 
 import scala.collection.mutable.ListBuffer
@@ -21,7 +22,10 @@ abstract class Container {
 
   def yCellOffset: Int
 
+  def emptyCheckRadius: Int
+
   def occupiedPositions: Seq[Position] = {
+    Screen.update
     val occupiedPositions: ListBuffer[Position] = new ListBuffer[Position]
 
     val rows: List[Int] = List.range(0, height)
@@ -40,18 +44,18 @@ abstract class Container {
 
   def isItemPresent(position: Position): Boolean = {
     val pixels = getPixels(position)
-    val color = robot.getPixelColor(pixels.x, pixels.y)
-    !isEmptyColor(color)
+//    val color: Color = Screen.getPixel(pixels.x, pixels.y)
+    val pixelColors: Seq[Color] = Screen.getPixels(pixels.x, pixels.y, emptyCheckRadius)
+    //    val color = robot.getPixelColor(pixels.x, pixels.y)
+    hasColor(pixelColors)
   }
 
-  def getPixels(position: Position): PixelPosition = {
-    val x = xBase + position.column * xCellOffset
-    val y = yBase + position.row * yCellOffset
-    new PixelPosition(x, y)
-  }
+  def hasColor(pixelColors: Seq[Color]): Boolean = {
+    val nonBlackPixelColorOption: Option[Color] = pixelColors.find((color: Color) => {
+      color.getBlue >= 16 || color.getRed >= 16 || color.getGreen >= 16
+    })
 
-  def isEmptyColor(color: Color): Boolean = {
-    color.getBlue < 16 && color.getRed < 16 && color.getGreen < 16
+    nonBlackPixelColorOption.isDefined
   }
 
   /**
@@ -95,5 +99,11 @@ abstract class Container {
   def getItem(position: Position): Item = {
     val itemInfo: String = Clicker.getItemInfo(getPixels(position))
     ItemFactory.create(itemInfo)
+  }
+
+  def getPixels(position: Position): PixelPosition = {
+    val x = xBase + position.column * xCellOffset
+    val y = yBase + position.row * yCellOffset
+    new PixelPosition(x, y)
   }
 }

@@ -1,6 +1,6 @@
 import com.melloware.jintellitype
 import com.melloware.jintellitype.JIntellitype
-import scala.concurrent.ExecutionContext.Implicits.global
+import screen.Screen
 
 object Main extends jintellitype.HotkeyListener {
   val EVENT_QUIT: Int = 1
@@ -12,6 +12,7 @@ object Main extends jintellitype.HotkeyListener {
       case EVENT_QUIT => quit()
       case EVENT_EMPTY_INVENTORY => InventoryManager.emptyInventory()
       case EVENT_UPDATE_CHAOS_TAB => InventoryManager.updateChaosTab()
+      //      case EVENT_UPDATE_CHAOS_TAB => InventoryManager.updateChaosTab()
       case otherEvent => println("Unexpected event: " + identifier)
     }
   }

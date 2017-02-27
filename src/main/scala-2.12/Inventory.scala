@@ -7,6 +7,7 @@ object Inventory extends Container {
   override def yBase = Config.INVENTORY_TOP_LEFT_COORD._2
   override def width = Config.INVENTORY_WIDTH
   override def height = Config.INVENTORY_HEIGHT
+  override def emptyCheckRadius = Config.INVENTORY_EMPTY_CHECK_RADIUS
   val xCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._1
   val yCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._2
   val pixelWidth: Int = xCeil - xBase

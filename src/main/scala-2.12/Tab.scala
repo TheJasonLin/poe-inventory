@@ -10,4 +10,5 @@ class Tab extends Container {
   val pixelHeight: Int = yCeil - yBase
   override def xCellOffset: Int = pixelWidth / (width - 1)
   override def yCellOffset: Int = pixelHeight / (height - 1)
+  override def emptyCheckRadius = Config.TAB_EMPTY_CHECK_RADIUS
 }
