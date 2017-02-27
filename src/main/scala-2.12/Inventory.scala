@@ -15,7 +15,7 @@ object Inventory extends Container {
   override def xCellOffset: Int = pixelWidth / (width - 1)
   override def yCellOffset: Int = pixelHeight / (height - 1)
 
-  def sendItemToStash(item: Item): Boolean = {
+  def sendItemToStash(item: Item, stashTab: Option[Tab] = None): Boolean = {
     if (item.position.isEmpty) throw new IllegalArgumentException("Item has no position")
     val sent: Boolean = Clicker.click(getPixels(item.position.get), ctrlMod = true)
     // mark item as sent
@@ -25,6 +25,8 @@ object Inventory extends Container {
       })
       item.positions = List.empty[Position]
     }
+    // 
+
     sent
   }
 

@@ -9,6 +9,7 @@ import scala.collection.mutable.ListBuffer
 abstract class Container {
   val robot: Robot = new Robot
   val items: ListBuffer[Item] = new ListBuffer[Item]
+  var upToDate: Boolean = false
 
   def xBase: Int
 
@@ -73,7 +74,7 @@ abstract class Container {
         val item: Item = ItemFactory.create(clipboard)
         println(item)
         // record item
-        items += item
+        addItem(item)
         // mark positions with item
         position.item = Option(item)
         val lastRow = position.row + (item.height - 1)
@@ -94,6 +95,13 @@ abstract class Container {
         })
       }
     })
+    // mark container as having been updated
+    upToDate = true
+  }
+
+  def addItem(item: Item): Unit = {
+    items += item
+    upToDate = false
   }
 
   def getItem(position: Position): Item = {
