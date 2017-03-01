@@ -12,37 +12,34 @@ object Inventory extends Container {
   val pixelWidth: Int = xCeil - xBase
   val pixelHeight: Int = yCeil - yBase
 
-  override def xBase = Config.INVENTORY_TOP_LEFT_COORD._1
+  override def xBase(): Int = Config.INVENTORY_TOP_LEFT_COORD._1
 
   override def yBase = Config.INVENTORY_TOP_LEFT_COORD._2
 
-  override def emptyCheckRadius = Config.INVENTORY_EMPTY_CHECK_RADIUS
+  override def cellRadius = Config.INVENTORY_CELL_RADIUS
 
-  override def xCellOffset: Int = pixelWidth / (width - 1)
+  override def xCellOffset(): Double = pixelWidth.asInstanceOf[Double] / (width - 1).asInstanceOf[Double]
 
   override def width = Config.INVENTORY_WIDTH
 
-  override def yCellOffset: Int = pixelHeight / (height - 1)
+  override def yCellOffset(): Double = pixelHeight.asInstanceOf[Double] / (height - 1).asInstanceOf[Double]
 
   override def height = Config.INVENTORY_HEIGHT
 
-  def sendItemToStash(item: Item): Boolean = {
-    if (item.position.isEmpty) throw new IllegalArgumentException("Item has no position")
-    val sent: Boolean = Clicker.click(getPixels(item.position.get), ctrlMod = true)
-    // mark item as sent
-    if (sent) {
-      removeItem(item)
-    }
-    sent
-  }
-
+  /**
+    * Moves an item to an allocation if possible.
+    * requirements: should already be on the tab
+    * @param item
+    * @param allocation
+    * @return
+    */
   def sendItemToAllocation(item: Item, allocation: Allocation): Boolean = {
     if (item.positions.isEmpty) throw new IllegalArgumentException("Item has no position")
     val currentTabOption: Option[Tab] = Stash.currentTab()
     if(currentTabOption.isEmpty) throw new IllegalArgumentException("Current Tab layout isn't defined")
     val currentTab: Tab = currentTabOption.get
     // get location in the current tab that's open, given the provided allocation
-    val positionInfoOption: Option[(PixelPosition, Position, Seq[Position])] = currentTab.positionInAllocation(item, allocation)
+    val positionInfoOption: Option[(PixelPosition, Position, Seq[Position])] = currentTab.findOpenPositionInAllocation(item, allocation)
     if(positionInfoOption.isEmpty) return false
     val dropPosition: PixelPosition = positionInfoOption.get._1
     val topLeftPosition: Position = positionInfoOption.get._2

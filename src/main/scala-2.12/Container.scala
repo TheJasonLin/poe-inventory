@@ -10,86 +10,107 @@ abstract class Container {
   val robot: Robot = new Robot
   val items: ListBuffer[Item] = new ListBuffer[Item]
   var upToDate: Boolean = false
+  private val positions: Seq[Seq[Position]] = createPositions()
 
-  def xBase: Int
+  def xBase(): Int
 
-  def yBase: Int
+  def yBase(): Int
 
-  def width: Int
+  def width(): Int
 
-  def height: Int
+  def height(): Int
 
-  def xCellOffset: Int
+  def xCellOffset(): Double
 
-  def yCellOffset: Int
+  def yCellOffset(): Double
 
-  def emptyCheckRadius: Int
+  def cellRadius(): Int
 
-  def occupiedPositions(): Seq[Position] = {
-    Screen.update()
-    val occupiedPositions: ListBuffer[Position] = new ListBuffer[Position]
+  def createPositions(): Seq[Seq[Position]] = {
+    val matrix = Array.ofDim[Position](height(), width())
 
-    val rows: List[Int] = List.range(0, height)
-    val columns: List[Int] = List.range(0, width)
-
-    rows.foreach((row: Int) => {
-      columns.foreach((column: Int) => {
-        val position: Position = new Position(row, column)
-        if (isItemPresent(position)) {
-          occupiedPositions += position
-        }
-      })
-    })
-    occupiedPositions
-  }
-
-  def freePositions(): Seq[Position] = {
-    val freePositions: ListBuffer[Position] = new ListBuffer[Position]
-
-    val rows: List[Int] = List.range(0, height)
-    val columns: List[Int] = List.range(0, width)
-
-    rows.foreach((row: Int) => {
-      columns.foreach((column: Int) => {
-        val position: Position = new Position(row, column)
-        if (!isItemPresent(position)) {
-          freePositions += position
-        }
-      })
-    })
-    freePositions
-  }
-
-  def isItemPresent(position: Position): Boolean = {
-    val pixels = getPixels(position)
-    val pixelColors: Seq[Color] = Screen.getPixels(pixels.x, pixels.y, emptyCheckRadius)
-    hasColor(pixelColors)
-  }
-
-  def hasColor(pixelColors: Seq[Color]): Boolean = {
-    val nonBlackPixelColorOption: Option[Color] = pixelColors.find((color: Color) => {
-      color.getBlue >= 16 || color.getRed >= 16 || color.getGreen >= 16
-    })
-
-    nonBlackPixelColorOption.isDefined
+    for(x <- 0 until height(); y <- 0 until width()) {
+      matrix(x)(y) = new Position(x, y)
+    }
+    matrix.map(_.toSeq).toSeq
   }
 
   /**
-    * Reads all items. Populates list of items
+    * testing Purposes
     */
-  def update(): Unit = {
-    // get all occupied positions
-    val positions: Seq[Position] = occupiedPositions
-    // iterate over positions, scraping the items. If a multi-cell item is found, mark its other positions as visited
-    positions.foreach((position) => {
+  def drawBoxes(): Unit = {
+    positions
+      .flatMap(_.toStream)
+      .foreach((position: Position) => {
+        val pixelPosition: PixelPosition = getPixels(position)
+        Screen.setPixels(pixelPosition, cellRadius())
+      })
+  }
+
+  private def isItemPresent(position: Position): Boolean = {
+    val pixels = getPixels(position)
+    val pixelColors: Seq[Color] = Screen.getPixels(pixels, cellRadius())
+    val present: Boolean = hasColor(pixelColors)
+    present
+  }
+
+  /**
+    * Looking for the Red or Blue that all items have that indicate whether they can be equipped
+    * @param pixelColors
+    * @return
+    */
+  private def hasColor(pixelColors: Seq[Color]): Boolean = {
+    val coloredPixelsColorOption: Option[Color] = pixelColors.find((color: Color) => {
+      val red = color.getRed
+      val green = color.getGreen
+      val blue = color.getBlue
+      val isRed = red > 40 && green < 8 && blue < 8
+      val isBlue = blue >= 30 && green < 8 && red < 8
+      isRed || isBlue
+    })
+
+    coloredPixelsColorOption.isDefined
+  }
+
+  /**
+    * Updates Occupancy info ONLY
+    */
+  def updateOccupancy(): Unit = {
+    positions
+      .flatMap(_.toStream)
+      .foreach((position: Position) => {
+        val itemPresent: Boolean = isItemPresent(position)
+        position.occupied = itemPresent
+        position._item = None
+      })
+  }
+
+  /**
+    * Updates Items and Positions from the screen
+    */
+  def updateOccupancyAndItems(): Unit = {
+    // clear items
+    items.clear()
+    // update occupancy
+    updateOccupancy()
+    // get occupied positions
+    val occupiedPositions: Seq[Position] = positions
+      .flatMap(_.toStream)
+      .filter((position: Position) => {
+        position.occupied
+      })
+    // in each occupied position, get the item and mark it along with any other occupied positions
+    occupiedPositions.foreach((position) => {
       // only create an item if this is the first time we've seen it
-      if (position.item.isEmpty) {
+      if (position._item.isEmpty) {
         // create item
-        val clipboard: String = Clicker.getItemInfo(getPixels(position))
-        val item: Item = ItemFactory.create(clipboard)
-        println(item)
-        // record item
-        addItem(item, position, positions)
+        val itemOption: Option[Item] = getItem(position)
+        if(itemOption.isDefined) {
+          val item = itemOption.get
+          println(item)
+          // record item
+          addItem(item, position, occupiedPositions)
+        }
       }
     })
     // mark container as having been updated
@@ -97,21 +118,27 @@ abstract class Container {
   }
 
   /**
-    * Attempts to find a pixel location which the item can be dropped off at that satisfies the allocation rules
+    * Attempts to find a free positions that'll hold the item, then returns the information needed to drop it off
     * @param item item to be dropped off
     * @param allocation rules to follow
-    * @return possible pixel location
+    * @return (
+    *         the pixel on screen it should be dropped off at,
+    *         the target top left position of the item,
+    *         all target positions
+    *         )
     */
-  def positionInAllocation(item: Item, allocation: Allocation): Option[(PixelPosition, Position, Seq[Position])] = {
+  def findOpenPositionInAllocation(item: Item, allocation: Allocation): Option[(PixelPosition, Position, Seq[Position])] = {
     // find free spaces in allocation
-    val openPositions: Seq[Position] = freePositions()
     val rowMin = allocation.topLeft.row
     val colMin = allocation.topLeft.column
     val rowMax = allocation.bottomRight.row
     val colMax = allocation.bottomRight.column
-    val possiblePositions: Seq[Position] = openPositions.filter((position: Position) => {
-      position.row >= rowMin && position.row <= rowMax && position.column >= colMin && position.column <= colMax
-    })
+    val possiblePositions: Seq[Position] = positions
+      .flatMap(_.toStream)
+      .filter(_.occupied == false)
+      .filter((position: Position) => {
+        position.row >= rowMin && position.row <= rowMax && position.column >= colMin && position.column <= colMax
+      })
     // find adjacent spaces that fit item
     var adjacentPositions: Seq[Position] = Seq.empty[Position]
     val topLeftPositionOption: Option[Position] = possiblePositions.find((position: Position) => {
@@ -157,15 +184,12 @@ abstract class Container {
     val lastRow = position.row + (item.height - 1)
     val lastColumn = position.column + (item.width - 1)
     val adjacentPositions: ListBuffer[Position] = new ListBuffer[Position]
-    // check that space is available
-    for (row <- position.row to lastRow) {
-      for (column <- position.column to lastColumn) {
-        val positionOption: Option[Position] = positions.find((position: Position) => {
-          position.row == row && position.column == column
-        })
-        if(positionOption.isDefined) adjacentPositions += positionOption.get
-        else isValid = false
-      }
+    for (row <- position.row to lastRow; column <- position.column to lastColumn) {
+      val positionOption: Option[Position] = positions.find((position: Position) => {
+        position.row == row && position.column == column
+      })
+      if(positionOption.isDefined) adjacentPositions += positionOption.get
+      else isValid = false
     }
     if(isValid) Option(adjacentPositions.toList)
     else None
@@ -179,8 +203,7 @@ abstract class Container {
     */
   def addItem(item: Item, position: Position, positions: Seq[Position]): Unit = {
     items += item
-    // mark positions with item
-//    position.item = Option(item)
+    // mark positions
     // get covered positions
     val coveredPositions: Seq[Position] = getAdjacentPositions(item, position, positions).get
     // mark positions
@@ -195,19 +218,29 @@ abstract class Container {
     items -= item
     // update positions about change
     item.positions.foreach((position: Position) => {
-      position.item = None
+      position._item = None
     })
     item.positions = List.empty[Position]
   }
 
-  def getItem(position: Position): Item = {
+  def getItem(position: Position): Option[Item] = {
     val itemInfo: String = Clicker.getItemInfo(getPixels(position))
     ItemFactory.create(itemInfo)
   }
 
   def getPixels(position: Position): PixelPosition = {
-    val x = xBase + position.column * xCellOffset
-    val y = yBase + position.row * yCellOffset
-    new PixelPosition(x, y)
+    val x = xBase() + position.column * xCellOffset()
+    val y = yBase() + position.row * yCellOffset()
+    new PixelPosition(x.asInstanceOf[Int], y.asInstanceOf[Int])
+  }
+
+  def ctrlClickItem(item: Item): Boolean = {
+    if (item.position.isEmpty) throw new IllegalArgumentException("Item has no position")
+    val sent: Boolean = Clicker.click(getPixels(item.position.get), ctrlMod = true)
+    // mark item as sent
+    if (sent) {
+      removeItem(item)
+    }
+    sent
   }
 }

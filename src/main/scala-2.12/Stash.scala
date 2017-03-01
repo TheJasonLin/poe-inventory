@@ -1,6 +1,8 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
+import screen.Screen
+
 import scala.collection.mutable
 
 object Stash {
@@ -16,17 +18,77 @@ object Stash {
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
 
-  def activateCurrencyTab(): Unit = activateTab(Config.CURRENCY_TAB)
+  def currentTab(): Option[Tab] = tabs.find((tab: Tab) => {
+    tab.index == currentTabIndex
+  })
 
-  def activateTab(tab: Int): Unit = {
+  /**
+    * In addition to activating, will update if it isn't already updated
+    */
+  def activateCurrencyTab(mode: Mode): Unit = activateTab(Config.CURRENCY_TAB, mode)
+
+  def activateEssenceTab(mode: Mode): Unit = activateTab(Config.ESSENCE_TAB, mode)
+
+  def activateDivinationTab(mode: Mode): Unit = activateTab(Config.DIVINATION_TAB, mode)
+
+  def activateHelmetTab(mode: Mode): Unit = activateTab(helmetAllocation.tabIndex, mode)
+
+  def activateBootTab(mode: Mode): Unit = activateTab(bootAllocation.tabIndex, mode)
+
+  def activateGloveTab(mode: Mode): Unit = activateTab(gloveAllocation.tabIndex, mode)
+
+  def activateBodyTab(mode: Mode): Unit = activateTab(bodyAllocation.tabIndex, mode)
+
+  def activateWeaponTab(mode: Mode): Unit = activateTab(weaponAllocation.tabIndex, mode)
+
+  def activateRingTab(mode: Mode): Unit = activateTab(ringAllocation.tabIndex, mode)
+
+  def activateAmuletTab(mode: Mode): Unit = activateTab(amuletAllocation.tabIndex, mode)
+
+  def activateBeltTab(mode: Mode): Unit = activateTab(beltAllocation.tabIndex, mode)
+
+  /**
+    * Changes the tab and reads the contents according to mode
+    * @param tab
+    * @param mode
+    */
+  def activateTab(tab: Int, mode: Mode): Unit = {
+    var tabChanged: Boolean = false
+
     while (currentTabIndex < tab) {
       nextTab()
-      Thread sleep 250
+      Thread sleep 50
+      tabChanged = true
     }
 
     while (currentTabIndex > tab) {
       prevTab()
-      Thread sleep 250
+      Thread sleep 50
+      tabChanged = true
+    }
+
+    if (tabChanged) {
+      Thread sleep 200
+      // update screen
+      Screen.update()
+      // update tab if there's an actual tab
+      val tabOption = currentTab()
+      if(tabOption.isDefined) {
+        val tab = tabOption.get
+        if(!tab.upToDate) {
+          mode match {
+            case Mode.READ_POSITIONS => {
+              tab.updateOccupancy()
+            }
+            case Mode.READ_POSITIONS_AND_ITEMS => {
+              tab.updateOccupancyAndItems()
+            }
+            case Mode.NO_READ => {
+              // do nothing
+            }
+          }
+        }
+      }
     }
   }
 
@@ -43,23 +105,6 @@ object Stash {
     robot.keyRelease(KeyEvent.VK_LEFT)
     currentTabIndex -= 1
   }
-
-  def currentTab(): Option[Tab] = tabs.find((tab: Tab) => {
-    tab.index == currentTabIndex
-  })
-
-  def activateEssenceTab(): Unit = activateTab(Config.ESSENCE_TAB)
-
-  def activateDivinationTab(): Unit = activateTab(Config.DIVINATION_TAB)
-
-  def activateHelmetTab(): Unit = activateTab(helmetAllocation.tabIndex)
-  def activateBootTab(): Unit = activateTab(bootAllocation.tabIndex)
-  def activateGloveTab(): Unit = activateTab(gloveAllocation.tabIndex)
-  def activateBodyTab(): Unit = activateTab(bodyAllocation.tabIndex)
-  def activateWeaponTab(): Unit = activateTab(weaponAllocation.tabIndex)
-  def activateRingTab(): Unit = activateTab(ringAllocation.tabIndex)
-  def activateAmuletTab(): Unit = activateTab(amuletAllocation.tabIndex)
-  def activateBeltTab(): Unit = activateTab(beltAllocation.tabIndex)
 
   def createTabs(): Seq[Tab] = {
     val tabIndexes: mutable.HashSet[Int] = new mutable.HashSet[Int]
@@ -80,6 +125,10 @@ object Stash {
   def resetTab(): Unit = {
     for (_ <- 1 to 25) prevTab()
     currentTabIndex = 0
+    Screen.update()
   }
 
+  def markTabsOutOfDate(): Unit = {
+    tabs.foreach(_.upToDate = false)
+  }
 }

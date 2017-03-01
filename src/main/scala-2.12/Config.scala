@@ -55,20 +55,16 @@ object Config {
 
 
   val TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
-  val TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (623, 768)
+  val TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
   val TAB_WIDTH: Int = 12
   val TAB_HEIGHT: Int = 12
-  /**
-    * How far to the left and to the right of the center of a cell we'll check for non-black cells
-    * to check if it's an empty cell
-    */
-  val TAB_EMPTY_CHECK_RADIUS: Int = 2
+  val TAB_CELL_RADIUS: Int = 20
 
-  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1297, 616)
-  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 828)
+  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1298, 615)
+  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 825)
   val INVENTORY_HEIGHT: Int = 5
   val INVENTORY_WIDTH: Int = 12
-  val INVENTORY_EMPTY_CHECK_RADIUS: Int = 2
+  val INVENTORY_CELL_RADIUS: Int = TAB_CELL_RADIUS
 
 
 }

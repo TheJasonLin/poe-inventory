@@ -2,15 +2,23 @@ package items
 
 import items.currency.{Currency, CurrencyFactory, Essence}
 import items.equipment.{Equipment, EquipmentFactory}
-import structures.Position
-
 
 object ItemFactory {
-  def create(clipboard: String): Item = {
+  private def isValid(clipboard: String): Boolean = {
+    // should be at least 3 lines
+    clipboard.split('\n').length > 2
+  }
+
+  def create(clipboard: String): Option[Item] = {
+    if(!isValid(clipboard)) {
+      return None
+    }
+
     val rarity = parseRarity(clipboard)
     val base = parseBase(clipboard)
     val name = parseName(clipboard)
-    create(rarity, base, name)
+
+    Option(create(rarity, base, name))
   }
 
   def parseRarity(clipboard: String): String = {

@@ -11,7 +11,7 @@ object BasicCurrency {
   val identifiers = Array(
     "Armourer's Scrap",
     "Blacksmith's Whetstone",
-    "Orb of augmentation",
+    "Orb of Augmentation",
     "Orb of Transmutation",
     "Scroll of Wisdom",
     "Silver Coin",
