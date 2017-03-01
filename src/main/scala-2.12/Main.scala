@@ -38,7 +38,7 @@ object Main extends jintellitype.HotkeyListener {
     Screen.update()
 
     Stash.resetTab()
-    Stash.activateBodyTab(Mode.NO_READ)
+    Stash.activateTab(TabType.BODY, Mode.NO_READ)
     val tab: Tab = Stash.currentTab().get
     tab.drawBoxes()
 

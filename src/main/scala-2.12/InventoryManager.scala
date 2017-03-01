@@ -1,79 +1,23 @@
-import items.{DivinationCard, Item}
 import items.currency.Currency
 import items.equipment.Equipment
 import items.equipment.accessory.{Amulet, Belt, Ring}
 import items.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import items.equipment.weapon.Weapon
-import screen.Screen
+import items.{DivinationCard, Item}
+import structures.Position
 
 object InventoryManager {
   def emptyInventory(): Unit = {
     prepareInventoryAction()
 
-    Stash.activateCurrencyTab(Mode.NO_READ)
+    Stash.activateTab(TabType.CURRENCY, Mode.NO_READ)
     dumpCurrencies()
-    Stash.activateEssenceTab(Mode.NO_READ)
+    Stash.activateTab(TabType.ESSENCE, Mode.NO_READ)
     dumpEssences()
-    Stash.activateDivinationTab(Mode.NO_READ)
+    Stash.activateTab(TabType.DIVINATION, Mode.NO_READ)
     dumpDivinationCards()
 
     dumpChaosEquipment()
-
-    markContainersOutOfDate()
-  }
-
-  def extractChaosSet(): Unit = {
-    Stash.resetTab()
-    // helmet
-    Stash.activateHelmetTab(Mode.READ_POSITIONS_AND_ITEMS)
-    var tab: Tab = Stash.currentTab().get
-    var itemOption: Option[Item] = tab.items.find(_.isInstanceOf[Helmet])
-    if(itemOption.isDefined) {
-      tab.ctrlClickItem(itemOption.get)
-    }
-    // boot
-    Stash.activateBootTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    itemOption = tab.items.find(_.isInstanceOf[Boot])
-    if(itemOption.isDefined) tab.ctrlClickItem(itemOption.get)
-    // Glove
-    Stash.activateGloveTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    itemOption = tab.items.find(_.isInstanceOf[Glove])
-    if(itemOption.isDefined) tab.ctrlClickItem(itemOption.get)
-    // Body
-    Stash.activateBodyTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    itemOption = tab.items.find(_.isInstanceOf[BodyArmour])
-    if(itemOption.isDefined) tab.ctrlClickItem(itemOption.get)
-    // Weapon
-    Stash.activateWeaponTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    tab.items
-      .filter(_.isInstanceOf[Weapon])
-      .slice(0, 2)
-      .foreach((item: Item) => {
-        tab.ctrlClickItem(item)
-      })
-    // Ring
-    Stash.activateRingTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    tab.items
-      .filter(_.isInstanceOf[Ring])
-      .slice(0, 2)
-      .foreach((item: Item) => {
-        tab.ctrlClickItem(item)
-      })
-    // Amulet
-    Stash.activateAmuletTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    itemOption = tab.items.find(_.isInstanceOf[Amulet])
-    if(itemOption.isDefined) tab.ctrlClickItem(itemOption.get)
-    // Belt
-    Stash.activateBeltTab(Mode.READ_POSITIONS_AND_ITEMS)
-    tab = Stash.currentTab().get
-    itemOption = tab.items.find(_.isInstanceOf[Belt])
-    if(itemOption.isDefined) tab.ctrlClickItem(itemOption.get)
 
     markContainersOutOfDate()
   }
@@ -114,49 +58,49 @@ object InventoryManager {
 
     if (helmets.nonEmpty) {
       println("Dumping Helmets")
-      Stash.activateHelmetTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.HELMET, Mode.READ_POSITIONS)
       helmets.foreach((helmet: Helmet) => Inventory.sendItemToAllocation(helmet, Stash.helmetAllocation))
     }
 
     if (boots.nonEmpty) {
       println("Dumping Boots")
-      Stash.activateBootTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.BOOT, Mode.READ_POSITIONS)
       boots.foreach((boot: Boot) => Inventory.sendItemToAllocation(boot, Stash.bootAllocation))
     }
 
     if (gloves.nonEmpty) {
       println("Dumping Gloves")
-      Stash.activateGloveTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.GLOVE, Mode.READ_POSITIONS)
       gloves.foreach((glove: Glove) => Inventory.sendItemToAllocation(glove, Stash.gloveAllocation))
     }
 
     if (bodys.nonEmpty) {
       println("Dumping Body Armours")
-      Stash.activateBodyTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.BODY, Mode.READ_POSITIONS)
       bodys.foreach((bodyArmour: BodyArmour) => Inventory.sendItemToAllocation(bodyArmour, Stash.bodyAllocation))
     }
 
     if (weapons.nonEmpty) {
       println("Dumping Weapons")
-      Stash.activateWeaponTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.WEAPON, Mode.READ_POSITIONS)
       weapons.foreach((weapon: Weapon) => Inventory.sendItemToAllocation(weapon, Stash.weaponAllocation))
     }
 
     if (rings.nonEmpty) {
       println("Dumping Rings")
-      Stash.activateRingTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.RING, Mode.READ_POSITIONS)
       rings.foreach((ring: Ring) => Inventory.sendItemToAllocation(ring, Stash.ringAllocation))
     }
 
     if (amulets.nonEmpty) {
       println("Dumping Amulets")
-      Stash.activateAmuletTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.AMULET, Mode.READ_POSITIONS)
       amulets.foreach((amulet: Amulet) => Inventory.sendItemToAllocation(amulet, Stash.amuletAllocation))
     }
 
     if (belts.nonEmpty) {
       println("Dumping Belts")
-      Stash.activateBeltTab(Mode.READ_POSITIONS)
+      Stash.activateTab(TabType.BELT, Mode.READ_POSITIONS)
       belts.foreach((belt: Belt) => Inventory.sendItemToAllocation(belt, Stash.beltAllocation))
     }
   }
@@ -164,5 +108,36 @@ object InventoryManager {
   private def markContainersOutOfDate(): Unit = {
     Inventory.upToDate = false
     Stash.markTabsOutOfDate()
+  }
+
+  def extractChaosSet(): Unit = {
+    Stash.resetTab()
+    extractItemFromsTab(TabType.HELMET, 1)
+    extractItemFromsTab(TabType.BOOT, 1)
+    extractItemFromsTab(TabType.GLOVE, 1)
+    extractItemFromsTab(TabType.BODY, 1)
+    extractItemFromsTab(TabType.WEAPON, 2)
+    extractItemFromsTab(TabType.RING, 2)
+    extractItemFromsTab(TabType.AMULET, 1)
+    extractItemFromsTab(TabType.BELT, 1)
+
+    markContainersOutOfDate()
+  }
+
+  def extractItemFromsTab(tabType: TabType, count: Int): Unit = {
+    val allocation: Allocation = Stash.allocations(tabType)
+    Stash.activateTab(tabType, Mode.READ_POSITIONS)
+    val tab = Stash.currentTab().get
+    tab.positionsInAllocation(allocation)
+      .filter(_.occupied == true)
+      .slice(0, count)
+      .map((position: Position) => {
+        tab.readAndRecordItem(position)
+      })
+      .foreach((itemOption: Option[Item]) => {
+        if (itemOption.isDefined) {
+          tab.ctrlClickItem(itemOption.get)
+        }
+      })
   }
 }

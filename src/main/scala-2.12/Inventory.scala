@@ -39,17 +39,16 @@ object Inventory extends Container {
     if(currentTabOption.isEmpty) throw new IllegalArgumentException("Current Tab layout isn't defined")
     val currentTab: Tab = currentTabOption.get
     // get location in the current tab that's open, given the provided allocation
-    val positionInfoOption: Option[(PixelPosition, Position, Seq[Position])] = currentTab.findOpenPositionInAllocation(item, allocation)
+    val positionInfoOption: Option[(PixelPosition, Position)] = currentTab.findOpenPositionInAllocation(item, allocation)
     if(positionInfoOption.isEmpty) return false
     val dropPosition: PixelPosition = positionInfoOption.get._1
     val topLeftPosition: Position = positionInfoOption.get._2
-    val occupiedPositions: Seq[Position] = positionInfoOption.get._3
 
     // move item from A to B
     val moveSuccess: Boolean = Clicker.move(getPixels(item.position.get), dropPosition)
     // inform tab of new item
     if(moveSuccess) {
-      currentTab.addItem(item, topLeftPosition, occupiedPositions)
+      currentTab.addItem(item, topLeftPosition)
     }
     moveSuccess
   }

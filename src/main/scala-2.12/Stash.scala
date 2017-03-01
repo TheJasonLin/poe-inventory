@@ -15,6 +15,32 @@ object Stash {
   val ringAllocation: Allocation = Config.RING_ALLOCATION
   val amuletAllocation: Allocation = Config.AMULET_ALLOCATION
   val beltAllocation: Allocation = Config.BELT_ALLOCATION
+
+  val allocations = collection.immutable.HashMap(
+    TabType.HELMET -> Config.HELMET_ALLOCATION,
+    TabType.BOOT -> Config.BOOT_ALLOCATION,
+    TabType.GLOVE -> Config.GLOVE_ALLOCATION,
+    TabType.BODY -> Config.BODY_ALLOCATION,
+    TabType.WEAPON -> Config.WEAPON_ALLOCATION,
+    TabType.RING -> Config.RING_ALLOCATION,
+    TabType.AMULET -> Config.AMULET_ALLOCATION,
+    TabType.BELT -> Config.BELT_ALLOCATION
+  )
+
+  val tabIndexes = collection.immutable.HashMap(
+    TabType.CURRENCY -> Config.CURRENCY_TAB,
+    TabType.ESSENCE -> Config.ESSENCE_TAB,
+    TabType.DIVINATION -> Config.DIVINATION_TAB,
+    TabType.HELMET -> Config.HELMET_ALLOCATION.tabIndex,
+    TabType.BOOT -> Config.BOOT_ALLOCATION.tabIndex ,
+    TabType.GLOVE -> Config.GLOVE_ALLOCATION.tabIndex ,
+    TabType.BODY -> Config.BODY_ALLOCATION.tabIndex ,
+    TabType.WEAPON -> Config.WEAPON_ALLOCATION.tabIndex ,
+    TabType.RING -> Config.RING_ALLOCATION.tabIndex ,
+    TabType.AMULET -> Config.AMULET_ALLOCATION.tabIndex ,
+    TabType.BELT -> Config.BELT_ALLOCATION.tabIndex 
+  )
+
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
 
@@ -23,36 +49,12 @@ object Stash {
   })
 
   /**
-    * In addition to activating, will update if it isn't already updated
-    */
-  def activateCurrencyTab(mode: Mode): Unit = activateTab(Config.CURRENCY_TAB, mode)
-
-  def activateEssenceTab(mode: Mode): Unit = activateTab(Config.ESSENCE_TAB, mode)
-
-  def activateDivinationTab(mode: Mode): Unit = activateTab(Config.DIVINATION_TAB, mode)
-
-  def activateHelmetTab(mode: Mode): Unit = activateTab(helmetAllocation.tabIndex, mode)
-
-  def activateBootTab(mode: Mode): Unit = activateTab(bootAllocation.tabIndex, mode)
-
-  def activateGloveTab(mode: Mode): Unit = activateTab(gloveAllocation.tabIndex, mode)
-
-  def activateBodyTab(mode: Mode): Unit = activateTab(bodyAllocation.tabIndex, mode)
-
-  def activateWeaponTab(mode: Mode): Unit = activateTab(weaponAllocation.tabIndex, mode)
-
-  def activateRingTab(mode: Mode): Unit = activateTab(ringAllocation.tabIndex, mode)
-
-  def activateAmuletTab(mode: Mode): Unit = activateTab(amuletAllocation.tabIndex, mode)
-
-  def activateBeltTab(mode: Mode): Unit = activateTab(beltAllocation.tabIndex, mode)
-
-  /**
     * Changes the tab and reads the contents according to mode
-    * @param tab
+    * @param tabType
     * @param mode
     */
-  def activateTab(tab: Int, mode: Mode): Unit = {
+  def activateTab(tabType: TabType, mode: Mode): Unit = {
+    val tab: Int = tabIndexes(tabType)
     var tabChanged: Boolean = false
 
     while (currentTabIndex < tab) {
@@ -108,14 +110,11 @@ object Stash {
 
   def createTabs(): Seq[Tab] = {
     val tabIndexes: mutable.HashSet[Int] = new mutable.HashSet[Int]
-    tabIndexes += helmetAllocation.tabIndex
-    tabIndexes += bootAllocation.tabIndex
-    tabIndexes += gloveAllocation.tabIndex
-    tabIndexes += bodyAllocation.tabIndex
-    tabIndexes += weaponAllocation.tabIndex
-    tabIndexes += ringAllocation.tabIndex
-    tabIndexes += amuletAllocation.tabIndex
-    tabIndexes += beltAllocation.tabIndex
+
+    allocations.foreach((pair) => {
+      val allocation = pair._2
+      tabIndexes += allocation.tabIndex
+    })
 
     tabIndexes.toList.map((index: Int) => {
       new Tab(index)
