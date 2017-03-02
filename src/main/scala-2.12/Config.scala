@@ -40,6 +40,15 @@ object Config {
   val AMULET_ALLOCATION: Allocation = a(5, NORMAL, r(0, 5, 11, 7))
   val BELT_ALLOCATION: Allocation = a(5, NORMAL, r(0, 8, 11, 11))
 
+  val BOOT_75_ALLOCATION: Allocation = a(6, NORMAL, r(0, 0, 11, 1))
+  val GLOVE_75_ALLOCATION: Allocation = a(6, NORMAL, r(0, 2, 11, 3))
+  val HELMET_75_ALLOCATION: Allocation = a(6, NORMAL, r(0, 4, 11, 5))
+  val BODY_75_ALLOCATION: Allocation = a(6, NORMAL, r(0, 6, 11, 7))
+  val WEAPON_75_ALLOCATION: Allocation = a(6, NORMAL, r(0, 8, 11, 11))
+  val RING_75_ALLOCATION: Allocation = a(7, NORMAL, r(0, 0, 11, 4))
+  val AMULET_75_ALLOCATION: Allocation = a(7, NORMAL, r(0, 5, 11, 7))
+  val BELT_75_ALLOCATION: Allocation = a(7, NORMAL, r(0, 8, 11, 11))
+
   val NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
   val NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
   val NORMAL_TAB_WIDTH: Int = 12

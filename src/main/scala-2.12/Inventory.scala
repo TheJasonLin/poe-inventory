@@ -88,7 +88,9 @@ object Inventory extends Container {
     })
   }
 
-  def chaosEquipment: Seq[Equipment] = {
+  def fullSetEquipment(level75: Boolean): Seq[Equipment] = {
+    val min: Int = if (level75) 75 else 60
+    val max: Int = if (level75) 999 else 74
     items
       // make usre it's rare
       .filter((item) => item.rarity == "Rare")
@@ -96,8 +98,8 @@ object Inventory extends Container {
       .filter((item: Item) => item.isInstanceOf[Equipment])
       // map it to equipment
       .map((item) => item.asInstanceOf[Equipment])
-      // make sure its item level 60 or Higher
-      .filter((item) => item.itemLevel >= 60)
+      // make sure its item level 60 / 75 or Higher
+      .filter((item) => item.itemLevel >= min && item.itemLevel <= max)
       // make sure its unidentified
       .filter((item) => !item.identified)
       // make sure it's desired for chaos recipe

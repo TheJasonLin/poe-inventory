@@ -17,7 +17,7 @@ object Stash {
   val amuletAllocation: Allocation = Config.AMULET_ALLOCATION
   val beltAllocation: Allocation = Config.BELT_ALLOCATION
 
-  val generalAllocations = collection.immutable.HashMap(
+  private val _generalAllocations = collection.immutable.HashMap(
     TabContents.CURRENCY -> Config.CURRENCY_ALLOCATION,
     TabContents.ESSENCE -> Config.ESSENCE_ALLOCATION,
     TabContents.DIVINATION -> Config.DIVINATION_ALLOCATION,
@@ -31,6 +31,17 @@ object Stash {
     TabContents.BELT -> Config.BELT_ALLOCATION
   )
 
+  private val _chaos75Allocations = collection.immutable.HashMap(
+    TabContents.HELMET -> Config.HELMET_75_ALLOCATION,
+    TabContents.BOOT -> Config.BOOT_75_ALLOCATION,
+    TabContents.GLOVE -> Config.GLOVE_75_ALLOCATION,
+    TabContents.BODY -> Config.BODY_75_ALLOCATION,
+    TabContents.WEAPON -> Config.WEAPON_75_ALLOCATION,
+    TabContents.RING -> Config.RING_75_ALLOCATION,
+    TabContents.AMULET -> Config.AMULET_75_ALLOCATION,
+    TabContents.BELT -> Config.BELT_75_ALLOCATION
+  )
+
   val mapAllocations = Config.MAP_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
@@ -40,14 +51,24 @@ object Stash {
     tab.index == currentTabIndex
   })
 
+  def getAllocation(tabContents: TabContents, level75: Boolean = false): Allocation = {
+    if(!level75) {
+      _generalAllocations(tabContents)
+    } else {
+      _chaos75Allocations(tabContents)
+    }
+  }
+
   /**
     * Changes the tab and reads the contents according to mode
     * NOTE: Not used for Maps, since maps can be in different tabs
     * @param tabContents
     * @param mode
     */
-  def activateTab(tabContents: TabContents, mode: Mode): Unit = {
-    val allocation = generalAllocations(tabContents)
+  def activateTab(tabContents: TabContents, mode: Mode, use75Allocations: Boolean): Unit = {
+    var allocation: Allocation = null
+    if(use75Allocations) allocation = _chaos75Allocations(tabContents)
+    else allocation = _generalAllocations(tabContents)
     activateTab(allocation, mode)
   }
 
@@ -135,13 +156,19 @@ object Stash {
     // using a set to avoid duplicates
     val tabInfos: mutable.HashSet[(Int, TabType)] = new mutable.HashSet[(Int, TabType)]
 
-    generalAllocations.foreach((pair) => {
+    _generalAllocations.foreach((pair) => {
       val allocation: Allocation = pair._2
       val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
       tabInfos += tabInfo
     })
 
     mapAllocations.foreach((pair) => {
+      val allocation: Allocation = pair._2
+      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
+      tabInfos += tabInfo
+    })
+
+    _chaos75Allocations.foreach((pair) => {
       val allocation: Allocation = pair._2
       val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
       tabInfos += tabInfo
