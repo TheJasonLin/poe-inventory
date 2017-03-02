@@ -46,9 +46,11 @@ object WeaponFactory {
         && !Sword.identifierExceptions.contains(base)
     ) {
       if (Item.matchesIdentifier(base, Sword.oneHandedIdentifiers) || Sword.oneHandedBases.contains(base)) {
-        return Option(new Sword(rarity, base, name, true))
+        //it's one handed, but need to figure out if it's a thrusting sword or regular
+        val isThrusting: Boolean = Item.matchesIdentifier(base, Sword.thrustingIdentifiers)
+        return Option(new Sword(rarity, base, name, true, isThrusting))
       } else {
-        return Option(new Sword(rarity, base, name, false))
+        return Option(new Sword(rarity, base, name, false, false))
       }
     }
 

@@ -4,9 +4,13 @@ class Sword(
              rarity: String,
              base: String,
              name: Option[String],
-             oneHanded: Boolean
+             oneHanded: Boolean,
+             val thrusting: Boolean
            ) extends VariableWeapon(rarity, base, name, oneHanded) {
 
+  override def height(): Int = if (thrusting) 4 else super.width()
+
+  override def width(): Int = if (thrusting) 1 else super.width()
 }
 
 object Sword {
@@ -84,5 +88,15 @@ object Sword {
     "Vaal Blade",
     "Tiger Hook",
     "Vaal Rapier"
+  )
+
+  val thrustingIdentifiers = Array(
+    "Spike",
+    "Rapier",
+    "Foil",
+    "Smallsword",
+    "Estoc",
+    "Pecoraro",
+    "Dragoon"
   )
 }
