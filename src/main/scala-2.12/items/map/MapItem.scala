@@ -1,13 +1,15 @@
 package items.map
 
-import items.Item
+import items.{CraftableItem, Item}
 
 class MapItem(
            rarity: String,
            base: String,
            name: Option[String],
+           itemLevel: Int,
+           identified: Boolean,
            val tier: Int
-         ) extends Item(rarity, base, name) {
+         ) extends CraftableItem(rarity, base, name, itemLevel, identified) {
 
   override def toString: String = super.toString() + s"[Tier: $tier]"
 }

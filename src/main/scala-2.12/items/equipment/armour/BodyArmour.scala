@@ -3,8 +3,10 @@ package items.equipment.armour
 class BodyArmour(
                   rarity: String,
                   base: String,
-                  name: Option[String]
-                ) extends Armour(rarity, base, name) {
+                  name: Option[String],
+                  itemLevel: Int,
+                  identified: Boolean
+                ) extends Armour(rarity, base, name, itemLevel, identified) {
   override def height(): Int = 3
 }
 

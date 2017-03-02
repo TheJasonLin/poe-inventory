@@ -4,8 +4,10 @@ class VariableWeapon(
                       rarity: String,
                       base: String,
                       name: Option[String],
+                      itemLevel: Int,
+                      identified: Boolean,
                       val oneHanded: Boolean
-                    ) extends Weapon(rarity, base, name) {
+                    ) extends Weapon(rarity, base, name, itemLevel, identified) {
   override def height(): Int = if (oneHanded) 3 else 4
 
   override def width(): Int = 2

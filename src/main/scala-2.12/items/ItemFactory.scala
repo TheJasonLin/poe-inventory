@@ -24,8 +24,9 @@ object ItemFactory {
     val base = parseBase(clipboard)
     val name = parseName(clipboard)
     val itemLevel = parseItemLevel(clipboard)
+    val identified = parseIdentified(clipboard)
 
-    Option(create(clipboard, rarity, base, name, itemLevel))
+    Option(create(clipboard, rarity, base, name, itemLevel, identified))
   }
 
   def parseRarity(clipboard: String): String = {
@@ -69,15 +70,15 @@ object ItemFactory {
     * @param itemLevelOption
     * @return
     */
-  private def create(clipboard: String, rarity: String, base: String, nameOption: Option[String], itemLevelOption: Option[Int]): Item = {
+  private def create(clipboard: String, rarity: String, base: String, nameOption: Option[String], itemLevelOption: Option[Int], identified: Boolean): Item = {
     if (rarity == "Gem") {
       return new Gem(rarity, base, nameOption)
     } else if (rarity == "Divination Card") {
       return new DivinationCard(rarity, base, nameOption)
     } else if (base.contains("Map")) {
       val mapTierOption = parseMapTier(clipboard)
-      if(mapTierOption.isDefined) {
-        return new MapItem(rarity, base, nameOption, mapTierOption.get)
+      if(mapTierOption.isDefined && itemLevelOption.isDefined) {
+        return new MapItem(rarity, base, nameOption, itemLevelOption.get, identified, mapTierOption.get)
       }
     }
     var itemOption: Option[Item] = None
@@ -85,8 +86,11 @@ object ItemFactory {
     itemOption = CurrencyFactory.create(rarity, base, nameOption)
     if(itemOption.isDefined) return itemOption.get
 
-    itemOption = EquipmentFactory.create(rarity, base, nameOption)
-    if(itemOption.isDefined) return itemOption.get
+    // All Equipment has itemLevel
+    if(itemLevelOption.isDefined) {
+      itemOption = EquipmentFactory.create(rarity, base, nameOption, itemLevelOption.get, identified)
+      if(itemOption.isDefined) return itemOption.get
+    }
 
     new UnknownItem(rarity, base, nameOption)
   }
@@ -107,5 +111,9 @@ object ItemFactory {
       val value = Integer.parseInt(valueText)
       Option(value)
     }
+  }
+
+  private def parseIdentified(clipboard: String): Boolean = {
+    !clipboard.contains("Unidentified")
   }
 }

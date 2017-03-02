@@ -1,12 +1,14 @@
 package items.equipment
 
-import items.Item
+import items.CraftableItem
 
 class Equipment(
                  rarity: String,
                  base: String,
-                 name: Option[String]
-               ) extends Item(rarity, base, name) {
+                 name: Option[String],
+                 itemLevel: Int,
+                 identified: Boolean
+               ) extends CraftableItem(rarity, base, name, itemLevel, identified) {
 
 }
 

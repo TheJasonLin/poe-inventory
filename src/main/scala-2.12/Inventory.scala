@@ -90,15 +90,23 @@ object Inventory extends Container {
 
   def chaosEquipment: Seq[Equipment] = {
     items
+      // make usre it's rare
+      .filter((item) => item.rarity == "Rare")
       // make sure it's equipment
       .filter((item: Item) => item.isInstanceOf[Equipment])
+      // map it to equipment
+      .map((item) => item.asInstanceOf[Equipment])
+      // make sure its item level 60 or Higher
+      .filter((item) => item.itemLevel >= 60)
+      // make sure its unidentified
+      .filter((item) => !item.identified)
       // make sure it's desired for chaos recipe
       .filter((item: Item) => {
-      val isArmour: Boolean = item.isInstanceOf[Armour] && !item.isInstanceOf[Shield]
-      val isAccessory: Boolean = item.isInstanceOf[Accessory] && !item.isInstanceOf[Quiver]
-      val isSmallWeapon: Boolean = item.isInstanceOf[Dagger] || item.isInstanceOf[Wand]
-      isArmour || isAccessory || isSmallWeapon
-    })
+        val isArmour: Boolean = item.isInstanceOf[Armour] && !item.isInstanceOf[Shield]
+        val isAccessory: Boolean = item.isInstanceOf[Accessory] && !item.isInstanceOf[Quiver]
+        val isSmallWeapon: Boolean = item.isInstanceOf[Dagger] || item.isInstanceOf[Wand]
+        isArmour || isAccessory || isSmallWeapon
+      })
       .map((item: Item) => {
         item.asInstanceOf[Equipment]
       })

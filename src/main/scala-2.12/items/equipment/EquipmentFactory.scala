@@ -6,24 +6,24 @@ import items.equipment.weapon.WeaponFactory
 import structures.Position
 
 object EquipmentFactory {
-  def create(rarity: String, base: String, name: Option[String]): Option[Equipment] = {
+  def create(rarity: String, base: String, name: Option[String], itemLevel: Int, identified: Boolean): Option[Equipment] = {
     var equipmentOption: Option[Equipment] = None
     // Flask
     if(base.contains("Flask")) {
-      return Option(new Flask(rarity, base, name))
+      return Option(new Flask(rarity, base, name, itemLevel, identified))
     }
     // Jewel
     if(base.contains("Jewel")) {
-      return Option(new Jewel(rarity, base, name))
+      return Option(new Jewel(rarity, base, name, itemLevel, identified))
     }
     // Accessory
-    equipmentOption = AccessoryFactory.create(rarity, base, name)
+    equipmentOption = AccessoryFactory.create(rarity, base, name, itemLevel, identified)
     if (equipmentOption.isDefined) return equipmentOption
     // Armour
-    equipmentOption = ArmourFactory.create(rarity, base, name)
+    equipmentOption = ArmourFactory.create(rarity, base, name, itemLevel, identified)
     if (equipmentOption.isDefined) return equipmentOption
     // Weapon
-    equipmentOption = WeaponFactory.create(rarity, base, name)
+    equipmentOption = WeaponFactory.create(rarity, base, name, itemLevel, identified)
     if(equipmentOption.isDefined) return equipmentOption
 
     None

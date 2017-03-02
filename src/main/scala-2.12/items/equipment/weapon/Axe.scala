@@ -4,8 +4,10 @@ class Axe(
            rarity: String,
            base: String,
            name: Option[String],
+           itemLevel: Int,
+           identified: Boolean,
            oneHanded: Boolean
-         ) extends VariableWeapon(rarity, base, name, oneHanded) {
+         ) extends VariableWeapon(rarity, base, name, itemLevel, identified, oneHanded) {
 }
 
 object Axe {
