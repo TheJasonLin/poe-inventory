@@ -1,24 +1,73 @@
+import TabType._
+import structures.Position
 
 class Tab(
-           val index: Int
+           val index: Int,
+           val tabType: TabType
          )
   extends Container {
-  val xCeil: Int = Config.TAB_BOTTOM_RIGHT_COORD._1
-  val yCeil: Int = Config.TAB_BOTTOM_RIGHT_COORD._2
-  val pixelWidth: Int = xCeil - xBase
-  val pixelHeight: Int = yCeil - yBase
 
-  override def xBase(): Int = Config.TAB_TOP_LEFT_COORD._1
+  val xCeil: Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_BOTTOM_RIGHT_COORD._1)
+    case QUAD => Option(Config.QUAD_TAB_BOTTOM_RIGHT_COORD._1)
+    case SPECIAL => None
+  }
 
-  override def yBase: Int = Config.TAB_TOP_LEFT_COORD._2
+  val yCeil: Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_BOTTOM_RIGHT_COORD._2)
+    case QUAD => Option(Config.QUAD_TAB_BOTTOM_RIGHT_COORD._2)
+    case SPECIAL => None
+  }
 
-  override def xCellOffset(): Double = pixelWidth.asInstanceOf[Double] / (width - 1).asInstanceOf[Double]
+  val pixelWidth: Option[Int] = if(xCeil.isDefined) Option(xCeil.get - xBase().get) else None
+  val pixelHeight: Option[Int] = if(xCeil.isDefined) Option(yCeil.get - yBase().get) else None
 
-  override def width: Int = Config.TAB_WIDTH
+  val specialTabAccessError = "Attempting to access Special Tab dimensions"
+  override def xBase(): Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_TOP_LEFT_COORD._1)
+    case QUAD => Option(Config.QUAD_TAB_TOP_LEFT_COORD._1)
+    case SPECIAL => throw new IllegalStateException(specialTabAccessError)
+  }
 
-  override def yCellOffset(): Double = pixelHeight.asInstanceOf[Double] / (height - 1).asInstanceOf[Double]
+  override def yBase(): Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_TOP_LEFT_COORD._2)
+    case QUAD => Option(Config.QUAD_TAB_TOP_LEFT_COORD._2)
+    case SPECIAL => throw new IllegalStateException(specialTabAccessError)
+  }
 
-  override def height: Int = Config.TAB_HEIGHT
+  override def xCellOffset(): Option[Double] =
+    if(width().isDefined)
+      Option(pixelWidth.get.asInstanceOf[Double] / (width().get - 1).asInstanceOf[Double])
+    else None
 
-  override def cellRadius = Config.TAB_CELL_RADIUS
+  override def width(): Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_WIDTH)
+    case QUAD => Option(Config.QUAD_TAB_WIDTH)
+    case SPECIAL => throw new IllegalStateException(specialTabAccessError)
+  }
+
+  override def yCellOffset(): Option[Double] =
+    if(height().isDefined)
+      Option(pixelHeight.get.asInstanceOf[Double] / (height().get - 1).asInstanceOf[Double])
+    else None
+
+  override def height(): Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_HEIGHT)
+    case QUAD => Option(Config.QUAD_TAB_HEIGHT)
+    case SPECIAL => throw new IllegalStateException(specialTabAccessError)
+  }
+
+  override def cellRadius(): Option[Int] = tabType match {
+    case NORMAL => Option(Config.NORMAL_TAB_CELL_RADIUS)
+    case QUAD => Option(Config.QUAD_TAB_CELL_RADIUS)
+    case SPECIAL => throw new IllegalStateException(specialTabAccessError)
+  }
+
+  override def createPositions(): Option[Seq[Seq[Position]]] = {
+    if(tabType == SPECIAL) {
+      None
+    } else {
+      super.createPositions()
+    }
+  }
 }

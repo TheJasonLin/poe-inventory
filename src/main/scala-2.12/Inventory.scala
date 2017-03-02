@@ -1,30 +1,33 @@
+import java.util.Optional
+
 import items.currency.{BasicCurrency, Essence}
 import items.equipment.Equipment
 import items.equipment.accessory.{Accessory, Quiver}
 import items.equipment.armour.{Armour, Shield}
 import items.equipment.weapon.{Dagger, Wand}
+import items.map.MapItem
 import items.{DivinationCard, Item}
 import structures.{PixelPosition, Position}
 
 object Inventory extends Container {
   val xCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._1
   val yCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._2
-  val pixelWidth: Int = xCeil - xBase
-  val pixelHeight: Int = yCeil - yBase
+  val pixelWidth: Int = xCeil - xBase().get
+  val pixelHeight: Int = yCeil - yBase().get
 
-  override def xBase(): Int = Config.INVENTORY_TOP_LEFT_COORD._1
+  override def xBase(): Option[Int] = Option(Config.INVENTORY_TOP_LEFT_COORD._1)
 
-  override def yBase = Config.INVENTORY_TOP_LEFT_COORD._2
+  override def yBase() = Option(Config.INVENTORY_TOP_LEFT_COORD._2)
 
-  override def cellRadius = Config.INVENTORY_CELL_RADIUS
+  override def cellRadius() = Option(Config.INVENTORY_CELL_RADIUS)
 
-  override def xCellOffset(): Double = pixelWidth.asInstanceOf[Double] / (width - 1).asInstanceOf[Double]
+  override def xCellOffset(): Option[Double] = Option(pixelWidth.asInstanceOf[Double] / (width().get - 1).asInstanceOf[Double])
 
-  override def width = Config.INVENTORY_WIDTH
+  override def width() = Option(Config.INVENTORY_WIDTH)
 
-  override def yCellOffset(): Double = pixelHeight.asInstanceOf[Double] / (height - 1).asInstanceOf[Double]
+  override def yCellOffset(): Option[Double] = Option(pixelHeight.asInstanceOf[Double] / (height().get - 1).asInstanceOf[Double])
 
-  override def height = Config.INVENTORY_HEIGHT
+  override def height() = Option(Config.INVENTORY_HEIGHT)
 
   /**
     * Moves an item to an allocation if possible.
@@ -74,6 +77,14 @@ object Inventory extends Container {
       item.isInstanceOf[DivinationCard]
     }).map((item: Item) => {
       item.asInstanceOf[DivinationCard]
+    })
+  }
+
+  def maps: Seq[MapItem] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[MapItem]
+    }).map((item: Item) => {
+      item.asInstanceOf[MapItem]
     })
   }
 

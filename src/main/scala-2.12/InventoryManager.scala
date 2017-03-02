@@ -3,23 +3,43 @@ import items.equipment.Equipment
 import items.equipment.accessory.{Amulet, Belt, Ring}
 import items.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import items.equipment.weapon.Weapon
+import items.map.MapItem
 import items.{DivinationCard, Item}
+import screen.Screen
 import structures.Position
 
 object InventoryManager {
-  def emptyInventory(): Unit = {
+  /**
+    * Store everything into the Stash
+    */
+  def storeInventory(): Unit = {
     prepareInventoryAction()
 
-    Stash.activateTab(TabType.CURRENCY, Mode.NO_READ)
     dumpCurrencies()
-    Stash.activateTab(TabType.ESSENCE, Mode.NO_READ)
     dumpEssences()
-    Stash.activateTab(TabType.DIVINATION, Mode.NO_READ)
     dumpDivinationCards()
+
+    dumpMaps()
 
     dumpChaosEquipment()
 
     markContainersOutOfDate()
+  }
+
+  /**
+    * Ctrl Click Everything
+    */
+  def emptyInventory(): Unit = {
+    // since we aren't reseting the stash, which normally updates the screen for us, we need to manually update the screen
+    Screen.update()
+    Inventory.updateOccupancy()
+    Inventory.positions()
+      .filter((position) => {
+        position.occupied
+      })
+      .foreach((position) => {
+        Inventory.ctrlClickPosition(position)
+      })
   }
 
   private def prepareInventoryAction(): Unit = {
@@ -29,19 +49,32 @@ object InventoryManager {
 
   private def dumpCurrencies(): Unit = {
     Inventory.basicCurrencies.foreach((currency: Currency) => {
+      Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ)
       Inventory.ctrlClickItem(currency)
     })
   }
 
   private def dumpEssences(): Unit = {
     Inventory.essences.foreach((essence) => {
+      Stash.activateTab(TabContents.ESSENCE, Mode.NO_READ)
       Inventory.ctrlClickItem(essence)
     })
   }
 
   private def dumpDivinationCards(): Unit = {
     Inventory.divinationCards.foreach((divinationCard: DivinationCard) => {
+      Stash.activateTab(TabContents.DIVINATION, Mode.NO_READ)
       Inventory.ctrlClickItem(divinationCard)
+    })
+  }
+
+  private def dumpMaps(): Unit = {
+    Inventory.maps.foreach((map: MapItem) => {
+      val allocationOption: Option[Allocation] = Stash.findMapAllocation(map)
+      if(allocationOption.isEmpty) return
+      val allocation = allocationOption.get
+      Stash.activateTab(allocation, Mode.READ_POSITIONS)
+      Inventory.sendItemToAllocation(map, allocation)
     })
   }
 
@@ -58,49 +91,49 @@ object InventoryManager {
 
     if (helmets.nonEmpty) {
       println("Dumping Helmets")
-      Stash.activateTab(TabType.HELMET, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.HELMET, Mode.READ_POSITIONS)
       helmets.foreach((helmet: Helmet) => Inventory.sendItemToAllocation(helmet, Stash.helmetAllocation))
     }
 
     if (boots.nonEmpty) {
       println("Dumping Boots")
-      Stash.activateTab(TabType.BOOT, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.BOOT, Mode.READ_POSITIONS)
       boots.foreach((boot: Boot) => Inventory.sendItemToAllocation(boot, Stash.bootAllocation))
     }
 
     if (gloves.nonEmpty) {
       println("Dumping Gloves")
-      Stash.activateTab(TabType.GLOVE, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.GLOVE, Mode.READ_POSITIONS)
       gloves.foreach((glove: Glove) => Inventory.sendItemToAllocation(glove, Stash.gloveAllocation))
     }
 
     if (bodys.nonEmpty) {
       println("Dumping Body Armours")
-      Stash.activateTab(TabType.BODY, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.BODY, Mode.READ_POSITIONS)
       bodys.foreach((bodyArmour: BodyArmour) => Inventory.sendItemToAllocation(bodyArmour, Stash.bodyAllocation))
     }
 
     if (weapons.nonEmpty) {
       println("Dumping Weapons")
-      Stash.activateTab(TabType.WEAPON, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.WEAPON, Mode.READ_POSITIONS)
       weapons.foreach((weapon: Weapon) => Inventory.sendItemToAllocation(weapon, Stash.weaponAllocation))
     }
 
     if (rings.nonEmpty) {
       println("Dumping Rings")
-      Stash.activateTab(TabType.RING, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.RING, Mode.READ_POSITIONS)
       rings.foreach((ring: Ring) => Inventory.sendItemToAllocation(ring, Stash.ringAllocation))
     }
 
     if (amulets.nonEmpty) {
       println("Dumping Amulets")
-      Stash.activateTab(TabType.AMULET, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.AMULET, Mode.READ_POSITIONS)
       amulets.foreach((amulet: Amulet) => Inventory.sendItemToAllocation(amulet, Stash.amuletAllocation))
     }
 
     if (belts.nonEmpty) {
       println("Dumping Belts")
-      Stash.activateTab(TabType.BELT, Mode.READ_POSITIONS)
+      Stash.activateTab(TabContents.BELT, Mode.READ_POSITIONS)
       belts.foreach((belt: Belt) => Inventory.sendItemToAllocation(belt, Stash.beltAllocation))
     }
   }
@@ -112,20 +145,20 @@ object InventoryManager {
 
   def extractChaosSet(): Unit = {
     Stash.resetTab()
-    extractItemFromsTab(TabType.HELMET, 1)
-    extractItemFromsTab(TabType.BOOT, 1)
-    extractItemFromsTab(TabType.GLOVE, 1)
-    extractItemFromsTab(TabType.BODY, 1)
-    extractItemFromsTab(TabType.WEAPON, 2)
-    extractItemFromsTab(TabType.RING, 2)
-    extractItemFromsTab(TabType.AMULET, 1)
-    extractItemFromsTab(TabType.BELT, 1)
+    extractItemFromsTab(TabContents.HELMET, 1)
+    extractItemFromsTab(TabContents.BOOT, 1)
+    extractItemFromsTab(TabContents.GLOVE, 1)
+    extractItemFromsTab(TabContents.BODY, 1)
+    extractItemFromsTab(TabContents.WEAPON, 2)
+    extractItemFromsTab(TabContents.RING, 2)
+    extractItemFromsTab(TabContents.AMULET, 1)
+    extractItemFromsTab(TabContents.BELT, 1)
 
     markContainersOutOfDate()
   }
 
-  def extractItemFromsTab(tabType: TabType, count: Int): Unit = {
-    val allocation: Allocation = Stash.allocations(tabType)
+  def extractItemFromsTab(tabType: TabContents, count: Int): Unit = {
+    val allocation: Allocation = Stash.generalAllocations(tabType)
     Stash.activateTab(tabType, Mode.READ_POSITIONS)
     val tab = Stash.currentTab().get
     tab.positionsInAllocation(allocation)

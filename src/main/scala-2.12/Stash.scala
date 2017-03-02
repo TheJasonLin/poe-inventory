@@ -1,6 +1,7 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
+import items.map.MapItem
 import screen.Screen
 
 import scala.collection.mutable
@@ -16,30 +17,21 @@ object Stash {
   val amuletAllocation: Allocation = Config.AMULET_ALLOCATION
   val beltAllocation: Allocation = Config.BELT_ALLOCATION
 
-  val allocations = collection.immutable.HashMap(
-    TabType.HELMET -> Config.HELMET_ALLOCATION,
-    TabType.BOOT -> Config.BOOT_ALLOCATION,
-    TabType.GLOVE -> Config.GLOVE_ALLOCATION,
-    TabType.BODY -> Config.BODY_ALLOCATION,
-    TabType.WEAPON -> Config.WEAPON_ALLOCATION,
-    TabType.RING -> Config.RING_ALLOCATION,
-    TabType.AMULET -> Config.AMULET_ALLOCATION,
-    TabType.BELT -> Config.BELT_ALLOCATION
+  val generalAllocations = collection.immutable.HashMap(
+    TabContents.CURRENCY -> Config.CURRENCY_ALLOCATION,
+    TabContents.ESSENCE -> Config.ESSENCE_ALLOCATION,
+    TabContents.DIVINATION -> Config.DIVINATION_ALLOCATION,
+    TabContents.HELMET -> Config.HELMET_ALLOCATION,
+    TabContents.BOOT -> Config.BOOT_ALLOCATION,
+    TabContents.GLOVE -> Config.GLOVE_ALLOCATION,
+    TabContents.BODY -> Config.BODY_ALLOCATION,
+    TabContents.WEAPON -> Config.WEAPON_ALLOCATION,
+    TabContents.RING -> Config.RING_ALLOCATION,
+    TabContents.AMULET -> Config.AMULET_ALLOCATION,
+    TabContents.BELT -> Config.BELT_ALLOCATION
   )
 
-  val tabIndexes = collection.immutable.HashMap(
-    TabType.CURRENCY -> Config.CURRENCY_TAB,
-    TabType.ESSENCE -> Config.ESSENCE_TAB,
-    TabType.DIVINATION -> Config.DIVINATION_TAB,
-    TabType.HELMET -> Config.HELMET_ALLOCATION.tabIndex,
-    TabType.BOOT -> Config.BOOT_ALLOCATION.tabIndex ,
-    TabType.GLOVE -> Config.GLOVE_ALLOCATION.tabIndex ,
-    TabType.BODY -> Config.BODY_ALLOCATION.tabIndex ,
-    TabType.WEAPON -> Config.WEAPON_ALLOCATION.tabIndex ,
-    TabType.RING -> Config.RING_ALLOCATION.tabIndex ,
-    TabType.AMULET -> Config.AMULET_ALLOCATION.tabIndex ,
-    TabType.BELT -> Config.BELT_ALLOCATION.tabIndex 
-  )
+  val mapAllocations = Config.MAP_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -50,20 +42,39 @@ object Stash {
 
   /**
     * Changes the tab and reads the contents according to mode
-    * @param tabType
+    * NOTE: Not used for Maps, since maps can be in different tabs
+    * @param tabContents
     * @param mode
     */
-  def activateTab(tabType: TabType, mode: Mode): Unit = {
-    val tab: Int = tabIndexes(tabType)
+  def activateTab(tabContents: TabContents, mode: Mode): Unit = {
+    val allocation = generalAllocations(tabContents)
+    activateTab(allocation, mode)
+  }
+
+  /**
+    * Activates the tab for an allocation
+    * @param allocation
+    */
+  def activateTab(allocation: Allocation, mode: Mode): Unit = {
+    val tabIndex: Int = allocation.tabIndex
+    activateTab(tabIndex, mode)
+  }
+
+  /**
+    * Changes the tab and reads the contents according to the mode
+    * @param tabIndex
+    * @param mode
+    */
+  def activateTab(tabIndex: Int, mode: Mode): Unit = {
     var tabChanged: Boolean = false
 
-    while (currentTabIndex < tab) {
+    while (currentTabIndex < tabIndex) {
       nextTab()
       Thread sleep 50
       tabChanged = true
     }
 
-    while (currentTabIndex > tab) {
+    while (currentTabIndex > tabIndex) {
       prevTab()
       Thread sleep 50
       tabChanged = true
@@ -77,7 +88,8 @@ object Stash {
       val tabOption = currentTab()
       if(tabOption.isDefined) {
         val tab = tabOption.get
-        if(!tab.upToDate) {
+        // don't try reading Currency / Essence / Div Tabs
+        if(!tab.upToDate && tab.tabType != TabType.SPECIAL) {
           mode match {
             case Mode.READ_POSITIONS => {
               tab.updateOccupancy()
@@ -94,6 +106,16 @@ object Stash {
     }
   }
 
+  def findMapAllocation(map: MapItem): Option[Allocation] = {
+    val pair: Option[(Int, Allocation)] = mapAllocations
+        .find((pair: (Int, Allocation)) => {
+          map.tier == pair._1
+        })
+    if(pair.isEmpty) return None
+    val allocation: Allocation = pair.get._2
+    Option(allocation)
+  }
+
   def nextTab(): Unit = {
     robot.keyPress(KeyEvent.VK_RIGHT)
     Thread sleep 5
@@ -108,16 +130,27 @@ object Stash {
     currentTabIndex -= 1
   }
 
+  //@TODO: Merge the general and map allocations
   def createTabs(): Seq[Tab] = {
-    val tabIndexes: mutable.HashSet[Int] = new mutable.HashSet[Int]
+    // using a set to avoid duplicates
+    val tabInfos: mutable.HashSet[(Int, TabType)] = new mutable.HashSet[(Int, TabType)]
 
-    allocations.foreach((pair) => {
-      val allocation = pair._2
-      tabIndexes += allocation.tabIndex
+    generalAllocations.foreach((pair) => {
+      val allocation: Allocation = pair._2
+      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
+      tabInfos += tabInfo
     })
 
-    tabIndexes.toList.map((index: Int) => {
-      new Tab(index)
+    mapAllocations.foreach((pair) => {
+      val allocation: Allocation = pair._2
+      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
+      tabInfos += tabInfo
+    })
+
+    tabInfos.toList.map((tabInfo: (Int, TabType)) => {
+      val index = tabInfo._1
+      val tabType = tabInfo._2
+      new Tab(index, tabType)
     })
   }
 

@@ -2,6 +2,7 @@ package items
 
 import items.currency.{Currency, CurrencyFactory, Essence}
 import items.equipment.{Equipment, EquipmentFactory}
+import items.map.MapItem
 
 object ItemFactory {
   private def isValid(clipboard: String): Boolean = {
@@ -9,6 +10,11 @@ object ItemFactory {
     clipboard.split('\n').length > 2
   }
 
+  /**
+    * Handles most of the parsing
+    * @param clipboard
+    * @return
+    */
   def create(clipboard: String): Option[Item] = {
     if(!isValid(clipboard)) {
       return None
@@ -17,8 +23,9 @@ object ItemFactory {
     val rarity = parseRarity(clipboard)
     val base = parseBase(clipboard)
     val name = parseName(clipboard)
+    val itemLevel = parseItemLevel(clipboard)
 
-    Option(create(rarity, base, name))
+    Option(create(clipboard, rarity, base, name, itemLevel))
   }
 
   def parseRarity(clipboard: String): String = {
@@ -44,25 +51,61 @@ object ItemFactory {
     Option(lines(1))
   }
 
-  def hasName(clipboard: String): Boolean = {
+  def parseItemLevel(clipboard: String): Option[Int] = {
+    parseNumericAttribute(clipboard, "Item Level: ")
+  }
+
+  private def hasName(clipboard: String): Boolean = {
     val lines: Array[String] = clipboard.split('\n')
     lines(2) != "--------"
   }
 
-  private def create(rarity: String, base: String, name: Option[String]): Item = {
+  /**
+    * Handles less parsing and more item creation
+    * @param clipboard
+    * @param rarity
+    * @param base
+    * @param nameOption
+    * @param itemLevelOption
+    * @return
+    */
+  private def create(clipboard: String, rarity: String, base: String, nameOption: Option[String], itemLevelOption: Option[Int]): Item = {
     if (rarity == "Gem") {
-      return new Gem(rarity, base, name)
+      return new Gem(rarity, base, nameOption)
     } else if (rarity == "Divination Card") {
-      return new DivinationCard(rarity, base, name)
+      return new DivinationCard(rarity, base, nameOption)
+    } else if (base.contains("Map")) {
+      val mapTierOption = parseMapTier(clipboard)
+      if(mapTierOption.isDefined) {
+        return new MapItem(rarity, base, nameOption, mapTierOption.get)
+      }
     }
     var itemOption: Option[Item] = None
 
-    itemOption = CurrencyFactory.create(rarity, base, name)
+    itemOption = CurrencyFactory.create(rarity, base, nameOption)
     if(itemOption.isDefined) return itemOption.get
 
-    itemOption = EquipmentFactory.create(rarity, base, name)
+    itemOption = EquipmentFactory.create(rarity, base, nameOption)
     if(itemOption.isDefined) return itemOption.get
 
-    new UnknownItem(rarity, base, name)
+    new UnknownItem(rarity, base, nameOption)
+  }
+
+  private def parseMapTier(clipboard: String): Option[Int] = {
+    parseNumericAttribute(clipboard, "Map Tier: ")
+  }
+
+  private def parseNumericAttribute(clipboard: String, label: String): Option[Int] = {
+    val labelStartIndex = clipboard.indexOf(label)
+    if(labelStartIndex < 0) {
+      None
+    } else {
+      val labelLength = label.length()
+      val valueStartIndex = labelStartIndex + labelLength
+      val valueEndIndex = clipboard.indexOf('\n', valueStartIndex)
+      val valueText: String = clipboard.substring(valueStartIndex, valueEndIndex)
+      val value = Integer.parseInt(valueText)
+      Option(value)
+    }
   }
 }

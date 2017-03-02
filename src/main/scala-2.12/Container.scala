@@ -10,32 +10,32 @@ abstract class Container {
   val robot: Robot = new Robot
   val items: ListBuffer[Item] = new ListBuffer[Item]
   var upToDate: Boolean = false
-  private val _positions: Seq[Seq[Position]] = createPositions()
+  private val _positions: Option[Seq[Seq[Position]]] = createPositions()
 
-  def xBase(): Int
+  def xBase(): Option[Int]
 
-  def yBase(): Int
+  def yBase(): Option[Int]
 
-  def width(): Int
+  def width(): Option[Int]
 
-  def height(): Int
+  def height(): Option[Int]
 
-  def xCellOffset(): Double
+  def xCellOffset(): Option[Double]
 
-  def yCellOffset(): Double
+  def yCellOffset(): Option[Double]
 
-  def cellRadius(): Int
+  def cellRadius(): Option[Int]
 
-  def createPositions(): Seq[Seq[Position]] = {
-    val matrix = Array.ofDim[Position](height(), width())
+  def createPositions(): Option[Seq[Seq[Position]]] = {
+    val matrix = Array.ofDim[Position](height().get, width().get)
 
-    for(x <- 0 until height(); y <- 0 until width()) {
+    for(x <- 0 until height().get; y <- 0 until width().get) {
       matrix(x)(y) = new Position(x, y)
     }
-    matrix.map(_.toSeq).toSeq
+    Option(matrix.map(_.toSeq).toSeq)
   }
 
-  def positions(): Seq[Position] = _positions.flatMap(_.toStream)
+  def positions(): Seq[Position] = _positions.get.flatMap(_.toStream)
 
   /**
     * testing Purposes
@@ -44,7 +44,7 @@ abstract class Container {
     positions
       .foreach((position: Position) => {
         val pixelPosition: PixelPosition = getPixels(position)
-        Screen.setPixels(pixelPosition, cellRadius())
+        Screen.setPixels(pixelPosition, cellRadius().get)
       })
   }
 
@@ -54,8 +54,8 @@ abstract class Container {
   }
 
   def getPixels(position: Position): PixelPosition = {
-    val x = xBase() + position.column * xCellOffset()
-    val y = yBase() + position.row * yCellOffset()
+    val x = xBase().get + position.column * xCellOffset().get
+    val y = yBase().get + position.row * yCellOffset().get
     new PixelPosition(x.asInstanceOf[Int], y.asInstanceOf[Int])
   }
 
@@ -87,7 +87,7 @@ abstract class Container {
 
   private def isItemPresent(position: Position): Boolean = {
     val pixels = getPixels(position)
-    val pixelColors: Seq[Color] = Screen.getPixels(pixels, cellRadius())
+    val pixelColors: Seq[Color] = Screen.getPixels(pixels, cellRadius().get)
     val present: Boolean = hasColor(pixelColors)
     present
   }
@@ -189,10 +189,10 @@ abstract class Container {
   * @return
   */
   def positionsInAllocation(allocation: Allocation): Seq[Position] = {
-    val rowMin = allocation.topLeft.row
-    val colMin = allocation.topLeft.column
-    val rowMax = allocation.bottomRight.row
-    val colMax = allocation.bottomRight.column
+    val rowMin = allocation.region.get.topLeft.row
+    val colMin = allocation.region.get.topLeft.column
+    val rowMax = allocation.region.get.bottomRight.row
+    val colMax = allocation.region.get.bottomRight.column
     positions()
       .filter((position: Position) => {
         position.row >= rowMin && position.row <= rowMax && position.column >= colMin && position.column <= colMax
@@ -252,5 +252,14 @@ abstract class Container {
       removeItem(item)
     }
     sent
+  }
+
+  /**
+    * WARNING: Only use this if you don't care where things end up. Use ctrlClickItem whenever possible
+    * This is much faster but just blindly clicks
+    * @param position
+    */
+  def ctrlClickPosition(position: Position): Unit = {
+    Clicker.click(getPixels(position), ctrlMod = true)
   }
 }
