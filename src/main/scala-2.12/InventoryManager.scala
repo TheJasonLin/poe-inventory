@@ -3,8 +3,7 @@ import items.equipment.Equipment
 import items.equipment.accessory.{Amulet, Belt, Ring}
 import items.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import items.equipment.weapon.Weapon
-import items.map.MapItem
-import items.{DivinationCard, Item}
+import items.{DivinationCard, Item, Leaguestone, MapItem}
 import screen.Screen
 import structures.Position
 
@@ -20,6 +19,7 @@ object InventoryManager {
     dumpDivinationCards()
 
     dumpMaps()
+    dumpLeaguestones()
 
     dumpFullSetEquipment(false)
     dumpFullSetEquipment(true)
@@ -76,6 +76,16 @@ object InventoryManager {
       val allocation = allocationOption.get
       Stash.activateTab(allocation, Mode.READ_POSITIONS)
       Inventory.sendItemToAllocation(map, allocation)
+    })
+  }
+
+  private def dumpLeaguestones(): Unit = {
+    Inventory.leaguestones.foreach((leaguestone: Leaguestone) => {
+      val allocationOption: Option[Allocation] = Stash.findLeaguestoneAllocation(leaguestone)
+      if(allocationOption.isEmpty) return
+      val allocation = allocationOption.get
+      Stash.activateTab(allocation, Mode.READ_POSITIONS)
+      Inventory.sendItemToAllocation(leaguestone, allocation)
     })
   }
 

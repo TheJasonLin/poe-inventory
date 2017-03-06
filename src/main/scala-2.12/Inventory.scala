@@ -5,8 +5,7 @@ import items.equipment.Equipment
 import items.equipment.accessory.{Accessory, Quiver}
 import items.equipment.armour.{Armour, Shield}
 import items.equipment.weapon.{Dagger, Wand}
-import items.map.MapItem
-import items.{DivinationCard, Item}
+import items.{DivinationCard, Item, Leaguestone, MapItem}
 import structures.{PixelPosition, Position}
 
 object Inventory extends Container {
@@ -85,6 +84,14 @@ object Inventory extends Container {
       item.isInstanceOf[MapItem]
     }).map((item: Item) => {
       item.asInstanceOf[MapItem]
+    })
+  }
+
+  def leaguestones: Seq[Leaguestone] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[Leaguestone]
+    }).map((item: Item) => {
+      item.asInstanceOf[Leaguestone]
     })
   }
 

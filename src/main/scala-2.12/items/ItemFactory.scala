@@ -2,7 +2,6 @@ package items
 
 import items.currency.{Currency, CurrencyFactory, Essence}
 import items.equipment.{Equipment, EquipmentFactory}
-import items.map.MapItem
 
 object ItemFactory {
   private def isValid(clipboard: String): Boolean = {
@@ -80,6 +79,8 @@ object ItemFactory {
       if(mapTierOption.isDefined && itemLevelOption.isDefined) {
         return new MapItem(rarity, base, nameOption, itemLevelOption.get, identified, mapTierOption.get)
       }
+    } else if (base.contains("Leaguestone")) {
+      return new Leaguestone(rarity, base, nameOption, itemLevelOption.get, identified)
     }
     var itemOption: Option[Item] = None
 

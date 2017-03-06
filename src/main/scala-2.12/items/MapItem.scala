@@ -1,6 +1,4 @@
-package items.map
-
-import items.{CraftableItem, Item}
+package items
 
 class MapItem(
            rarity: String,

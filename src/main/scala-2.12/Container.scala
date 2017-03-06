@@ -41,7 +41,7 @@ abstract class Container {
     * testing Purposes
     */
   def drawBoxes(): Unit = {
-    positions
+    positions()
       .foreach((position: Position) => {
         val pixelPosition: PixelPosition = getPixels(position)
         Screen.setPixels(pixelPosition, cellRadius().get)

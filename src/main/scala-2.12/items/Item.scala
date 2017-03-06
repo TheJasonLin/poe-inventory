@@ -10,7 +10,7 @@ abstract class Item(val rarity: String, val base: String, val name: Option[Strin
   def position: Option[Position] = if(positions.isEmpty) None else Option(positions(0))
 
 
-  override def toString: String = getClass + s"($positions, $rarity, $base, $name)"
+  override def toString: String = getClass + s"($positions, $rarity, $base, $name, $width(), $height())"
 }
 
 object Item {

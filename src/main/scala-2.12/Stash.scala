@@ -1,7 +1,7 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
-import items.map.MapItem
+import items.{Leaguestone, MapItem}
 import screen.Screen
 
 import scala.collection.mutable
@@ -43,6 +43,7 @@ object Stash {
   )
 
   val mapAllocations = Config.MAP_ALLOCATION
+  val leaguestoneAllocations = Config.LEAGUESTONE_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -137,6 +138,16 @@ object Stash {
     Option(allocation)
   }
 
+  def findLeaguestoneAllocation(leaguestone: Leaguestone): Option[Allocation] = {
+    val pair: Option[(String, Allocation)] = leaguestoneAllocations
+      .find((pair: (String, Allocation)) => {
+        leaguestone.base.contains(pair._1)
+      })
+    if(pair.isEmpty) return None
+    val allocation: Allocation = pair.get._2
+    Option(allocation)
+  }
+
   def nextTab(): Unit = {
     robot.keyPress(KeyEvent.VK_RIGHT)
     Thread sleep 5
@@ -163,6 +174,12 @@ object Stash {
     })
 
     mapAllocations.foreach((pair) => {
+      val allocation: Allocation = pair._2
+      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
+      tabInfos += tabInfo
+    })
+
+    leaguestoneAllocations.foreach((pair) => {
       val allocation: Allocation = pair._2
       val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
       tabInfos += tabInfo
