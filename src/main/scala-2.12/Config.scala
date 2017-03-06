@@ -24,7 +24,7 @@ object Config {
   val QUALITY_GEM_ALLOCATION = a(QUALITY_FLASK, NORMAL, r(0, 6, 11, 11))
 
   val MISC_ALLOCATION: Map[String, Allocation] = collection.immutable.HashMap(
-    "Offering to the Goddess" -> a(MAP_TAB, QUAD, r(0, 21, 11, 21))
+    "Offering to the Goddess" -> a(MAP_TAB, QUAD, r(0, 21, 23, 21))
   )
 
   val BAD_LEAGUESTONE_COLUMN = 11
