@@ -9,7 +9,7 @@ class Equipment(
                  itemLevel: Int,
                  identified: Boolean,
                  quality: Int
-               ) extends CraftableItem(rarity, base, name, 1, true, quality) {
+               ) extends CraftableItem(rarity, base, name, itemLevel, identified, quality) {
 
 }
 
