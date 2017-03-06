@@ -36,6 +36,8 @@ object InventoryManager {
     * Ctrl Click Everything
     */
   def emptyInventory(): Unit = {
+    // delay to let the user let go of the hotkey
+    Thread sleep 200
     // since we aren't reseting the stash, which normally updates the screen for us, we need to manually update the screen
     Screen.update()
     Inventory.updateOccupancy()

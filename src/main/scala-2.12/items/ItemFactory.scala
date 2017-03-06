@@ -95,16 +95,17 @@ object ItemFactory {
     * @return
     */
   private def create(clipboard: String, rarity: String, base: String, nameOption: Option[String], itemLevelOption: Option[Int], identified: Boolean, quality: Int): Item = {
+    val baseWords = base.split(' ')
     if (rarity == "Gem") {
       return new Gem(rarity, base, nameOption, quality)
     } else if (rarity == "Divination Card") {
       return new DivinationCard(rarity, base, nameOption)
-    } else if (base.contains("Map")) {
+    } else if (baseWords.contains("Map")) {
       val mapTierOption = parseMapTier(clipboard)
       if(mapTierOption.isDefined && itemLevelOption.isDefined) {
         return new MapItem(rarity, base, nameOption, itemLevelOption.get, identified, quality, mapTierOption.get)
       }
-    } else if (base.contains("Leaguestone")) {
+    } else if (baseWords.contains("Leaguestone")) {
       return new Leaguestone(rarity, base, nameOption, itemLevelOption.get, identified)
     }
     var itemOption: Option[Item] = None

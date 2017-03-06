@@ -2,13 +2,14 @@ package items.equipment.accessory
 
 object AccessoryFactory {
   def create(rarity: String, base: String, name: Option[String], itemLevel: Int, identified: Boolean): Option[Accessory] = {
-    if (base.contains("Amulet")) {
+    val baseWords: Seq[String] = base.split(' ')
+    if (baseWords.contains("Amulet")) {
       return Option(new Amulet(rarity, base, name, itemLevel, identified))
-    } else if (base.contains("Ring")) {
+    } else if (baseWords.contains("Ring")) {
       return Option(new Ring(rarity, base, name, itemLevel, identified))
-    } else if (base.contains("Belt") || base.contains("Sash")) {
+    } else if (baseWords.contains("Belt") || base.contains("Sash")) {
       return Option(new Belt(rarity, base, name, itemLevel, identified))
-    } else if (base.contains("Quiver")) {
+    } else if (baseWords.contains("Quiver")) {
       return Option(new Quiver(rarity, base, name, itemLevel, identified))
     }
     None
