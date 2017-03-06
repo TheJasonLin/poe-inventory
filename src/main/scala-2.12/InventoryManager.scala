@@ -27,6 +27,8 @@ object InventoryManager {
     dumpFullSetEquipment(false)
     dumpFullSetEquipment(true)
 
+    dumpMisc()
+
     markContainersOutOfDate()
   }
 
@@ -119,6 +121,16 @@ object InventoryManager {
     Stash.activateTab(allocation, Mode.READ_POSITIONS)
     qualityGems.foreach((gem: Gem) => {
       Inventory.sendItemToAllocation(gem, Stash.qualityGemAllocations)
+    })
+  }
+
+  private def dumpMisc(): Unit = {
+    val miscItems = Inventory.miscItems
+    if(miscItems.isEmpty) return
+    miscItems.foreach((item: Item) => {
+      val allocation = Stash.findMiscAllocation(item)
+      Stash.activateTab(allocation, Mode.READ_POSITIONS)
+      Inventory.sendItemToAllocation(item, allocation)
     })
   }
 

@@ -1,7 +1,7 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
-import items.{Leaguestone, MapItem}
+import items.{Item, Leaguestone, MapItem}
 import screen.Screen
 
 import scala.collection.mutable
@@ -48,6 +48,8 @@ object Stash {
 
   val qualityFlaskAllocations = Config.QUALITY_FLASK_ALLOCATION
   val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
+
+  val miscAllocations = Config.MISC_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -150,6 +152,11 @@ object Stash {
     if(pair.isEmpty) return None
     val allocation: Allocation = pair.get._2
     Option(allocation)
+  }
+
+  def findMiscAllocation(item: Item): Allocation = {
+    val baseName = item.base
+    miscAllocations(baseName)
   }
 
   def nextTab(): Unit = {

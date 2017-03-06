@@ -115,6 +115,13 @@ object Inventory extends Container {
     })
   }
 
+  def miscItems: Seq[Item] = {
+    val keys: Seq[String] = Stash.miscAllocations.keys.toList
+    items.filter((item: Item) => {
+      keys.contains(item.base)
+    })
+  }
+
   def fullSetEquipment(level75: Boolean): Seq[Equipment] = {
     val min: Int = if (level75) 75 else 60
     val max: Int = if (level75) 999 else 74

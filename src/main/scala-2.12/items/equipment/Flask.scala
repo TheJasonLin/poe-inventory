@@ -8,5 +8,5 @@ class Flask(
              identified: Boolean,
              quality: Int
            ) extends Equipment(rarity, base, name, itemLevel, identified, quality) {
-
+  override def height(): Int = 2
 }
