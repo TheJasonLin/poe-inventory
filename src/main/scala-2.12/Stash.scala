@@ -8,6 +8,7 @@ import scala.collection.mutable
 
 object Stash {
   val robot = new Robot
+
   val helmetAllocation: Allocation = Config.HELMET_ALLOCATION
   val bootAllocation: Allocation = Config.BOOT_ALLOCATION
   val gloveAllocation: Allocation = Config.GLOVE_ALLOCATION
@@ -44,6 +45,9 @@ object Stash {
 
   val mapAllocations = Config.MAP_ALLOCATION
   val leaguestoneAllocations = Config.LEAGUESTONE_ALLOCATION
+
+  val qualityFlaskAllocations = Config.QUALITY_FLASK_ALLOCATION
+  val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -167,29 +171,23 @@ object Stash {
     // using a set to avoid duplicates
     val tabInfos: mutable.HashSet[(Int, TabType)] = new mutable.HashSet[(Int, TabType)]
 
-    _generalAllocations.foreach((pair) => {
-      val allocation: Allocation = pair._2
-      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
-      tabInfos += tabInfo
-    })
+    def addAllocation[K](allocations: Map[K, Allocation]): Unit = {
+      allocations.foreach((pair) => {
+        val allocation: Allocation = pair._2
+        val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
+        tabInfos += tabInfo
+      })
+    }
 
-    mapAllocations.foreach((pair) => {
-      val allocation: Allocation = pair._2
-      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
-      tabInfos += tabInfo
-    })
+    addAllocation[TabContents](_generalAllocations)
+    addAllocation[TabContents](_chaos75Allocations)
 
-    leaguestoneAllocations.foreach((pair) => {
-      val allocation: Allocation = pair._2
-      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
-      tabInfos += tabInfo
-    })
+    addAllocation[Int](mapAllocations)
+    addAllocation[String](leaguestoneAllocations)
 
-    _chaos75Allocations.foreach((pair) => {
-      val allocation: Allocation = pair._2
-      val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
-      tabInfos += tabInfo
-    })
+    tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]
+
+    tabInfos += (qualityGemAllocations.tabIndex, qualityGemAllocations.tabType).asInstanceOf[(Int, TabType)]
 
     tabInfos.toList.map((tabInfo: (Int, TabType)) => {
       val index = tabInfo._1

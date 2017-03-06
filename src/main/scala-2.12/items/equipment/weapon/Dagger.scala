@@ -5,8 +5,9 @@ class Dagger(
               base: String,
               name: Option[String],
               itemLevel: Int,
-              identified: Boolean
-            ) extends Weapon(rarity, base, name, itemLevel, identified) {
+              identified: Boolean,
+              quality: Int
+            ) extends Weapon(rarity, base, name, itemLevel, identified, quality) {
 
 }
 

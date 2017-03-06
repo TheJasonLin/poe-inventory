@@ -6,8 +6,9 @@ class Axe(
            name: Option[String],
            itemLevel: Int,
            identified: Boolean,
+           quality: Int,
            oneHanded: Boolean
-         ) extends VariableWeapon(rarity, base, name, itemLevel, identified, oneHanded) {
+         ) extends VariableWeapon(rarity, base, name, itemLevel, identified, quality, oneHanded) {
 }
 
 object Axe {

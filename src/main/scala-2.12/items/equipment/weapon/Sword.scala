@@ -6,9 +6,10 @@ class Sword(
              name: Option[String],
              itemLevel: Int,
              identified: Boolean,
+             quality: Int,
              oneHanded: Boolean,
              val thrusting: Boolean
-           ) extends VariableWeapon(rarity, base, name, itemLevel, identified, oneHanded) {
+           ) extends VariableWeapon(rarity, base, name, itemLevel, identified, quality, oneHanded) {
 
   override def height(): Int = if (thrusting) 4 else super.width()
 

@@ -5,9 +5,10 @@ class Claw(
             base: String,
             name: Option[String],
             itemLevel: Int,
-            identified: Boolean
-          ) extends Weapon(rarity, base, name, itemLevel, identified) {
-  override def height(): Int = 2
+            identified: Boolean,
+            quality: Int
+          ) extends Weapon(rarity, base, name, itemLevel, identified, quality) {
+override def height(): Int = 2
 
   override def width(): Int = 2
 }

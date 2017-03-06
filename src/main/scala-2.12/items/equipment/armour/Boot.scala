@@ -5,8 +5,9 @@ class Boot(
             base: String,
             name: Option[String],
             itemLevel: Int,
-            identified: Boolean
-          ) extends Armour(rarity, base, name, itemLevel, identified) {
+            identified: Boolean,
+            quality: Int
+          ) extends Armour(rarity, base, name, itemLevel, identified, quality) {
   override def height(): Int = 2
 }
 

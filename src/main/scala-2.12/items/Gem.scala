@@ -7,7 +7,8 @@ package items
 class Gem(
            rarity: String,
            base: String,
-           name: Option[String]
-         ) extends CraftableItem(rarity, base, name, 1, true) {
+           name: Option[String],
+           quality: Int
+         ) extends CraftableItem(rarity, base, name, 1, true, quality) {
 
 }

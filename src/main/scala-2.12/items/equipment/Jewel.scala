@@ -6,6 +6,6 @@ class Jewel(
              name: Option[String],
              itemLevel: Int,
              identified: Boolean
-           ) extends Equipment(rarity, base, name, itemLevel, identified) {
+           ) extends Equipment(rarity, base, name, itemLevel, identified, 0) {
 
 }

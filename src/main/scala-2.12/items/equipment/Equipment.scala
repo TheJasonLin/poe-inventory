@@ -7,8 +7,9 @@ class Equipment(
                  base: String,
                  name: Option[String],
                  itemLevel: Int,
-                 identified: Boolean
-               ) extends CraftableItem(rarity, base, name, itemLevel, identified) {
+                 identified: Boolean,
+                 quality: Int
+               ) extends CraftableItem(rarity, base, name, 1, true, quality) {
 
 }
 

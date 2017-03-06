@@ -1,5 +1,7 @@
 package items
 
+import java.awt.datatransfer.Clipboard
+
 import items.currency.{Currency, CurrencyFactory, Essence}
 import items.equipment.{Equipment, EquipmentFactory}
 
@@ -24,8 +26,9 @@ object ItemFactory {
     val name = parseName(clipboard)
     val itemLevel = parseItemLevel(clipboard)
     val identified = parseIdentified(clipboard)
+    val quality = parseQuality(clipboard)
 
-    Option(create(clipboard, rarity, base, name, itemLevel, identified))
+    Option(create(clipboard, rarity, base, name, itemLevel, identified, quality))
   }
 
   def parseRarity(clipboard: String): String = {
@@ -55,6 +58,28 @@ object ItemFactory {
     parseNumericAttribute(clipboard, "Item Level: ")
   }
 
+  /**
+    * Parses the quality. Defaults to 0 if not found.
+    * @param clipboard
+    * @return
+    */
+  def parseQuality(clipboard: String): Int = {
+    val label = "Quality: +"
+    val labelIndex: Int = clipboard.indexOf(label)
+    if(labelIndex < 0) {
+      0
+    } else {
+      val valueIndex: Int = labelIndex + label.length
+      val endIndex: Int = clipboard.indexOf("%", valueIndex)
+      if(endIndex < 0) {
+        0
+      } else {
+        val qualityString = clipboard.substring(valueIndex, endIndex)
+        Integer.parseInt(qualityString)
+      }
+    }
+  }
+
   private def hasName(clipboard: String): Boolean = {
     val lines: Array[String] = clipboard.split('\n')
     lines(2) != "--------"
@@ -69,15 +94,15 @@ object ItemFactory {
     * @param itemLevelOption
     * @return
     */
-  private def create(clipboard: String, rarity: String, base: String, nameOption: Option[String], itemLevelOption: Option[Int], identified: Boolean): Item = {
+  private def create(clipboard: String, rarity: String, base: String, nameOption: Option[String], itemLevelOption: Option[Int], identified: Boolean, quality: Int): Item = {
     if (rarity == "Gem") {
-      return new Gem(rarity, base, nameOption)
+      return new Gem(rarity, base, nameOption, quality)
     } else if (rarity == "Divination Card") {
       return new DivinationCard(rarity, base, nameOption)
     } else if (base.contains("Map")) {
       val mapTierOption = parseMapTier(clipboard)
       if(mapTierOption.isDefined && itemLevelOption.isDefined) {
-        return new MapItem(rarity, base, nameOption, itemLevelOption.get, identified, mapTierOption.get)
+        return new MapItem(rarity, base, nameOption, itemLevelOption.get, identified, quality, mapTierOption.get)
       }
     } else if (base.contains("Leaguestone")) {
       return new Leaguestone(rarity, base, nameOption, itemLevelOption.get, identified)
@@ -89,7 +114,7 @@ object ItemFactory {
 
     // All Equipment has itemLevel
     if(itemLevelOption.isDefined) {
-      itemOption = EquipmentFactory.create(rarity, base, nameOption, itemLevelOption.get, identified)
+      itemOption = EquipmentFactory.create(rarity, base, nameOption, itemLevelOption.get, identified, quality)
       if(itemOption.isDefined) return itemOption.get
     }
 

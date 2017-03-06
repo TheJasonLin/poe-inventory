@@ -6,6 +6,6 @@ class Leaguestone(
                 name: Option[String],
                 itemLevel: Int,
                 identified: Boolean
-              ) extends CraftableItem(rarity, base, name, itemLevel, identified) {
+                 ) extends CraftableItem(rarity, base, name, 1, true, 0) {
 
 }

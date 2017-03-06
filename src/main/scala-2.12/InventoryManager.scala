@@ -1,9 +1,9 @@
 import items.currency.Currency
-import items.equipment.Equipment
+import items.equipment.{Equipment, Flask}
 import items.equipment.accessory.{Amulet, Belt, Ring}
 import items.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import items.equipment.weapon.Weapon
-import items.{DivinationCard, Item, Leaguestone, MapItem}
+import items._
 import screen.Screen
 import structures.Position
 
@@ -20,6 +20,9 @@ object InventoryManager {
 
     dumpMaps()
     dumpLeaguestones()
+
+    dumpQualityFlasks()
+    dumpQualityGems()
 
     dumpFullSetEquipment(false)
     dumpFullSetEquipment(true)
@@ -49,28 +52,36 @@ object InventoryManager {
   }
 
   private def dumpCurrencies(): Unit = {
-    Inventory.basicCurrencies.foreach((currency: Currency) => {
+    val currencies = Inventory.basicCurrencies
+    if(currencies.isEmpty) return
+    currencies.foreach((currency: Currency) => {
       Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, false)
       Inventory.ctrlClickItem(currency)
     })
   }
 
   private def dumpEssences(): Unit = {
-    Inventory.essences.foreach((essence) => {
+    val essences = Inventory.essences
+    if(essences.isEmpty) return
+    essences.foreach((essence) => {
       Stash.activateTab(TabContents.ESSENCE, Mode.NO_READ, false)
       Inventory.ctrlClickItem(essence)
     })
   }
 
   private def dumpDivinationCards(): Unit = {
-    Inventory.divinationCards.foreach((divinationCard: DivinationCard) => {
+    val divinationCards = Inventory.divinationCards
+    if(divinationCards.isEmpty) return
+    divinationCards.foreach((divinationCard: DivinationCard) => {
       Stash.activateTab(TabContents.DIVINATION, Mode.NO_READ, false)
       Inventory.ctrlClickItem(divinationCard)
     })
   }
 
   private def dumpMaps(): Unit = {
-    Inventory.maps.foreach((map: MapItem) => {
+    val maps = Inventory.maps
+    if(maps.isEmpty) return
+    maps.foreach((map: MapItem) => {
       val allocationOption: Option[Allocation] = Stash.findMapAllocation(map)
       if(allocationOption.isEmpty) return
       val allocation = allocationOption.get
@@ -80,12 +91,34 @@ object InventoryManager {
   }
 
   private def dumpLeaguestones(): Unit = {
-    Inventory.leaguestones.foreach((leaguestone: Leaguestone) => {
+    val leaguestones = Inventory.leaguestones
+    if(leaguestones.isEmpty) return
+    leaguestones.foreach((leaguestone: Leaguestone) => {
       val allocationOption: Option[Allocation] = Stash.findLeaguestoneAllocation(leaguestone)
       if(allocationOption.isEmpty) return
       val allocation = allocationOption.get
       Stash.activateTab(allocation, Mode.READ_POSITIONS)
       Inventory.sendItemToAllocation(leaguestone, allocation)
+    })
+  }
+
+  private def dumpQualityFlasks(): Unit = {
+    val qualityFlasks = Inventory.qualityFlasks
+    if(qualityFlasks.isEmpty) return
+    val allocation: Allocation = Stash.qualityFlaskAllocations
+    Stash.activateTab(allocation, Mode.READ_POSITIONS)
+    qualityFlasks.foreach((flask: Flask) => {
+      Inventory.sendItemToAllocation(flask, Stash.qualityFlaskAllocations)
+    })
+  }
+
+  private def dumpQualityGems(): Unit = {
+    val qualityGems: Seq[Gem] = Inventory.qualityGems
+    if(qualityGems.isEmpty) return
+    val allocation: Allocation = Stash.qualityGemAllocations
+    Stash.activateTab(allocation, Mode.READ_POSITIONS)
+    qualityGems.foreach((gem: Gem) => {
+      Inventory.sendItemToAllocation(gem, Stash.qualityGemAllocations)
     })
   }
 

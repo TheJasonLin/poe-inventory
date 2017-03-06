@@ -6,8 +6,9 @@ class MapItem(
            name: Option[String],
            itemLevel: Int,
            identified: Boolean,
+           quality: Int,
            val tier: Int
-         ) extends CraftableItem(rarity, base, name, itemLevel, identified) {
+         ) extends CraftableItem(rarity, base, name, itemLevel, identified, quality) {
 
   override def toString: String = super.toString() + s"[Tier: $tier]"
 }

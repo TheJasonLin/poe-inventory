@@ -1,11 +1,11 @@
 import java.util.Optional
 
 import items.currency.{BasicCurrency, Essence}
-import items.equipment.Equipment
+import items.equipment.{Equipment, Flask}
 import items.equipment.accessory.{Accessory, Quiver}
 import items.equipment.armour.{Armour, Shield}
 import items.equipment.weapon.{Dagger, Wand}
-import items.{DivinationCard, Item, Leaguestone, MapItem}
+import items._
 import structures.{PixelPosition, Position}
 
 object Inventory extends Container {
@@ -92,6 +92,26 @@ object Inventory extends Container {
       item.isInstanceOf[Leaguestone]
     }).map((item: Item) => {
       item.asInstanceOf[Leaguestone]
+    })
+  }
+
+  def qualityFlasks: Seq[Flask] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[Flask]
+    }).map((item: Item) => {
+      item.asInstanceOf[Flask]
+    }).filter((flask: Flask) => {
+      flask.quality > 0
+    })
+  }
+
+  def qualityGems: Seq[Gem] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[Gem]
+    }).map((item: Item) => {
+      item.asInstanceOf[Gem]
+    }).filter((gem: Gem) => {
+      gem.quality > 0
     })
   }
 
