@@ -22,7 +22,7 @@ object ArmourFactory {
       return Option(new Helmet(rarity, base, name, itemLevel, identified, quality))
     }
 
-    if(Item.matchesIdentifier(base, BodyArmour.identifiers)) {
+    if(Item.matchesIdentifier(base, BodyArmour.identifiers) || BodyArmour.baseNames.contains(base)) {
       return Option(new BodyArmour(rarity, base, name, itemLevel, identified, quality))
     }
 

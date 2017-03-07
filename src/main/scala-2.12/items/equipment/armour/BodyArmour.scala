@@ -44,4 +44,8 @@ object BodyArmour {
     "Jacket",
     "Raiment"
   )
+
+  val baseNames = Array(
+    "Full Dragonscale"
+  )
 }
