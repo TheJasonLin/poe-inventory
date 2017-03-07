@@ -1,7 +1,7 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
-import items.{Item, Leaguestone, MapItem}
+import items.{Item, Leaguestone, MapItem, Talisman}
 import screen.Screen
 
 import scala.collection.mutable
@@ -45,6 +45,7 @@ object Stash {
 
   val mapAllocations = Config.MAP_ALLOCATION
   val leaguestoneAllocations = Config.LEAGUESTONE_ALLOCATION
+  val talismanAllocations = Config.TALISMAN_ALLOCATION
 
   val qualityFlaskAllocations = Config.QUALITY_FLASK_ALLOCATION
   val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
@@ -109,7 +110,7 @@ object Stash {
     }
 
     if (tabChanged) {
-      Thread sleep 200
+      Thread sleep Config.TAB_CHANGE_DELAY
       // update screen
       Screen.update()
       // update tab if there's an actual tab
@@ -154,6 +155,16 @@ object Stash {
     Option(allocation)
   }
 
+  def findTalismanAllocation(talisman: Talisman): Option[Allocation] = {
+    val pair: Option[(Int, Allocation)] = talismanAllocations
+      .find((pair: (Int, Allocation)) => {
+        talisman.talismanTier == pair._1
+      })
+    if(pair.isEmpty) return None
+    val allocation: Allocation = pair.get._2
+    Option(allocation)
+  }
+
   def findMiscAllocation(item: Item): Allocation = {
     val baseName = item.base
     miscAllocations(baseName)
@@ -191,6 +202,7 @@ object Stash {
 
     addAllocation[Int](mapAllocations)
     addAllocation[String](leaguestoneAllocations)
+    addAllocation[Int](talismanAllocations)
 
     tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]
 

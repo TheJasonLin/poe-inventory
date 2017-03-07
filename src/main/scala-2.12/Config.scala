@@ -2,6 +2,7 @@ import structures.{Position, Region}
 import TabType._
 
 object Config {
+  val TAB_CHANGE_DELAY: Int = 600
   val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(4)
   val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(3)
 
@@ -13,18 +14,23 @@ object Config {
 
   val LEAGUESTONE_TAB = 4
 
-  val CHAOS_GEAR_60 = 5
-  val CHAOS_JEWELRY_60 = 6
-  val REGAL_GEAR_75 = 7
-  val REGAL_JEWELRY_75 = 8
-  val QUALITY_FLASK = 9
-  val QUALITY_GEM = QUALITY_FLASK
+  val CHAOS_GEAR_60_TAB = 5
+  val CHAOS_JEWELRY_60_TAB = 6
+  val REGAL_GEAR_75_TAB = 7
+  val REGAL_JEWELRY_75_TAB = 8
+  val QUALITY_FLASK_TAB = 9
+  val QUALITY_GEM_TAB = QUALITY_FLASK_TAB
+  val TALISMAN_TAB = 10
 
-  val QUALITY_FLASK_ALLOCATION = a(QUALITY_FLASK, NORMAL, r(0, 0, 11, 5))
-  val QUALITY_GEM_ALLOCATION = a(QUALITY_FLASK, NORMAL, r(0, 6, 11, 11))
+  val QUALITY_FLASK_ALLOCATION = a(QUALITY_FLASK_TAB, NORMAL, r(0, 0, 11, 5))
+  val QUALITY_GEM_ALLOCATION = a(QUALITY_FLASK_TAB, NORMAL, r(0, 6, 11, 11))
 
   val MISC_ALLOCATION: Map[String, Allocation] = collection.immutable.HashMap(
-    "Offering to the Goddess" -> a(MAP_TAB, QUAD, r(0, 21, 23, 21))
+    "Offering to the Goddess" -> a(MAP_TAB, QUAD, r(0, 21, 23, 21)),
+    "Sacrifice at Dusk" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
+    "Sacrifice at Midnight" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
+    "Sacrifice at Dawn" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
+    "Sacrifice at Noon" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23))
   )
 
   val BAD_LEAGUESTONE_COLUMN = 11
@@ -71,23 +77,30 @@ object Config {
     16 -> a(MAP_TAB, QUAD, r(0, 17, 23, 17))
   )
 
-  val BOOT_ALLOCATION: Allocation = a(CHAOS_GEAR_60, NORMAL, r(0, 0, 11, 1))
-  val GLOVE_ALLOCATION: Allocation = a(CHAOS_GEAR_60, NORMAL, r(0, 2, 11, 3))
-  val HELMET_ALLOCATION: Allocation = a(CHAOS_GEAR_60, NORMAL, r(0, 4, 11, 5))
-  val BODY_ALLOCATION: Allocation = a(CHAOS_GEAR_60, NORMAL, r(0, 6, 11, 7))
-  val WEAPON_ALLOCATION: Allocation = a(CHAOS_GEAR_60, NORMAL, r(0, 8, 11, 11))
-  val RING_ALLOCATION: Allocation = a(CHAOS_JEWELRY_60, NORMAL, r(0, 0, 11, 4))
-  val AMULET_ALLOCATION: Allocation = a(CHAOS_JEWELRY_60, NORMAL, r(0, 5, 11, 7))
-  val BELT_ALLOCATION: Allocation = a(CHAOS_JEWELRY_60, NORMAL, r(0, 8, 11, 11))
+  val TALISMAN_ALLOCATION = collection.immutable.HashMap(
+    1 -> a(TALISMAN_TAB, NORMAL, r(0, 0, 11, 4)),
+    2 -> a(TALISMAN_TAB, NORMAL, r(0, 5, 11, 8)),
+    3 -> a(TALISMAN_TAB, NORMAL, r(0, 9, 11, 10)),
+    4 -> a(TALISMAN_TAB, NORMAL, r(0, 11, 11, 11))
+  )
 
-  val BOOT_75_ALLOCATION: Allocation = a(REGAL_GEAR_75, NORMAL, r(0, 0, 11, 1))
-  val GLOVE_75_ALLOCATION: Allocation = a(REGAL_GEAR_75, NORMAL, r(0, 2, 11, 3))
-  val HELMET_75_ALLOCATION: Allocation = a(REGAL_GEAR_75, NORMAL, r(0, 4, 11, 5))
-  val BODY_75_ALLOCATION: Allocation = a(REGAL_GEAR_75, NORMAL, r(0, 6, 11, 7))
-  val WEAPON_75_ALLOCATION: Allocation = a(REGAL_GEAR_75, NORMAL, r(0, 8, 11, 11))
-  val RING_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75, NORMAL, r(0, 0, 11, 4))
-  val AMULET_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75, NORMAL, r(0, 5, 11, 7))
-  val BELT_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75, NORMAL, r(0, 8, 11, 11))
+  val BOOT_ALLOCATION: Allocation = a(CHAOS_GEAR_60_TAB, NORMAL, r(0, 0, 11, 1))
+  val GLOVE_ALLOCATION: Allocation = a(CHAOS_GEAR_60_TAB, NORMAL, r(0, 2, 11, 3))
+  val HELMET_ALLOCATION: Allocation = a(CHAOS_GEAR_60_TAB, NORMAL, r(0, 4, 11, 5))
+  val BODY_ALLOCATION: Allocation = a(CHAOS_GEAR_60_TAB, NORMAL, r(0, 6, 11, 7))
+  val WEAPON_ALLOCATION: Allocation = a(CHAOS_GEAR_60_TAB, NORMAL, r(0, 8, 11, 11))
+  val RING_ALLOCATION: Allocation = a(CHAOS_JEWELRY_60_TAB, NORMAL, r(0, 0, 11, 4))
+  val AMULET_ALLOCATION: Allocation = a(CHAOS_JEWELRY_60_TAB, NORMAL, r(0, 5, 11, 7))
+  val BELT_ALLOCATION: Allocation = a(CHAOS_JEWELRY_60_TAB, NORMAL, r(0, 8, 11, 11))
+
+  val BOOT_75_ALLOCATION: Allocation = a(REGAL_GEAR_75_TAB, NORMAL, r(0, 0, 11, 1))
+  val GLOVE_75_ALLOCATION: Allocation = a(REGAL_GEAR_75_TAB, NORMAL, r(0, 2, 11, 3))
+  val HELMET_75_ALLOCATION: Allocation = a(REGAL_GEAR_75_TAB, NORMAL, r(0, 4, 11, 5))
+  val BODY_75_ALLOCATION: Allocation = a(REGAL_GEAR_75_TAB, NORMAL, r(0, 6, 11, 7))
+  val WEAPON_75_ALLOCATION: Allocation = a(REGAL_GEAR_75_TAB, NORMAL, r(0, 8, 11, 11))
+  val RING_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 0, 11, 4))
+  val AMULET_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 5, 11, 7))
+  val BELT_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 8, 11, 11))
 
   val NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
   val NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)

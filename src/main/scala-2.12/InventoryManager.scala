@@ -20,6 +20,7 @@ object InventoryManager {
 
     dumpMaps()
     dumpLeaguestones()
+    dumpTalismans()
 
     dumpQualityFlasks()
     dumpQualityGems()
@@ -103,6 +104,18 @@ object InventoryManager {
       val allocation = allocationOption.get
       Stash.activateTab(allocation, Mode.READ_POSITIONS)
       Inventory.sendItemToAllocation(leaguestone, allocation)
+    })
+  }
+
+  private def dumpTalismans(): Unit = {
+    val talismans = Inventory.talismans
+    if(talismans.isEmpty) return
+    talismans.foreach((talisman: Talisman) => {
+      val allocationOption: Option[Allocation] = Stash.findTalismanAllocation(talisman)
+      if(allocationOption.isEmpty) return
+      val allocation = allocationOption.get
+      Stash.activateTab(allocation, Mode.READ_POSITIONS)
+      Inventory.sendItemToAllocation(talisman, allocation)
     })
   }
 

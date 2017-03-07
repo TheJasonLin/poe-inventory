@@ -2,8 +2,8 @@ package items
 
 import java.awt.datatransfer.Clipboard
 
-import items.currency.{Currency, CurrencyFactory, Essence}
-import items.equipment.{Equipment, EquipmentFactory}
+import items.currency.CurrencyFactory
+import items.equipment.EquipmentFactory
 
 object ItemFactory {
   private def isValid(clipboard: String): Boolean = {
@@ -107,6 +107,10 @@ object ItemFactory {
       }
     } else if (baseWords.contains("Leaguestone")) {
       return new Leaguestone(rarity, base, nameOption, itemLevelOption.get, identified)
+    } else if (baseWords.contains("Talisman")) {
+      val talismanTierOption = parseTalismanTier(clipboard)
+      val talismanTier: Int = if (talismanTierOption.isDefined) talismanTierOption.get else 0
+      return new Talisman(rarity, base, nameOption, talismanTier)
     }
     var itemOption: Option[Item] = None
 
@@ -142,5 +146,9 @@ object ItemFactory {
 
   private def parseIdentified(clipboard: String): Boolean = {
     !clipboard.contains("Unidentified")
+  }
+
+  private def parseTalismanTier(clipboard: String): Option[Int] = {
+    parseNumericAttribute(clipboard, "Talisman Tier: ")
   }
 }

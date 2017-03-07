@@ -95,6 +95,14 @@ object Inventory extends Container {
     })
   }
 
+  def talismans: Seq[Talisman] = {
+    items.filter((item: Item) => {
+      item.isInstanceOf[Talisman]
+    }).map((item: Item) => {
+      item.asInstanceOf[Talisman]
+    })
+  }
+
   def qualityFlasks: Seq[Flask] = {
     items.filter((item: Item) => {
       item.isInstanceOf[Flask]
