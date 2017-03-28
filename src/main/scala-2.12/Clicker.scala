@@ -68,11 +68,17 @@ object Clicker {
     true
   }
 
+  // moves the mouse to the center of the screen to avoid any tooltip from blocking the screen
+  def center(): Unit = {
+    robot mouseMove(Config.CENTER._1, Config.CENTER._2)
+    quickSleep()
+  }
+
   private def click(): Unit = {
     robot mousePress InputEvent.BUTTON1_MASK
     quickSleep
     robot mouseRelease InputEvent.BUTTON1_MASK
   }
 
-  private def quickSleep() = Thread sleep 20
+  private def quickSleep() = Thread sleep Config.QUICK_SLEEP
 }

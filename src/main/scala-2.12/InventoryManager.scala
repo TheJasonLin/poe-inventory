@@ -25,8 +25,13 @@ object InventoryManager {
     dumpQualityFlasks()
     dumpQualityGems()
 
-    dumpFullSetEquipment(false)
-    dumpFullSetEquipment(true)
+
+    if(Config.SEPARATE_REGAL) {
+      dumpFullSetEquipment(chaos = true, regal = false)
+      dumpFullSetEquipment(chaos = false, regal = true)
+    } else {
+      dumpFullSetEquipment(chaos = true, regal = true)
+    }
 
     dumpMisc()
 
@@ -143,14 +148,16 @@ object InventoryManager {
     val miscItems = Inventory.miscItems
     if(miscItems.isEmpty) return
     miscItems.foreach((item: Item) => {
-      val allocation = Stash.findMiscAllocation(item)
+      val allocation: Allocation = Stash.findMiscAllocation(item)
       Stash.activateTab(allocation, Mode.READ_POSITIONS)
       Inventory.sendItemToAllocation(item, allocation)
     })
   }
 
-  private def dumpFullSetEquipment(level75: Boolean): Unit = {
-    val chaosEquipment: Seq[Equipment] = Inventory.fullSetEquipment(level75)
+  private def dumpFullSetEquipment(chaos: Boolean, regal: Boolean): Unit = {
+    val useRegalTab: Boolean = regal && !chaos
+
+    val chaosEquipment: Seq[Equipment] = Inventory.fullSetEquipment(chaos, regal)
     val helmets: Seq[Helmet] = chaosEquipment.filter((equipment) => equipment.isInstanceOf[Helmet]).map((equipment) => equipment.asInstanceOf[Helmet])
     val boots: Seq[Boot] = chaosEquipment.filter((equipment) => equipment.isInstanceOf[Boot]).map((equipment) => equipment.asInstanceOf[Boot])
     val gloves: Seq[Glove] = chaosEquipment.filter((equipment) => equipment.isInstanceOf[Glove]).map((equipment) => equipment.asInstanceOf[Glove])
@@ -162,49 +169,49 @@ object InventoryManager {
 
     if (helmets.nonEmpty) {
       println("Dumping Helmets")
-      Stash.activateTab(TabContents.HELMET, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.HELMET, Mode.READ_POSITIONS, useRegalTab)
       helmets.foreach((helmet: Helmet) => Inventory.sendItemToAllocation(helmet, Stash.helmetAllocation))
     }
 
     if (boots.nonEmpty) {
       println("Dumping Boots")
-      Stash.activateTab(TabContents.BOOT, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.BOOT, Mode.READ_POSITIONS, useRegalTab)
       boots.foreach((boot: Boot) => Inventory.sendItemToAllocation(boot, Stash.bootAllocation))
     }
 
     if (gloves.nonEmpty) {
       println("Dumping Gloves")
-      Stash.activateTab(TabContents.GLOVE, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.GLOVE, Mode.READ_POSITIONS, useRegalTab)
       gloves.foreach((glove: Glove) => Inventory.sendItemToAllocation(glove, Stash.gloveAllocation))
     }
 
     if (bodys.nonEmpty) {
       println("Dumping Body Armours")
-      Stash.activateTab(TabContents.BODY, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.BODY, Mode.READ_POSITIONS, useRegalTab)
       bodys.foreach((bodyArmour: BodyArmour) => Inventory.sendItemToAllocation(bodyArmour, Stash.bodyAllocation))
     }
 
     if (weapons.nonEmpty) {
       println("Dumping Weapons")
-      Stash.activateTab(TabContents.WEAPON, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.WEAPON, Mode.READ_POSITIONS, useRegalTab)
       weapons.foreach((weapon: Weapon) => Inventory.sendItemToAllocation(weapon, Stash.weaponAllocation))
     }
 
     if (rings.nonEmpty) {
       println("Dumping Rings")
-      Stash.activateTab(TabContents.RING, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.RING, Mode.READ_POSITIONS, useRegalTab)
       rings.foreach((ring: Ring) => Inventory.sendItemToAllocation(ring, Stash.ringAllocation))
     }
 
     if (amulets.nonEmpty) {
       println("Dumping Amulets")
-      Stash.activateTab(TabContents.AMULET, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.AMULET, Mode.READ_POSITIONS, useRegalTab)
       amulets.foreach((amulet: Amulet) => Inventory.sendItemToAllocation(amulet, Stash.amuletAllocation))
     }
 
     if (belts.nonEmpty) {
       println("Dumping Belts")
-      Stash.activateTab(TabContents.BELT, Mode.READ_POSITIONS, level75)
+      Stash.activateTab(TabContents.BELT, Mode.READ_POSITIONS, useRegalTab)
       belts.foreach((belt: Belt) => Inventory.sendItemToAllocation(belt, Stash.beltAllocation))
     }
   }

@@ -28,6 +28,7 @@ object Main extends jintellitype.HotkeyListener {
 
   def main(args: Array[String]): Unit = {
     registerHotkeys()
+    println("Script Loaded Successfully")
   }
 
   def registerHotkeys(): Unit = {
@@ -35,8 +36,8 @@ object Main extends jintellitype.HotkeyListener {
     JIntellitype.getInstance().addHotKeyListener(this)
     JIntellitype.getInstance().registerHotKey(EVENT_QUIT, ctrlShift, 'Q')
     JIntellitype.getInstance().registerHotKey(EVENT_STORE_INVENTORY, ctrlShift, 'B')
-    JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'G')
-    JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'F')
+    JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'F')
+    JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
     JIntellitype.getInstance().registerHotKey(EVENT_CALIBRATE, ctrlShift, 'T')
     JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
   }

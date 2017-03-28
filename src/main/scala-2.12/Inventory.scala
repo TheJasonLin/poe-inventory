@@ -130,9 +130,10 @@ object Inventory extends Container {
     })
   }
 
-  def fullSetEquipment(level75: Boolean): Seq[Equipment] = {
-    val min: Int = if (level75) 75 else 60
-    val max: Int = if (level75) 999 else 74
+  def fullSetEquipment(chaos: Boolean, regal: Boolean): Seq[Equipment] = {
+    if(!chaos && !regal) throw new IllegalArgumentException("Need at least one to be true")
+    val min = if (chaos) 60 else 75
+    val max = if (!regal) 75 else 100
     items
       // make usre it's rare
       .filter((item) => item.rarity == "Rare")

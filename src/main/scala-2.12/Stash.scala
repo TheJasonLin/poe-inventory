@@ -119,6 +119,8 @@ object Stash {
         val tab = tabOption.get
         // don't try reading Currency / Essence / Div Tabs
         if(!tab.upToDate && tab.tabType != TabType.SPECIAL) {
+          // move mouse so we can read without any highlighting in the way'
+          Clicker.center()
           mode match {
             case Mode.READ_POSITIONS => {
               tab.updateOccupancy()
@@ -203,6 +205,7 @@ object Stash {
     addAllocation[Int](mapAllocations)
     addAllocation[String](leaguestoneAllocations)
     addAllocation[Int](talismanAllocations)
+    addAllocation[String](miscAllocations)
 
     tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]
 
