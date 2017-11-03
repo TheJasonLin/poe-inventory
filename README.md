@@ -2,7 +2,9 @@
 
 This Scala program allows you to automate inventory management. Some features include:
 
- - Intelligently empty inventory
+ - Empty inventory
+    - Intelligently (Supports Currency, Essence, Div Card, Quad, Normal, and Premium Tabs)
+    - Blindly (useful for trading bulk currency)
  - Sort Maps by Tier
  - Chaos / Regal recipe
 
