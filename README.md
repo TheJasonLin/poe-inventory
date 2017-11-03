@@ -10,10 +10,10 @@ This Scala program allows you to automate inventory management. Some features in
 
 ## Installation
 
-For 64-Bit Windows:
+**For 64-Bit Windows:**
 
 Copy `system32\JIntellitype64.dll` to `C:\Windows\System32` and rename it to `JIntellitype.dll`. This enables the program to bind to the hotkeys
 
-For 32-Bit Windows:
+**For 32-Bit Windows:**
 
 Copy `system32\JIntellitype.dll` to `C:\Windows\System32`. This enables the program to bind to the hotkeys
