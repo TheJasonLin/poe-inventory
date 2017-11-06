@@ -49,7 +49,8 @@ object Config {
     "Sacrifice at Dusk" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
     "Sacrifice at Midnight" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
     "Sacrifice at Dawn" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
-    "Sacrifice at Noon" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23))
+    "Sacrifice at Noon" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
+    "Divine Vessel" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23))
   )
 
   val BAD_LEAGUESTONE_COLUMN = 11

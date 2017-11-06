@@ -49,7 +49,23 @@ object Currency {
     "Alteration Shard",
     "Scroll Fragment",
     "Transmutation Shard",
-    "Eternal Orb"
+    "Eternal Orb",
+    "Ancient Orb",
+    "Ancient Shard",
+    "Annulment Shard",
+    "Binding Shard",
+    "Chaos Shard",
+    "Engineer's Orb",
+    "Engineer's Shard",
+    "Exalted Shard",
+    "Harbinger's Orb",
+    "Harbinger's Shard",
+    "Horizon Shard",
+    "Mirror Shard",
+    "Orb of Annulment",
+    "Orb of Binding",
+    "Orb of Horizons",
+    "Regal Shard"
   )
 
   def is(name: String): Boolean = {
