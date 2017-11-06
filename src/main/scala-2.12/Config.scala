@@ -4,6 +4,9 @@ import TabType._
 object Config {
   val TAB_CHANGE_DELAY: Int = 600
   val QUICK_SLEEP: Int = 50
+  /**
+    * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
+   */
   val SEPARATE_REGAL: Boolean = false
   val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(4)
   val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(3)
@@ -14,21 +17,25 @@ object Config {
   private var tabIndex: Int = -1
 
   /**
-    * You can rearrange the order of these
+    * idx() generates a sequential number, allowing easy rearrangement
     */
   val CURRENCY_TAB: Int = idx()
   val ESSENCE_TAB: Int = idx()
   val DIVINATION_TAB: Int = idx()
   val MAP_TAB: Int = idx()
-  val LEAGUESTONE_TAB: Int = idx()
   val CHAOS_GEAR_60_TAB: Int = idx()
   val CHAOS_JEWELRY_60_TAB: Int = idx()
   val QUALITY_FLASK_TAB: Int = idx()
   val QUALITY_GEM_TAB: Int = QUALITY_FLASK_TAB
-  val TALISMAN_TAB: Int = idx()
-  val CHANCE_TAB: Int = idx()
-  val REGAL_GEAR_75_TAB: Int = idx()
-  val REGAL_JEWELRY_75_TAB: Int = idx()
+
+  /**
+    * The following tabs are defined, but not used and in a catch all tab
+    */
+  val CATCH_ALL: Int = idx()
+  val LEAGUESTONE_TAB: Int = CATCH_ALL
+  val TALISMAN_TAB: Int = CATCH_ALL
+  val REGAL_GEAR_75_TAB: Int = CATCH_ALL
+  val REGAL_JEWELRY_75_TAB: Int = CATCH_ALL
 
   val CURRENCY_ALLOCATION: Allocation = a(CURRENCY_TAB, SPECIAL)
   val ESSENCE_ALLOCATION: Allocation = a(ESSENCE_TAB, SPECIAL)
@@ -42,8 +49,7 @@ object Config {
     "Sacrifice at Dusk" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
     "Sacrifice at Midnight" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
     "Sacrifice at Dawn" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
-    "Sacrifice at Noon" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23)),
-    "Leather Belt" -> a(CHANCE_TAB, NORMAL, r(0, 0, 11, 11))
+    "Sacrifice at Noon" -> a(MAP_TAB, QUAD, r(0, 22, 23, 23))
   )
 
   val BAD_LEAGUESTONE_COLUMN = 11
