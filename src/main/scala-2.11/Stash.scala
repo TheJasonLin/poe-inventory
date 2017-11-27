@@ -1,8 +1,10 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
-import items.{Item, Leaguestone, MapItem, Talisman}
+import com.poe.parser.item.equipment.accessory.Talisman
+import com.poe.parser.item.{Leaguestone, MapItem}
 import screen.Screen
+import structures.ScreenItem
 
 import scala.collection.mutable
 
@@ -137,38 +139,38 @@ object Stash {
     }
   }
 
-  def findMapAllocation(map: MapItem): Option[Allocation] = {
+  def findMapAllocation(item: ScreenItem): Option[Allocation] = {
     val pair: Option[(Int, Allocation)] = mapAllocations
         .find((pair: (Int, Allocation)) => {
-          map.tier == pair._1
+          item.data.asInstanceOf[MapItem].tier == pair._1
         })
     if(pair.isEmpty) return None
     val allocation: Allocation = pair.get._2
     Option(allocation)
   }
 
-  def findLeaguestoneAllocation(leaguestone: Leaguestone): Option[Allocation] = {
+  def findLeaguestoneAllocation(item: ScreenItem): Option[Allocation] = {
     val pair: Option[(String, Allocation)] = leaguestoneAllocations
       .find((pair: (String, Allocation)) => {
-        leaguestone.base.contains(pair._1)
+        item.data.typeLine.contains(pair._1)
       })
     if(pair.isEmpty) return None
     val allocation: Allocation = pair.get._2
     Option(allocation)
   }
 
-  def findTalismanAllocation(talisman: Talisman): Option[Allocation] = {
+  def findTalismanAllocation(item: ScreenItem): Option[Allocation] = {
     val pair: Option[(Int, Allocation)] = talismanAllocations
       .find((pair: (Int, Allocation)) => {
-        talisman.talismanTier == pair._1
+        item.data.asInstanceOf[Talisman].talismanTier == pair._1
       })
     if(pair.isEmpty) return None
     val allocation: Allocation = pair.get._2
     Option(allocation)
   }
 
-  def findMiscAllocation(item: Item): Allocation = {
-    val baseName = item.base
+  def findMiscAllocation(item: ScreenItem): Allocation = {
+    val baseName = item.data.typeLine
     miscAllocations(baseName)
   }
 

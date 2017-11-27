@@ -1,14 +1,15 @@
 import java.awt.{Color, Robot}
 
-import items.{Item, ItemFactory}
+import com.poe.parser.ItemFactory
+import com.poe.parser.item.Item
 import screen.Screen
-import structures.{PixelPosition, Position}
+import structures.{PixelPosition, Position, ScreenItem}
 
 import scala.collection.mutable.ListBuffer
 
 abstract class Container {
   val robot: Robot = new Robot
-  val items: ListBuffer[Item] = new ListBuffer[Item]
+  val items: ListBuffer[ScreenItem] = new ListBuffer[ScreenItem]
   var upToDate: Boolean = false
   private val _positions: Option[Seq[Seq[Position]]] = createPositions()
 
@@ -29,7 +30,7 @@ abstract class Container {
   def createPositions(): Option[Seq[Seq[Position]]] = {
     val matrix = Array.ofDim[Position](height().get, width().get)
 
-    for(x <- 0 until height().get; y <- 0 until width().get) {
+    for (x <- 0 until height().get; y <- 0 until width().get) {
       matrix(x)(y) = new Position(x, y)
     }
     Option(matrix.map(_.toSeq).toSeq)
@@ -48,9 +49,10 @@ abstract class Container {
       })
   }
 
-  private def getItem(position: Position): Option[Item] = {
+  private def getItem(position: Position): ScreenItem = {
     val itemInfo: String = Clicker.getItemInfo(getPixels(position))
-    ItemFactory.create(itemInfo)
+    val poeItem: Item = ItemFactory.create(itemInfo)
+    new ScreenItem(poeItem)
   }
 
   def getPixels(position: Position): PixelPosition = {
@@ -63,7 +65,7 @@ abstract class Container {
     * @param item
     * @param position top left corner position of them item
     */
-  def addItem(item: Item, position: Position): Unit = {
+  def addItem(item: ScreenItem, position: Position): Unit = {
     items += item
     // mark positions
     // get covered positions
@@ -75,7 +77,7 @@ abstract class Container {
     })
   }
 
-  def removeItem(item: Item): Unit = {
+  def removeItem(item: ScreenItem): Unit = {
     // remove from list of items
     items -= item
     // update positions about change
@@ -94,6 +96,7 @@ abstract class Container {
 
   /**
     * Looking for the Red or Blue that all items have that indicate whether they can be equipped
+    *
     * @param pixelColors
     * @return
     */
@@ -125,24 +128,25 @@ abstract class Container {
   /**
     * if there's a valid set of positions of the 'item' size with the top left corner as 'position' among 'positions'
     * it returns those
-    * @param item item with desired size
-    * @param position position to use as the top left corner
+    *
+    * @param item      item with desired size
+    * @param position  position to use as the top left corner
     * @param positions all possible positions
     * @return
     */
-  def getAdjacentPositions(item: Item, position: Position, positions: Seq[Position]): Option[Seq[Position]] = {
+  def getAdjacentPositions(item: ScreenItem, position: Position, positions: Seq[Position]): Option[Seq[Position]] = {
     var isValid = true
-    val lastRow = position.row + (item.height - 1)
-    val lastColumn = position.column + (item.width - 1)
+    val lastRow = position.row + (item.data.height - 1)
+    val lastColumn = position.column + (item.data.width - 1)
     val adjacentPositions: ListBuffer[Position] = new ListBuffer[Position]
     for (row <- position.row to lastRow; column <- position.column to lastColumn) {
       val positionOption: Option[Position] = positions.find((position: Position) => {
         position.row == row && position.column == column
       })
-      if(positionOption.isDefined) adjacentPositions += positionOption.get
+      if (positionOption.isDefined) adjacentPositions += positionOption.get
       else isValid = false
     }
-    if(isValid) Option(adjacentPositions.toList)
+    if (isValid) Option(adjacentPositions.toList)
     else None
   }
 
@@ -171,23 +175,21 @@ abstract class Container {
     upToDate = true
   }
 
-  def readAndRecordItem(position: Position): Option[Item] = {
+  def readAndRecordItem(position: Position): ScreenItem = {
     // create item
-    val itemOption: Option[Item] = getItem(position)
-    if (itemOption.isDefined) {
-      val item = itemOption.get
-      println(item)
-      // record item
-      addItem(item, position)
-    }
-    itemOption
+    val item: ScreenItem = getItem(position)
+    println(item)
+    // record item
+    addItem(item, position)
+    item
   }
 
   /**
-  * returns positions that are in the allocation
-  * @param allocation
-  * @return
-  */
+    * returns positions that are in the allocation
+    *
+    * @param allocation
+    * @return
+    */
   def positionsInAllocation(allocation: Allocation): Seq[Position] = {
     val rowMin = allocation.region.get.topLeft.row
     val colMin = allocation.region.get.topLeft.column
@@ -198,9 +200,11 @@ abstract class Container {
         position.row >= rowMin && position.row <= rowMax && position.column >= colMin && position.column <= colMax
       })
   }
-    /**
+
+  /**
     * Attempts to find a free positions that'll hold the item, then returns the information needed to drop it off
-    * @param item item to be dropped off
+    *
+    * @param item       item to be dropped off
     * @param allocation rules to follow
     * @return (
     *         the pixel on screen it should be dropped off at,
@@ -208,27 +212,27 @@ abstract class Container {
     *         all target positions
     *         )
     */
-    def findOpenPositionInAllocation(item: Item, allocation: Allocation): Option[(PixelPosition, Position)] = {
+  def findOpenPositionInAllocation(item: ScreenItem, allocation: Allocation): Option[(PixelPosition, Position)] = {
     // find free spaces in allocation
     val possiblePositions: Seq[Position] = positionsInAllocation(allocation)
-      .filter(_.occupied == false )
+      .filter(_.occupied == false)
     // find adjacent spaces that fit item
     var adjacentPositions: Seq[Position] = Seq.empty[Position]
     val topLeftPositionOption: Option[Position] = possiblePositions.find((position: Position) => {
       // check if this is a valid topLeftPosition
       val adjacentPositionsOption = getAdjacentPositions(item, position, possiblePositions)
       val success = adjacentPositionsOption.isDefined
-      if(success) {
+      if (success) {
         adjacentPositions = adjacentPositionsOption.get
       }
       success
     })
-    if(topLeftPositionOption.isEmpty) return None
+    if (topLeftPositionOption.isEmpty) return None
     // get pixel positions of the spaces
     val pixelPositions: Seq[PixelPosition] = adjacentPositions
       .map((position: Position) => {
-          getPixels(position)
-        })
+        getPixels(position)
+      })
     // return the average of the pixel positions
     val sum: PixelPosition = pixelPositions.reduce[PixelPosition]((a: PixelPosition, b: PixelPosition) => {
       new PixelPosition(a.x + b.x, a.y + b.y)
@@ -238,13 +242,13 @@ abstract class Container {
     val topLeftPosition: Position = topLeftPositionOption.get
     // return trio of information
     Option(
-    averagePosition,
-    topLeftPosition
+      averagePosition,
+      topLeftPosition
     )
   }
 
 
-  def ctrlClickItem(item: Item): Boolean = {
+  def ctrlClickItem(item: ScreenItem): Boolean = {
     if (item.position.isEmpty) throw new IllegalArgumentException("Item has no position")
     val sent: Boolean = Clicker.click(getPixels(item.position.get), ctrlMod = true)
     // mark item as sent
@@ -257,6 +261,7 @@ abstract class Container {
   /**
     * WARNING: Only use this if you don't care where things end up. Use ctrlClickItem whenever possible
     * This is much faster but just blindly clicks
+    *
     * @param position
     */
   def ctrlClickPosition(position: Position): Unit = {

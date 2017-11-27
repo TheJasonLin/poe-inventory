@@ -1,5 +1,0 @@
-package items
-
-class Mod {
-
-}
