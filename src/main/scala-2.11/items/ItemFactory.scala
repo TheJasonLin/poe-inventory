@@ -1,7 +1,5 @@
 package items
 
-import java.awt.datatransfer.Clipboard
-
 import items.currency.CurrencyFactory
 import items.equipment.EquipmentFactory
 
