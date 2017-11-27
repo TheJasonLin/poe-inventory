@@ -1,7 +1,5 @@
 package items.currency
 
-import structures.Position
-
 object CurrencyFactory {
   def create(rarity: String, base: String, name: Option[String]): Option[Currency] = {
     if(base.contains("Essence")) {
