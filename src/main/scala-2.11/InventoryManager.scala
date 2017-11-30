@@ -1,11 +1,15 @@
-import com.poe.parser.item.currency.Currency
+import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec
+
+import com.poe.parser.item.MapItem
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
+import com.typesafe.scalalogging.Logger
 import screen.Screen
-import structures.{Position, ScreenItem}
+import structures.{MapRequirements, Position, ScreenItem}
 
 object InventoryManager {
+  val log = Logger("InventoryManager")
   /**
     * Store everything into the Stash
     */
@@ -54,6 +58,9 @@ object InventoryManager {
       })
   }
 
+  /**
+    * Switch to first tab and read inventory
+    */
   private def prepareInventoryAction(): Unit = {
     Stash.resetTab()
     Inventory.updateOccupancyAndItems()
@@ -248,5 +255,67 @@ object InventoryManager {
           extractedCount += 1
         }
       })
+  }
+
+  /**
+    * Parse map-mods.ini to see what the requirements are
+    * Read Inventory to know what currency we have to work with
+    * Begin rolling maps in the RUN_TAB
+    */
+  def rollMaps(): Unit = {
+    // readMods
+    try {
+      val mapRequirements = readMods()
+      rollMaps(mapRequirements)
+    } catch {
+      case e: Exception => {
+        log.error(s"error rolling maps: ${e.getMessage}")
+        Unit
+      }
+    }
+  }
+
+  private def readMods(): MapRequirements = {
+    // TODO Implement
+    throw new IllegalStateException("Not Implemented")
+  }
+
+  /**
+    * Rolls every map in the run tab to match the requirements
+    */
+  private def rollMaps(mapRequirements: MapRequirements): Unit = {
+    prepareInventoryAction()
+    Stash.activateTab(Config.RUN_TAB, Mode.READ_POSITIONS)
+    if (!Stash.currentTab.isDefined) {
+      throw new IllegalMonitorStateException("RUN_TAB not defined")
+    }
+    val tab = Stash.currentTab().get
+    tab.positions()
+      // get occupied positions
+      .filter((position: Position) => {
+        position.occupied
+      })
+      // read items
+      .map((position: Position) => {
+        tab.readAndRecordItem(position)
+      })
+      // get maps
+      .filter((item: ScreenItem) => {
+        item.data.isInstanceOf[Map]
+      })
+      // roll map
+      .foreach((item: ScreenItem) => {
+        rollMap(item, mapRequirements)
+      })
+  }
+
+  private def rollMap(item: ScreenItem, mapRequirements: MapRequirements): Unit = {
+    //TODO Implement
+
+  }
+
+  private def isMapAcceptable(map: MapItem, mapRequirements: MapRequirements): Boolean = {
+    // check thresholds
+    // TODO Implement
   }
 }

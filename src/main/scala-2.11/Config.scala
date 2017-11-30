@@ -23,6 +23,7 @@ object Config {
   val ESSENCE_TAB: Int = idx()
   val DIVINATION_TAB: Int = idx()
   val MAP_TAB: Int = idx()
+  val RUN_TAB: Int = idx()
   val CHAOS_GEAR_60_TAB: Int = idx()
   val CHAOS_JEWELRY_60_TAB: Int = idx()
   val QUALITY_FLASK_TAB: Int = idx()
