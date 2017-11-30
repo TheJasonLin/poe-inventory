@@ -1,3 +1,5 @@
 package structures
 
-case class MapRequirements(blacklistMods: Seq[String], minQuantity: Int, minPackSize: Int, minQuality: Int)
+import com.poe.constants.Rarity
+
+case class MapRequirements(blacklistMods: Seq[String], rollRarity: Rarity, minItemQuantity: Int, minItemRarity: Int, minPackSize: Int, minQuality: Int)

@@ -16,4 +16,4 @@ libraryDependencies += "com.melloware" % "jintellitype" % "1.3.9"
 
 libraryDependencies += "default" % "poe-constants_2.11" % "0.0.6"
 
-libraryDependencies += "default" % "poe-parser_2.11" % "0.0.6"
+libraryDependencies += "default" % "poe-parser_2.11" % "0.1.2"

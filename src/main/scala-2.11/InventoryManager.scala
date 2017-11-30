@@ -1,6 +1,7 @@
 import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec
 
-import com.poe.parser.item.MapItem
+import com.poe.constants.Rarity
+import com.poe.parser.item.{MapItem, Mod}
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
@@ -290,32 +291,128 @@ object InventoryManager {
       throw new IllegalMonitorStateException("RUN_TAB not defined")
     }
     val tab = Stash.currentTab().get
+    var keepRolling = true
     tab.positions()
       // get occupied positions
       .filter((position: Position) => {
         position.occupied
       })
-      // read items
-      .map((position: Position) => {
-        tab.readAndRecordItem(position)
-      })
-      // get maps
-      .filter((item: ScreenItem) => {
-        item.data.isInstanceOf[Map]
-      })
-      // roll map
-      .foreach((item: ScreenItem) => {
-        rollMap(item, mapRequirements)
+      .foreach((position: Position) => {
+        if (!keepRolling) {
+          return
+        }
+        try {
+          rollMapInPosition(tab, position, mapRequirements)
+        } catch {
+          case e: Exception => {
+            log.warn(s"stopped rolling maps due to: ${e.getMessage}")
+            keepRolling = false
+          }
+        }
       })
   }
 
-  private def rollMap(item: ScreenItem, mapRequirements: MapRequirements): Unit = {
-    //TODO Implement
+  private def rollMapInPosition(tab: Tab, position: Position, mapRequirements: MapRequirements): Unit = {
+    val item = tab.readAndRecordItem(position)
+    if (!item.data.isInstanceOf[Map]) {
+      return
+    }
 
+    val map: MapItem = item.data.asInstanceOf[MapItem]
+    var shouldRoll = true
+    while (shouldRoll) {
+      val issues = getIssues(map, mapRequirements)
+      if (issues.isEmpty) {
+        shouldRoll = false
+      } else {
+        rerollMap(tab, item, issues, mapRequirements)
+      }
+    }
   }
 
-  private def isMapAcceptable(map: MapItem, mapRequirements: MapRequirements): Boolean = {
+  // TODO make this smarter
+  private def rerollMap(tab: Tab, item: ScreenItem, issues: Set[MapIssue], mapRequirements: MapRequirements): Unit = {
+    val map: MapItem = item.data.asInstanceOf[MapItem]
+    if (map.corrupted) {
+      throw new IllegalArgumentException("encountered a corrupted map that isn't up to par")
+    }
+    // scour
+    useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Scouring")
+
+    // quality if necessary
+    if (issues.contains(MapIssue.QUALITY_LOW)) {
+      val qualityDeficit = mapRequirements.minQuality - map.quality.getOrElse(0)
+      var chiselCount = qualityDeficit / 5
+      if (qualityDeficit % 5 > 0) {
+        chiselCount += 1
+      }
+      for (_ <- 0 until chiselCount) {
+        useCurrencyFromInventoryOnItemInTab(item, tab, "Cartographer's Chisel")
+      }
+    }
+    // return to rarity
+    val rarity = mapRequirements.rollRarity
+    if (rarity == Rarity.NORMAL) {
+      // do nothing
+    } else if (rarity == Rarity.MAGIC) {
+      // use transmute
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Transmutation")
+    } else if (rarity == Rarity.RARE) {
+      // use alch
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Alchemy")
+    } else {
+      throw new IllegalArgumentException(s"unrecognized roll rarity $rarity")
+    }
+  }
+
+  private def useCurrencyFromInventoryOnItemInTab(item: ScreenItem, tab: Tab, currencyName: String): Unit = {
+    // find currency
+    val currencyOption = Inventory.findCurrency(currencyName)
+    if (currencyOption.isEmpty) {
+      throw new IllegalStateException(s"could not find $currencyName in inventory")
+    }
+    val currency = currencyOption.get
+
+    // use currency
+    val currencyPixelPosition = Inventory.getPixels(currency.position.get)
+    Clicker.rightClick(currencyPixelPosition)
+
+    Thread sleep 10
+
+    // click item
+    val itemPixelPosition = tab.getPixels(item.position.get)
+    Clicker.click(itemPixelPosition)
+  }
+
+  // returns issues it finds with the map
+  private def getIssues(map: MapItem, mapRequirements: MapRequirements): Set[MapIssue] = {
+    var issues: Set[MapIssue] = Set()
     // check thresholds
-    // TODO Implement
+    if (map.quality.getOrElse(0) < mapRequirements.minQuality) {
+      issues += MapIssue.QUALITY_LOW
+    }
+
+    val badIIQ = map.itemQuantity < mapRequirements.minItemQuantity
+    val badIIR = map.itemRarity < mapRequirements.minItemRarity
+    val badPackSize = map.packSize < mapRequirements.minPackSize
+    if (badIIQ || badIIR || badPackSize) {
+      issues += MapIssue.BAD_ATTRIBUTES
+    }
+
+    // check mods
+    if (hasBlacklistMods(map.explicits, mapRequirements.blacklistMods)) {
+      issues += MapIssue.BAD_ATTRIBUTES
+    } else if (hasBlacklistMods(map.implicits, mapRequirements.blacklistMods)) {
+      issues += MapIssue.BAD_ATTRIBUTES
+    }
+
+    issues
+  }
+
+  private def hasBlacklistMods(mods: Seq[Mod], blacklistMods: Seq[String]): Boolean = {
+    val matchOption = mods.find((mod: Mod) => {
+      blacklistMods.contains(mod.text)
+    })
+    matchOption.isDefined
   }
 }

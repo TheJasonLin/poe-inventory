@@ -28,6 +28,16 @@ object Clicker {
     !colorPreClick.equals(colorPostClick)
   }
 
+  // TODO add validation of a successful right click
+  def rightClick(pixelPosition: PixelPosition): Unit = {
+    val x = pixelPosition.x
+    val y = pixelPosition.y
+
+    robot.mouseMove(x, y)
+    Thread sleep 20
+    rightClick()
+  }
+
   def getItemInfo(pixelPosition: PixelPosition): String = {
     val x = pixelPosition.x
     val y = pixelPosition.y
@@ -78,6 +88,12 @@ object Clicker {
     robot mousePress InputEvent.BUTTON1_MASK
     quickSleep
     robot mouseRelease InputEvent.BUTTON1_MASK
+  }
+
+  private def rightClick(): Unit = {
+    robot mousePress InputEvent.BUTTON2_MASK
+    quickSleep
+    robot mouseRelease InputEvent.BUTTON2_MASK
   }
 
   private def quickSleep() = Thread sleep Config.QUICK_SLEEP
