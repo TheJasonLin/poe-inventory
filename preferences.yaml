@@ -1,0 +1,15 @@
+mapPreferences:
+  thresholds:
+    rollRarity: Rare
+    minQuantity: 10
+    minRarity: 10
+    minPackSize: 10
+    minQuality: 20
+  modBlacklist:
+    - "Monsters reflect #% of Elemental Damage"
+    - "Monsters have #git st% chance to Avoid Elemental Ailments"
+    - "Cannot Leech Life from Monsters"
+    - "Cannot Leech Mana from Monsters"
+  reference:
+    - "Players are Cursed with Temporal Chains"
+    - "-#% maximum Player Resistances"

@@ -1,13 +1,13 @@
-import javax.xml.crypto.dsig.spec.ExcC14NParameterSpec
-
 import com.poe.constants.Rarity
-import com.poe.parser.item.{MapItem, Mod}
+import com.poe.parser.item.currency.Currency
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
+import com.poe.parser.item.{MapItem, Mod}
 import com.typesafe.scalalogging.Logger
+import config.MapRequirements
 import screen.Screen
-import structures.{MapRequirements, Position, ScreenItem}
+import structures.{Position, ScreenItem}
 
 object InventoryManager {
   val log = Logger("InventoryManager")
@@ -259,36 +259,14 @@ object InventoryManager {
   }
 
   /**
-    * Parse map-mods.ini to see what the requirements are
     * Read Inventory to know what currency we have to work with
     * Begin rolling maps in the RUN_TAB
     */
   def rollMaps(): Unit = {
-    // readMods
-    try {
-      val mapRequirements = readMods()
-      rollMaps(mapRequirements)
-    } catch {
-      case e: Exception => {
-        log.error(s"error rolling maps: ${e.getMessage}")
-        Unit
-      }
-    }
-  }
-
-  private def readMods(): MapRequirements = {
-    // TODO Implement
-    throw new IllegalStateException("Not Implemented")
-  }
-
-  /**
-    * Rolls every map in the run tab to match the requirements
-    */
-  private def rollMaps(mapRequirements: MapRequirements): Unit = {
     prepareInventoryAction()
-    Stash.activateTab(Config.RUN_TAB, Mode.READ_POSITIONS)
-    if (!Stash.currentTab.isDefined) {
-      throw new IllegalMonitorStateException("RUN_TAB not defined")
+    Stash.activateTab(Config.RUN_MAP_ALLOCATION, Mode.READ_POSITIONS)
+    if (Stash.currentTab.isEmpty) {
+      throw new IllegalStateException("RUN_TAB not defined")
     }
     val tab = Stash.currentTab().get
     var keepRolling = true
@@ -302,7 +280,7 @@ object InventoryManager {
           return
         }
         try {
-          rollMapInPosition(tab, position, mapRequirements)
+          rollMapInPosition(tab, position)
         } catch {
           case e: Exception => {
             log.warn(s"stopped rolling maps due to: ${e.getMessage}")
@@ -312,27 +290,36 @@ object InventoryManager {
       })
   }
 
-  private def rollMapInPosition(tab: Tab, position: Position, mapRequirements: MapRequirements): Unit = {
+  private def rollMapInPosition(tab: Tab, position: Position): Unit = {
     val item = tab.readAndRecordItem(position)
-    if (!item.data.isInstanceOf[Map]) {
+    if (!item.data.isInstanceOf[MapItem]) {
       return
     }
 
-    val map: MapItem = item.data.asInstanceOf[MapItem]
+    var map: MapItem = item.data.asInstanceOf[MapItem]
     var shouldRoll = true
     while (shouldRoll) {
-      val issues = getIssues(map, mapRequirements)
+      val issues = getIssues(map)
       if (issues.isEmpty) {
         shouldRoll = false
       } else {
-        rerollMap(tab, item, issues, mapRequirements)
+        rerollMap(tab, item, issues)
+        val newScreenItem = tab.readAndRecordItem(item.position.get)
+        map = newScreenItem.data.asInstanceOf[MapItem]
       }
     }
   }
 
   // TODO make this smarter
-  private def rerollMap(tab: Tab, item: ScreenItem, issues: Set[MapIssue], mapRequirements: MapRequirements): Unit = {
+  private def rerollMap(tab: Tab, item: ScreenItem, issues: Set[MapIssue]): Unit = {
     val map: MapItem = item.data.asInstanceOf[MapItem]
+
+    if (issues.contains(MapIssue.UNIDENTIFIED)) {
+      // just id and consider it rerolled
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Scroll of Wisdom")
+      return
+    }
+
     if (map.corrupted) {
       throw new IllegalArgumentException("encountered a corrupted map that isn't up to par")
     }
@@ -341,7 +328,7 @@ object InventoryManager {
 
     // quality if necessary
     if (issues.contains(MapIssue.QUALITY_LOW)) {
-      val qualityDeficit = mapRequirements.minQuality - map.quality.getOrElse(0)
+      val qualityDeficit = MapRequirements.minQuality - map.quality.getOrElse(0)
       var chiselCount = qualityDeficit / 5
       if (qualityDeficit % 5 > 0) {
         chiselCount += 1
@@ -351,7 +338,7 @@ object InventoryManager {
       }
     }
     // return to rarity
-    val rarity = mapRequirements.rollRarity
+    val rarity = MapRequirements.rollRarity
     if (rarity == Rarity.NORMAL) {
       // do nothing
     } else if (rarity == Rarity.MAGIC) {
@@ -376,33 +363,51 @@ object InventoryManager {
     // use currency
     val currencyPixelPosition = Inventory.getPixels(currency.position.get)
     Clicker.rightClick(currencyPixelPosition)
+    // record the currency as used
+    decrementCurrency(currency, tab)
 
-    Thread sleep 10
+    Thread sleep 300
 
     // click item
     val itemPixelPosition = tab.getPixels(item.position.get)
     Clicker.click(itemPixelPosition)
   }
 
+  private def decrementCurrency(currencyItem: ScreenItem, tab: Tab): Unit = {
+    val currency: Currency = currencyItem.data.asInstanceOf[Currency]
+    val stackSize = currency.stackSize.get
+    if (stackSize.size > 1) {
+      currency.stackSize = Option(stackSize.copy(size = stackSize.size - 1))
+    } else {
+      tab.removeItem(currencyItem)
+    }
+  }
+
   // returns issues it finds with the map
-  private def getIssues(map: MapItem, mapRequirements: MapRequirements): Set[MapIssue] = {
+  private def getIssues(map: MapItem): Set[MapIssue] = {
     var issues: Set[MapIssue] = Set()
+    // check if unidentified
+    if (!map.identified) {
+      issues += MapIssue.UNIDENTIFIED
+      return issues
+    }
+
     // check thresholds
-    if (map.quality.getOrElse(0) < mapRequirements.minQuality) {
+    if (map.quality.getOrElse(0) < MapRequirements.minQuality) {
       issues += MapIssue.QUALITY_LOW
     }
 
-    val badIIQ = map.itemQuantity < mapRequirements.minItemQuantity
-    val badIIR = map.itemRarity < mapRequirements.minItemRarity
-    val badPackSize = map.packSize < mapRequirements.minPackSize
+    val badIIQ = map.itemQuantity < MapRequirements.minItemQuantity
+    val badIIR = map.itemRarity < MapRequirements.minItemRarity
+    val badPackSize = map.packSize < MapRequirements.minPackSize
     if (badIIQ || badIIR || badPackSize) {
       issues += MapIssue.BAD_ATTRIBUTES
     }
 
     // check mods
-    if (hasBlacklistMods(map.explicits, mapRequirements.blacklistMods)) {
+    if (hasBlacklistMods(map.explicits, MapRequirements.blacklistMods)) {
       issues += MapIssue.BAD_ATTRIBUTES
-    } else if (hasBlacklistMods(map.implicits, mapRequirements.blacklistMods)) {
+    } else if (hasBlacklistMods(map.implicits, MapRequirements.blacklistMods)) {
       issues += MapIssue.BAD_ATTRIBUTES
     }
 

@@ -36,6 +36,7 @@ object Clicker {
     robot.mouseMove(x, y)
     Thread sleep 20
     rightClick()
+    Thread sleep 20
   }
 
   def getItemInfo(pixelPosition: PixelPosition): String = {
@@ -91,9 +92,9 @@ object Clicker {
   }
 
   private def rightClick(): Unit = {
-    robot mousePress InputEvent.BUTTON2_MASK
+    robot mousePress InputEvent.BUTTON3_MASK
     quickSleep
-    robot mouseRelease InputEvent.BUTTON2_MASK
+    robot mouseRelease InputEvent.BUTTON3_MASK
   }
 
   private def quickSleep() = Thread sleep Config.QUICK_SLEEP

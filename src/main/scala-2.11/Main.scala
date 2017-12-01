@@ -42,6 +42,7 @@ object Main extends jintellitype.HotkeyListener {
     JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
     JIntellitype.getInstance().registerHotKey(EVENT_CALIBRATE, ctrlShift, 'T')
     JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
+    JIntellitype.getInstance().registerHotKey(EVENT_ROLL_MAPS, ctrlShift, 'M')
   }
 
   def calibrate(): Unit = {

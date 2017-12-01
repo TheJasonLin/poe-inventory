@@ -8,7 +8,7 @@ object Config {
     * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
    */
   val SEPARATE_REGAL: Boolean = false
-  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(4)
+  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(5)
   val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(3)
 
   /**
@@ -41,6 +41,8 @@ object Config {
   val CURRENCY_ALLOCATION: Allocation = a(CURRENCY_TAB, SPECIAL)
   val ESSENCE_ALLOCATION: Allocation = a(ESSENCE_TAB, SPECIAL)
   val DIVINATION_ALLOCATION: Allocation = a(DIVINATION_TAB, SPECIAL)
+
+  val RUN_MAP_ALLOCATION: Allocation = a(RUN_TAB, NORMAL, r(0, 0, 11, 11))
 
   val QUALITY_FLASK_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, NORMAL, r(0, 0, 11, 5))
   val QUALITY_GEM_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, NORMAL, r(0, 6, 11, 11))
