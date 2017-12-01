@@ -49,6 +49,8 @@ object Stash {
   val leaguestoneAllocations = Config.LEAGUESTONE_ALLOCATION
   val talismanAllocations = Config.TALISMAN_ALLOCATION
 
+  val runMapAllocation = Config.RUN_MAP_ALLOCATION
+
   val qualityFlaskAllocations = Config.QUALITY_FLASK_ALLOCATION
   val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
 
@@ -209,8 +211,8 @@ object Stash {
     addAllocation[Int](talismanAllocations)
     addAllocation[String](miscAllocations)
 
+    tabInfos += (runMapAllocation.tabIndex, runMapAllocation.tabType).asInstanceOf[(Int, TabType)]
     tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]
-
     tabInfos += (qualityGemAllocations.tabIndex, qualityGemAllocations.tabType).asInstanceOf[(Int, TabType)]
 
     tabInfos.toList.map((tabInfo: (Int, TabType)) => {

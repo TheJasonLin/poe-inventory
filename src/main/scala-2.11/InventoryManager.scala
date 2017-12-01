@@ -1,11 +1,16 @@
+import com.poe.constants.Rarity
 import com.poe.parser.item.currency.Currency
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
+import com.poe.parser.item.{MapItem, Mod}
+import com.typesafe.scalalogging.Logger
+import config.MapRequirements
 import screen.Screen
 import structures.{Position, ScreenItem}
 
 object InventoryManager {
+  val log = Logger("InventoryManager")
   /**
     * Store everything into the Stash
     */
@@ -54,6 +59,9 @@ object InventoryManager {
       })
   }
 
+  /**
+    * Switch to first tab and read inventory
+    */
   private def prepareInventoryAction(): Unit = {
     Stash.resetTab()
     Inventory.updateOccupancyAndItems()
@@ -248,5 +256,168 @@ object InventoryManager {
           extractedCount += 1
         }
       })
+  }
+
+  /**
+    * Read Inventory to know what currency we have to work with
+    * Begin rolling maps in the RUN_TAB
+    */
+  def rollMaps(): Unit = {
+    prepareInventoryAction()
+    Stash.activateTab(Config.RUN_MAP_ALLOCATION, Mode.READ_POSITIONS)
+    if (Stash.currentTab.isEmpty) {
+      throw new IllegalStateException("RUN_TAB not defined")
+    }
+    val tab = Stash.currentTab().get
+    var keepRolling = true
+    tab.positions()
+      // get occupied positions
+      .filter((position: Position) => {
+        position.occupied
+      })
+      .foreach((position: Position) => {
+        if (!keepRolling) {
+          return
+        }
+        try {
+          rollMapInPosition(tab, position)
+        } catch {
+          case e: Exception => {
+            log.warn(s"stopped rolling maps due to: ${e.getMessage}")
+            keepRolling = false
+          }
+        }
+      })
+  }
+
+  private def rollMapInPosition(tab: Tab, position: Position): Unit = {
+    val item = tab.readAndRecordItem(position)
+    if (!item.data.isInstanceOf[MapItem]) {
+      return
+    }
+
+    var map: MapItem = item.data.asInstanceOf[MapItem]
+    var shouldRoll = true
+    while (shouldRoll) {
+      val issues = getIssues(map)
+      if (issues.isEmpty) {
+        shouldRoll = false
+      } else {
+        rerollMap(tab, item, issues)
+        val newScreenItem = tab.readAndRecordItem(item.position.get)
+        map = newScreenItem.data.asInstanceOf[MapItem]
+      }
+    }
+  }
+
+  // TODO make this smarter
+  private def rerollMap(tab: Tab, item: ScreenItem, issues: Set[MapIssue]): Unit = {
+    val map: MapItem = item.data.asInstanceOf[MapItem]
+
+    if (issues.contains(MapIssue.UNIDENTIFIED)) {
+      // just id and consider it rerolled
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Scroll of Wisdom")
+      return
+    }
+
+    if (map.corrupted) {
+      throw new IllegalArgumentException("encountered a corrupted map that isn't up to par")
+    }
+    // scour
+    useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Scouring")
+
+    // quality if necessary
+    if (issues.contains(MapIssue.QUALITY_LOW)) {
+      val qualityDeficit = MapRequirements.minQuality - map.quality.getOrElse(0)
+      var chiselCount = qualityDeficit / 5
+      if (qualityDeficit % 5 > 0) {
+        chiselCount += 1
+      }
+      for (_ <- 0 until chiselCount) {
+        useCurrencyFromInventoryOnItemInTab(item, tab, "Cartographer's Chisel")
+      }
+    }
+    // return to rarity
+    val rarity = MapRequirements.rollRarity
+    if (rarity == Rarity.NORMAL) {
+      // do nothing
+    } else if (rarity == Rarity.MAGIC) {
+      // use transmute
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Transmutation")
+    } else if (rarity == Rarity.RARE) {
+      // use alch
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Alchemy")
+    } else {
+      throw new IllegalArgumentException(s"unrecognized roll rarity $rarity")
+    }
+  }
+
+  private def useCurrencyFromInventoryOnItemInTab(item: ScreenItem, tab: Tab, currencyName: String): Unit = {
+    // find currency
+    val currencyOption = Inventory.findCurrency(currencyName)
+    if (currencyOption.isEmpty) {
+      throw new IllegalStateException(s"could not find $currencyName in inventory")
+    }
+    val currency = currencyOption.get
+
+    // use currency
+    val currencyPixelPosition = Inventory.getPixels(currency.position.get)
+    Clicker.rightClick(currencyPixelPosition)
+    // record the currency as used
+    decrementCurrency(currency, tab)
+
+    Thread sleep 300
+
+    // click item
+    val itemPixelPosition = tab.getPixels(item.position.get)
+    Clicker.click(itemPixelPosition)
+  }
+
+  private def decrementCurrency(currencyItem: ScreenItem, tab: Tab): Unit = {
+    val currency: Currency = currencyItem.data.asInstanceOf[Currency]
+    val stackSize = currency.stackSize.get
+    if (stackSize.size > 1) {
+      currency.stackSize = Option(stackSize.copy(size = stackSize.size - 1))
+    } else {
+      tab.removeItem(currencyItem)
+    }
+  }
+
+  // returns issues it finds with the map
+  private def getIssues(map: MapItem): Set[MapIssue] = {
+    var issues: Set[MapIssue] = Set()
+    // check if unidentified
+    if (!map.identified) {
+      issues += MapIssue.UNIDENTIFIED
+      return issues
+    }
+
+    // check thresholds
+    if (map.quality.getOrElse(0) < MapRequirements.minQuality) {
+      issues += MapIssue.QUALITY_LOW
+    }
+
+    val badIIQ = map.itemQuantity < MapRequirements.minItemQuantity
+    val badIIR = map.itemRarity < MapRequirements.minItemRarity
+    val badPackSize = map.packSize < MapRequirements.minPackSize
+    if (badIIQ || badIIR || badPackSize) {
+      issues += MapIssue.BAD_ATTRIBUTES
+    }
+
+    // check mods
+    if (hasBlacklistMods(map.explicits, MapRequirements.blacklistMods)) {
+      issues += MapIssue.BAD_ATTRIBUTES
+    } else if (hasBlacklistMods(map.implicits, MapRequirements.blacklistMods)) {
+      issues += MapIssue.BAD_ATTRIBUTES
+    }
+
+    issues
+  }
+
+  private def hasBlacklistMods(mods: Seq[Mod], blacklistMods: Seq[String]): Boolean = {
+    val matchOption = mods.find((mod: Mod) => {
+      blacklistMods.contains(mod.text)
+    })
+    matchOption.isDefined
   }
 }

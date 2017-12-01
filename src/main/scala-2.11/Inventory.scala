@@ -1,5 +1,5 @@
 import com.poe.constants.Rarity
-import com.poe.parser.item.currency.{BasicCurrency, Essence}
+import com.poe.parser.item.currency.{BasicCurrency, Currency, Essence}
 import com.poe.parser.item.equipment.{Equipment, Flask}
 import com.poe.parser.item.equipment.accessory.{Accessory, Quiver, Talisman}
 import com.poe.parser.item._
@@ -143,6 +143,12 @@ object Inventory extends Container {
       val isAccessory: Boolean = equipment.isInstanceOf[Accessory] && !equipment.isInstanceOf[Quiver]
       val isSmallWeapon: Boolean = equipment.isInstanceOf[Dagger] || equipment.isInstanceOf[Wand]
       isArmour || isAccessory || isSmallWeapon
+    })
+  }
+
+  def findCurrency(name: String): Option[ScreenItem] = {
+    basicCurrencies.find((item: ScreenItem) => {
+      item.data.typeLine == name
     })
   }
 }
