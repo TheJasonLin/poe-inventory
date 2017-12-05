@@ -1,13 +1,14 @@
 import com.poe.constants.Rarity
-import com.poe.parser.item.currency.Currency
+import com.poe.parser.ItemFactory
+import com.poe.parser.item.currency.{BasicCurrency, Currency}
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
-import com.poe.parser.item.{MapItem, Mod}
+import com.poe.parser.item.{Item, MapItem, Mod}
 import com.typesafe.scalalogging.Logger
-import config.MapRequirements
+import config.{CurrencyTabConfig, CurrencyValues, MapRequirements, MapValues}
 import screen.Screen
-import structures.{Position, ScreenItem}
+import structures.{PixelPosition, Position, ScreenItem}
 
 object InventoryManager {
   val log = Logger("InventoryManager")
@@ -324,7 +325,9 @@ object InventoryManager {
       throw new IllegalArgumentException("encountered a corrupted map that isn't up to par")
     }
     // scour
-    useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Scouring")
+    if (map.rarity == Rarity.MAGIC || map.rarity == Rarity.RARE) {
+      useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Scouring")
+    }
 
     // quality if necessary
     if (issues.contains(MapIssue.QUALITY_LOW)) {
@@ -375,11 +378,14 @@ object InventoryManager {
 
   private def decrementCurrency(currencyItem: ScreenItem, tab: Tab): Unit = {
     val currency: Currency = currencyItem.data.asInstanceOf[Currency]
+    if (currency.stackSize.isEmpty) {
+      log.warn("currency found without stackSize")
+    }
     val stackSize = currency.stackSize.get
     if (stackSize.size > 1) {
       currency.stackSize = Option(stackSize.copy(size = stackSize.size - 1))
     } else {
-      tab.removeItem(currencyItem)
+      Inventory.removeItem(currencyItem)
     }
   }
 
@@ -419,5 +425,69 @@ object InventoryManager {
       blacklistMods.contains(mod.text)
     })
     matchOption.isDefined
+  }
+
+  def countCurrencyValues(): Unit = {
+    // delay to let the user let go of the hotkey
+    Thread sleep 200
+
+    Stash.resetTab()
+    Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, use75Allocations = false)
+
+    var total: Double = 0
+    // read the stack size for every currency
+    for ((typeLine: String, position: PixelPosition) <- CurrencyTabConfig.CURRENCY_TAB_POSITIONS) {
+      val clipboard: String = Clicker.getItemInfo(position)
+      try {
+        val item: Item = ItemFactory.create(clipboard)
+        if (item.typeLine.equals(typeLine)) {
+          val currency: BasicCurrency = item.asInstanceOf[BasicCurrency]
+          val stackSize = currency.stackSize.get.size
+          val currencyValue: Double = CurrencyValues.values(typeLine)
+          val value: Double = currencyValue * stackSize
+          log.info(s"$typeLine: $stackSize ($value)")
+          total += value
+        }
+      } catch {
+        case _: RuntimeException => log.warn(s"$typeLine: 0 (0)")
+      }
+    }
+
+    log.info(s"Net Liquid Worth: $total")
+  }
+
+  def countMapValues(): Unit = {
+    // delay to let the user let go of the hotkey
+    Thread sleep 200
+
+    Stash.resetTab()
+
+    var total: Double = 0.0
+
+    for (tier <- MapValues.MinMapTierWithValue to MapValues.MaxMapTier) {
+      val allocation: Allocation = Config.MAP_ALLOCATION(tier)
+      Stash.activateTab(allocation, Mode.READ_POSITIONS)
+      val currentTabOption: Option[Tab] = Stash.currentTab()
+      if (currentTabOption.isEmpty) throw new IllegalStateException("current tab not found")
+      val currentTab: Tab = currentTabOption.get
+      var tierTotal: Double = 0.0
+      val positions = Stash.currentTab().get.positionsInAllocation(allocation)
+      positions.filter((position: Position) => {
+        position.occupied
+      }).map((position) => {
+        currentTab.readAndRecordItem(position)
+      }).foreach((item) => {
+        val pairOption: Option[(String, Double)] = MapValues.values.find((pair: (String, Double)) => {
+          item.data.typeLine.contains(pair._1)
+        })
+        if (pairOption.isDefined) {
+          val pair = pairOption.get
+          tierTotal += pair._2
+        }
+      })
+      log.info(s"Tier $tier: $tierTotal")
+      total += tierTotal
+    }
+    log.info(s"Total: $total")
   }
 }

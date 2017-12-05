@@ -20,11 +20,11 @@ object MapRequirements {
     "Monsters reflect #% of Elemental Damage",
     "Monsters have #git st% chance to Avoid Elemental Ailments",
     "Cannot Leech Life from Monsters",
-    "Cannot Leech Mana from Monsters"
+    "Cannot Leech Mana from Monsters",
+    "Players are Cursed with Temporal Chains"
   )
 
   private val references: Seq[String] = Seq(
-    "Players are Cursed with Temporal Chains",
     "-#% maximum Player Resistances"
   )
 }

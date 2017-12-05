@@ -178,7 +178,6 @@ abstract class Container {
   def readAndRecordItem(position: Position): ScreenItem = {
     // create item
     val item: ScreenItem = getItem(position)
-    println(item)
     // record item
     addItem(item, position)
     item
