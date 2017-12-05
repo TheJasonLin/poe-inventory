@@ -2,6 +2,7 @@ import structures.{Position, Region}
 import TabType._
 
 object Config {
+  val SAFE_MODE: Boolean = true
   val TAB_CHANGE_DELAY: Int = 600
   val QUICK_SLEEP: Int = 50
   /**

@@ -41,14 +41,18 @@ object Main extends jintellitype.HotkeyListener {
     val ctrlShift = jintellitype.JIntellitypeConstants.MOD_CONTROL + jintellitype.JIntellitypeConstants.MOD_SHIFT
     JIntellitype.getInstance().addHotKeyListener(this)
     JIntellitype.getInstance().registerHotKey(EVENT_QUIT, ctrlShift, 'Q')
-    JIntellitype.getInstance().registerHotKey(EVENT_STORE_INVENTORY, ctrlShift, 'B')
-    JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'F')
-    JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
+
     JIntellitype.getInstance().registerHotKey(EVENT_CALIBRATE, ctrlShift, 'T')
-    JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
     JIntellitype.getInstance().registerHotKey(EVENT_ROLL_MAPS, ctrlShift, 'M')
     JIntellitype.getInstance().registerHotKey(EVENT_COUNT_CURRENCY, ctrlShift, '4')
     JIntellitype.getInstance().registerHotKey(EVENT_COUNT_MAP_VALUES, ctrlShift, '5')
+
+    if (!Config.SAFE_MODE) {
+      JIntellitype.getInstance().registerHotKey(EVENT_STORE_INVENTORY, ctrlShift, 'B')
+      JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'F')
+      JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
+      JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
+    }
   }
 
   def calibrate(): Unit = {

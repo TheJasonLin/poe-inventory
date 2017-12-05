@@ -280,12 +280,26 @@ object InventoryManager {
         if (!keepRolling) {
           return
         }
-        try {
-          rollMapInPosition(tab, position)
-        } catch {
-          case e: Exception => {
-            log.warn(s"stopped rolling maps due to: ${e.getMessage}")
+
+        if (Config.SAFE_MODE) {
+          val item: ScreenItem = tab.readAndRecordItem(position)
+
+          val issues: Set[MapIssue] = getIssues(item.data.asInstanceOf[MapItem])
+          if (issues.nonEmpty) {
             keepRolling = false
+            log.info("stopped rolling due to the following issues:")
+            if (issues.contains(MapIssue.UNIDENTIFIED)) log.info("map is unidentified")
+            if (issues.contains(MapIssue.BAD_ATTRIBUTES)) log.info("map has bad attributes")
+            if (issues.contains(MapIssue.QUALITY_LOW)) log.info("map has low quality")
+          }
+        } else {
+          try {
+            rollMapInPosition(tab, position)
+          } catch {
+            case e: Exception => {
+              log.warn(s"stopped rolling maps due to: ${e.getMessage}")
+              keepRolling = false
+            }
           }
         }
       })
