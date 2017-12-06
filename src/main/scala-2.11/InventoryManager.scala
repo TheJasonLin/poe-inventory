@@ -264,7 +264,11 @@ object InventoryManager {
     * Begin rolling maps in the RUN_TAB
     */
   def rollMaps(): Unit = {
-    prepareInventoryAction()
+    if (Config.SAFE_MODE) {
+      Stash.resetTab()
+    } else {
+      prepareInventoryAction()
+    }
     Stash.activateTab(Config.RUN_MAP_ALLOCATION, Mode.READ_POSITIONS)
     if (Stash.currentTab.isEmpty) {
       throw new IllegalStateException("RUN_TAB not defined")
