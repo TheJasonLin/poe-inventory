@@ -3,14 +3,14 @@ package config
 import com.poe.constants.Rarity
 
 object MapRequirements {
-  val rollRarity: Rarity = Rarity.RARE
+  val rollRarity: Rarity = Rarity.MAGIC
   // prefix IIQ range: [6, 20]
   // suffix IIQ range: [6, 20] + 25 (no leech)
-  val minItemQuantity: Int = 30
+  val minItemQuantity: Int = 5
 
   // prefix IIR range: [3, 10]
   // suffix IIR range: [5, 15]
-  val minItemRarity: Int = 20
+  val minItemRarity: Int = 5
 
   // suffix Pack Size range: [0, 16]
   val minPackSize: Int = 0
