@@ -96,6 +96,23 @@ object InventoryManager {
   }
 
   private def dumpMaps(): Unit = {
+    if (Config.SPECIAL_MAP_TAB) {
+      dumpMapsSpecial()
+    } else {
+      dumpMapsNonSpecial()
+    }
+  }
+
+  private def dumpMapsSpecial(): Unit = {
+    val maps = Inventory.maps
+    if (maps.isEmpty) return
+    maps.foreach((item: ScreenItem) => {
+      Stash.activateTab(TabContents.MAP, Mode.NO_READ, false)
+      Inventory.ctrlClickItem(item)
+    })
+  }
+
+  private def dumpMapsNonSpecial(): Unit = {
     val maps = Inventory.maps
     if(maps.isEmpty) return
     maps.foreach((item: ScreenItem) => {
@@ -482,6 +499,10 @@ object InventoryManager {
   }
 
   def countMapValues(): Unit = {
+    if (Config.SPECIAL_MAP_TAB) {
+      log.warn("special map tab not supported")
+      return
+    }
     // delay to let the user let go of the hotkey
     Thread sleep 200
 
