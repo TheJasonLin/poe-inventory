@@ -24,6 +24,7 @@ object Stash {
     TabContents.CURRENCY -> Config.CURRENCY_ALLOCATION,
     TabContents.ESSENCE -> Config.ESSENCE_ALLOCATION,
     TabContents.DIVINATION -> Config.DIVINATION_ALLOCATION,
+    TabContents.MAP -> Config.SPECIAL_MAP_ALLOCATION,
     TabContents.HELMET -> Config.HELMET_ALLOCATION,
     TabContents.BOOT -> Config.BOOT_ALLOCATION,
     TabContents.GLOVE -> Config.GLOVE_ALLOCATION,

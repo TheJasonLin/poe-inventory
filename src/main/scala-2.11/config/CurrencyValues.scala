@@ -1,29 +1,29 @@
 package config
 
 object CurrencyValues {
-  private val Bauble = 1f/10
-  private val GCP = 1f/0.8
-  private val Chisel = 1f/2.5
-  private val Alt = 1f/12
-  private val Annul = 10
-  private val Chance = 1f/7.7
-  private val Exalt = 95
-  private val Mirror_inExalts = 200
-  private val Regal = 1f/1.8
-  private val Alch = 1f/3
-  private val Blessed = 1f/2.7
-  private val Divine = 18
-  private val Jeweller = 1f/8
-  private val Fusing = 1f/2
-  private val Chromat = 1f/10
-  private val Perandus = 1f/42
-  private val Silver = 1f/4.5
-  private val Scour = 1f/1.6
-  private val Regret = 1f/1
-  private val Vaal = 1f/0.8
-  private val Apprentice = 1f/1.3
-  private val Journyman = 2
-  private val Master = 5
+  private val Bauble = 1f/6
+  private val GCP = 5f/7
+  private val Chisel = 1f/4.9
+  private val Alt = 1f/21
+  private val Annul = 4
+  private val Chance = 1f/10.9
+  private val Exalt = 41
+  private val Mirror_inExalts = 62.5
+  private val Regal = 0.9375f
+  private val Alch = 10f/34
+  private val Blessed = 0.4f
+  private val Divine = 6.5f
+  private val Jeweller = 1f/10.8
+  private val Fusing = 1f/2.7
+  private val Chromat = 1f/14.5
+  private val Perandus = 0
+  private val Silver = 1f/3.7
+  private val Scour = 1f/2.6
+  private val Regret = 1f/1.7
+  private val Vaal = 1f/1.9
+  private val Apprentice = 1f/1.75
+  private val Journyman = 1.8f
+  private val Master = 3.66f
 
   val values:Map[String, Double] = Map[String, Double](
     "Scroll Fragment" -> 0,

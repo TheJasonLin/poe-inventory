@@ -2,6 +2,7 @@ public enum TabContents {
     CURRENCY,
     ESSENCE,
     DIVINATION,
+    MAP,
     HELMET,
     BOOT,
     GLOVE,
