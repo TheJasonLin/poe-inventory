@@ -10,8 +10,8 @@ object Config {
     * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
    */
   val SEPARATE_REGAL: Boolean = false
-  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(5)
-  val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(3)
+  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(4)
+  val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(5)
 
   /**
     * Ignore this. This is a helper
@@ -130,25 +130,35 @@ object Config {
   val AMULET_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 5, 11, 7))
   val BELT_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 8, 11, 11))
 
+  // 1080p
+//  val NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
+//  val NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
+//  val QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
+//  val QUAD_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (635, 780)
+//  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
+//  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 825)
+//  val CENTER: (Int, Int) = (953, 452)
+
+  // 1200p
   val NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
   val NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
+  val QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
+  val QUAD_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (635, 780)
+  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
+  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1877, 825)
+  val CENTER: (Int, Int) = (953, 452)
+
   val NORMAL_TAB_WIDTH: Int = 12
   val NORMAL_TAB_HEIGHT: Int = 12
   val NORMAL_TAB_CELL_RADIUS: Int = 20
 
-  val QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
-  val QUAD_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (635, 780)
   val QUAD_TAB_WIDTH: Int = 24
   val QUAD_TAB_HEIGHT: Int = 24
   val QUAD_TAB_CELL_RADIUS: Int = 10
 
-  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
-  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 825)
   val INVENTORY_HEIGHT: Int = 5
   val INVENTORY_WIDTH: Int = 11
   val INVENTORY_CELL_RADIUS: Int = NORMAL_TAB_CELL_RADIUS
-
-  val CENTER: (Int, Int) = (953, 452)
 
   private def a(tabIndex: Int, tabType: TabType, region: Option[Region] = None): Allocation = {
     new Allocation(tabIndex, tabType, region)

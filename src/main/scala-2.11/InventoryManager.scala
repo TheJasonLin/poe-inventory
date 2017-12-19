@@ -361,7 +361,7 @@ object InventoryManager {
     }
 
     // use alteration shortcut if magic and quality is fine
-    if (map.rarity == Rarity.MAGIC && !issues.contains(MapIssue.QUALITY_LOW)) {
+    if (MapRequirements.rollRarity == Rarity.MAGIC && map.rarity == Rarity.MAGIC && !issues.contains(MapIssue.QUALITY_LOW)) {
       useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Alteration")
       return
     }
