@@ -16,6 +16,7 @@ object InventoryManager {
     * Store everything into the Stash
     */
   def storeInventory(): Unit = {
+    userReleaseSleep()
     prepareInventoryAction()
 
     dumpCurrencies()
@@ -46,8 +47,7 @@ object InventoryManager {
     * Ctrl Click Everything
     */
   def emptyInventory(): Unit = {
-    // delay to let the user let go of the hotkey
-    Thread sleep 200
+    userReleaseSleep()
     // since we aren't reseting the stash, which normally updates the screen for us, we need to manually update the screen
     Screen.update()
     Inventory.updateOccupancy()
@@ -246,6 +246,7 @@ object InventoryManager {
   }
 
   def extractFullSet(level75: Boolean): Unit = {
+    userReleaseSleep()
     Stash.resetTab()
     extractItemsFromTab(TabContents.HELMET, 1, level75)
     extractItemsFromTab(TabContents.BOOT, 1, level75)
@@ -281,6 +282,7 @@ object InventoryManager {
     * Begin rolling maps in the RUN_TAB
     */
   def rollMaps(): Unit = {
+    userReleaseSleep()
     if (Config.SAFE_MODE) {
       Stash.resetTab()
     } else {
@@ -470,8 +472,7 @@ object InventoryManager {
   }
 
   def countCurrencyValues(): Unit = {
-    // delay to let the user let go of the hotkey
-    Thread sleep 200
+    userReleaseSleep()
 
     Stash.resetTab()
     Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, use75Allocations = false)
@@ -503,8 +504,7 @@ object InventoryManager {
       log.warn("special map tab not supported")
       return
     }
-    // delay to let the user let go of the hotkey
-    Thread sleep 200
+    userReleaseSleep()
 
     Stash.resetTab()
 
@@ -535,5 +535,9 @@ object InventoryManager {
       total += tierTotal
     }
     log.info(s"Total: $total")
+  }
+
+  def userReleaseSleep(): Unit = {
+    Thread sleep Config.USER_KEY_RELEASE_DELAY
   }
 }

@@ -6,6 +6,9 @@ object Config {
   val SPECIAL_MAP_TAB: Boolean = true
   val TAB_CHANGE_DELAY: Int = 600
   val QUICK_SLEEP: Int = 50
+  // the amount of time to let the user let go of the hotkey
+  val USER_KEY_RELEASE_DELAY: Int = 200
+  
   /**
     * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
    */
