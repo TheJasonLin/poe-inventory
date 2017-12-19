@@ -1,5 +1,6 @@
 import structures.{Position, Region}
 import TabType._
+import config.ScreenResolution
 
 object Config {
   val SAFE_MODE: Boolean = false
@@ -8,7 +9,8 @@ object Config {
   val QUICK_SLEEP: Int = 50
   // the amount of time to let the user let go of the hotkey
   val USER_KEY_RELEASE_DELAY: Int = 200
-  
+  val RESOLUTION: ScreenResolution = ScreenResolution.P1200
+
   /**
     * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
    */
@@ -134,22 +136,25 @@ object Config {
   val BELT_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 8, 11, 11))
 
   // 1080p
-//  val NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
-//  val NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
-//  val QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
-//  val QUAD_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (635, 780)
-//  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
-//  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 825)
-//  val CENTER: (Int, Int) = (953, 452)
+  var NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
+  var NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
+  var QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
+  var QUAD_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (635, 780)
+  var INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
+  var INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 825)
+  var CENTER: (Int, Int) = (953, 452)
 
   // 1200p
-  val NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
-  val NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
-  val QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
-  val QUAD_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (635, 780)
-  val INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
-  val INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1877, 825)
-  val CENTER: (Int, Int) = (953, 452)
+  if (RESOLUTION == ScreenResolution.P1200) {
+    NORMAL_TAB_TOP_LEFT_COORD = (42, 188)
+    NORMAL_TAB_BOTTOM_RIGHT_COORD = (622, 767)
+    QUAD_TAB_TOP_LEFT_COORD = (30, 175)
+    QUAD_TAB_BOTTOM_RIGHT_COORD = (635, 780)
+    INVENTORY_TOP_LEFT_COORD = (1350, 615)
+    INVENTORY_BOTTOM_RIGHT_COORD = (1877, 825)
+    CENTER = (953, 452)
+  }
+
 
   val NORMAL_TAB_WIDTH: Int = 12
   val NORMAL_TAB_HEIGHT: Int = 12
