@@ -172,7 +172,6 @@ abstract class Container {
         readAndRecordItem(position)
       }
     })
-    println(s"found ${this.items.length} items")
     // mark container as having been updated
     upToDate = true
   }

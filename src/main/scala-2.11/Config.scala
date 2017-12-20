@@ -5,7 +5,7 @@ import config.ScreenResolution
 object Config {
   val SAFE_MODE: Boolean = false
   val SPECIAL_MAP_TAB: Boolean = true
-  val TAB_CHANGE_DELAY: Int = 600
+  val TAB_CHANGE_DELAY: Int = 700
   val QUICK_SLEEP: Int = 50
   // the amount of time to let the user let go of the hotkey
   val USER_KEY_RELEASE_DELAY: Int = 300
