@@ -12,6 +12,7 @@ object Main extends jintellitype.HotkeyListener {
   val EVENT_ROLL_MAPS: Int = 7
   val EVENT_COUNT_CURRENCY: Int = 8
   val EVENT_COUNT_MAP_VALUES: Int = 9
+  val EVENT_ID_AND_DUMP: Int = 10
 
   override def onHotKey(identifier: Int): Unit = {
     identifier match {
@@ -23,6 +24,7 @@ object Main extends jintellitype.HotkeyListener {
       case EVENT_ROLL_MAPS => InventoryManager.rollMaps()
       case EVENT_COUNT_CURRENCY => InventoryManager.countCurrencyValues()
       case EVENT_COUNT_MAP_VALUES => InventoryManager.countMapValues()
+      case EVENT_ID_AND_DUMP => InventoryManager.idAndDump()
       case EVENT_CALIBRATE => calibrate()
     }
   }
@@ -52,6 +54,7 @@ object Main extends jintellitype.HotkeyListener {
       JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'F')
       JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
       JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
+      JIntellitype.getInstance().registerHotKey(EVENT_ID_AND_DUMP, ctrlShift, 'N')
     }
   }
 

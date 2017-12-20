@@ -117,6 +117,7 @@ abstract class Container {
     * Updates Occupancy info ONLY
     */
   def updateOccupancy(): Unit = {
+    Clicker.center()
     positions
       .foreach((position: Position) => {
         val itemPresent: Boolean = isItemPresent(position)
@@ -171,6 +172,7 @@ abstract class Container {
         readAndRecordItem(position)
       }
     })
+    println(s"found ${this.items.length} items")
     // mark container as having been updated
     upToDate = true
   }

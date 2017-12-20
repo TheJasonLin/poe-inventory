@@ -8,8 +8,8 @@ object Config {
   val TAB_CHANGE_DELAY: Int = 600
   val QUICK_SLEEP: Int = 50
   // the amount of time to let the user let go of the hotkey
-  val USER_KEY_RELEASE_DELAY: Int = 200
-  val RESOLUTION: ScreenResolution = ScreenResolution.P1200
+  val USER_KEY_RELEASE_DELAY: Int = 300
+  val RESOLUTION: ScreenResolution = ScreenResolution.P1080
 
   /**
     * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
@@ -36,6 +36,7 @@ object Config {
   val QUALITY_FLASK_TAB: Int = idx()
   val QUALITY_GEM_TAB: Int = QUALITY_FLASK_TAB
   val FRAGMENT_TAB: Int = idx()
+  val DUMP_TAB: Int = idx()
   /**
     * The following tabs are defined, but not used and in a catch all tab
     */
@@ -49,6 +50,7 @@ object Config {
   val ESSENCE_ALLOCATION: Allocation = a(ESSENCE_TAB, SPECIAL)
   val DIVINATION_ALLOCATION: Allocation = a(DIVINATION_TAB, SPECIAL)
   val SPECIAL_MAP_ALLOCATION: Allocation = a(MAP_TAB, SPECIAL)
+  val DUMP_ALLOCATION: Allocation = a(DUMP_TAB, QUAD, r(0, 0, 23, 23))
 
   val RUN_MAP_ALLOCATION: Allocation = a(RUN_TAB, NORMAL, r(0, 0, 11, 11))
 

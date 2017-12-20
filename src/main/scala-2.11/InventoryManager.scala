@@ -1,12 +1,13 @@
 import com.poe.constants.Rarity
 import com.poe.parser.ItemFactory
 import com.poe.parser.item.currency.{BasicCurrency, Currency}
+import com.poe.parser.item.equipment.Equipment
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
-import com.poe.parser.item.{Item, MapItem, Mod}
+import com.poe.parser.item.{CraftableItem, Item, MapItem, Mod}
 import com.typesafe.scalalogging.Logger
-import config.{CurrencyTabConfig, CurrencyValues, MapRequirements, MapValues}
+import config._
 import screen.Screen
 import structures.{PixelPosition, Position, ScreenItem}
 
@@ -537,7 +538,44 @@ object InventoryManager {
     log.info(s"Total: $total")
   }
 
-  def userReleaseSleep(): Unit = {
+  private def userReleaseSleep(): Unit = {
     Thread sleep Config.USER_KEY_RELEASE_DELAY
+  }
+
+  def idAndDump(): Unit = {
+    userReleaseSleep()
+    prepareInventoryAction()
+    idItems()
+    dumpInventoryToDumpAllocation()
+  }
+
+  private def idItems(): Unit = {
+    Inventory.items.filter((item: ScreenItem) => {
+      item.data.isInstanceOf[CraftableItem] && !item.data.asInstanceOf[CraftableItem].identified
+    }).foreach((item: ScreenItem) => {
+      useCurrencyFromTabOnItemInInventory(item, "Scroll of Wisdom")
+    })
+  }
+
+  private def useCurrencyFromTabOnItemInInventory(item: ScreenItem, currency: String): Unit = {
+    Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, use75Allocations = false)
+    val currencyPosition: PixelPosition = CurrencyTabConfig.CURRENCY_TAB_POSITIONS(currency)
+    Clicker.rightClick(currencyPosition)
+    Thread sleep 200
+    val itemPositionOption: Option[Position] = item.position
+    if (itemPositionOption.isEmpty) {
+      log.warn("item position was empty when trying to use currency")
+      return
+    }
+    val pixelPosition: PixelPosition = Inventory.getPixels(itemPositionOption.get)
+    Clicker.click(pixelPosition)
+  }
+
+  private def dumpInventoryToDumpAllocation(): Unit = {
+    Stash.activateTab(Config.DUMP_ALLOCATION, Mode.NO_READ)
+    Inventory.items.foreach((item: ScreenItem) => {
+      Inventory.ctrlClickItem(item)
+      Stash.currentTab().get.upToDate = false
+    })
   }
 }
