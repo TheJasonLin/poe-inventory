@@ -3,6 +3,7 @@ public enum TabContents {
     ESSENCE,
     DIVINATION,
     MAP,
+    FRAGMENT,
     HELMET,
     BOOT,
     GLOVE,

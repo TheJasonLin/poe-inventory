@@ -116,6 +116,41 @@ object Inventory extends Container {
     })
   }
 
+  final private val fragmentTypelines: Seq[String] = Seq[String](
+    "Offering to the Goddess",
+    "Sacrifice at Dusk",
+    "Sacrifice at Midnight",
+    "Sacrifice at Dawn",
+    "Sacrifice at Noon",
+    "Divine Vessel",
+    // TODO missing 2
+    "Mortal Hope",
+    "Mortal Ignorance",
+    // TODO what are the others?
+    "Fragment of the Minotaur",
+    "Fragment of the Chimera",
+    "Fragment of the Phoenix",
+    "Fragment of the Hydra",
+    "Splinter of Chayula",
+    "Splinter of Tul",
+    "Splinter of Xoph",
+    "Splinter of Esh",
+    "Splinter of Uul-Netol",
+    // TODO is this right?
+    "Chayula's Breachstone",
+    "Tul's Breachstone",
+    "Xoph's Breachstone",
+    "Esh's Breachstone",
+    "Uul-Netol's Breachstone"
+  )
+
+  // TODO make this based on parser results
+  def fragments: Seq[ScreenItem] = {
+    items.filter((item: ScreenItem) => {
+      fragmentTypelines.contains(item.data.typeLine)
+    })
+  }
+
   def fullSetEquipment(chaos: Boolean, regal: Boolean): Seq[ScreenItem] = {
     if (!chaos && !regal) throw new IllegalArgumentException("Need at least one to be true")
     val min = if (chaos) 60 else 75

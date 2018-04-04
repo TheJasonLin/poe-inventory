@@ -30,12 +30,12 @@ object Config {
   val ESSENCE_TAB: Int = idx()
   val DIVINATION_TAB: Int = idx()
   val MAP_TAB: Int = idx()
+  val FRAGMENT_TAB: Int = idx()
   val RUN_TAB: Int = idx()
   val CHAOS_GEAR_60_TAB: Int = idx()
   val CHAOS_JEWELRY_60_TAB: Int = idx()
   val QUALITY_FLASK_TAB: Int = idx()
   val QUALITY_GEM_TAB: Int = QUALITY_FLASK_TAB
-  val FRAGMENT_TAB: Int = idx()
   val DUMP_TAB: Int = idx()
   /**
     * The following tabs are defined, but not used and in a catch all tab
@@ -50,6 +50,7 @@ object Config {
   val ESSENCE_ALLOCATION: Allocation = a(ESSENCE_TAB, SPECIAL)
   val DIVINATION_ALLOCATION: Allocation = a(DIVINATION_TAB, SPECIAL)
   val SPECIAL_MAP_ALLOCATION: Allocation = a(MAP_TAB, SPECIAL)
+  val FRAGMENT_ALLOCATION: Allocation = a(FRAGMENT_TAB, SPECIAL)
   val DUMP_ALLOCATION: Allocation = a(DUMP_TAB, QUAD, r(0, 0, 23, 23))
 
   val RUN_MAP_ALLOCATION: Allocation = a(RUN_TAB, NORMAL, r(0, 0, 11, 11))
@@ -58,12 +59,12 @@ object Config {
   val QUALITY_GEM_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, NORMAL, r(0, 6, 11, 11))
 
   val MISC_ALLOCATION: Map[String, Allocation] = collection.immutable.HashMap(
-    "Offering to the Goddess" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
-    "Sacrifice at Dusk" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
-    "Sacrifice at Midnight" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
-    "Sacrifice at Dawn" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
-    "Sacrifice at Noon" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
-    "Divine Vessel" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11))
+//    "Offering to the Goddess" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
+//    "Sacrifice at Dusk" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
+//    "Sacrifice at Midnight" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
+//    "Sacrifice at Dawn" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
+//    "Sacrifice at Noon" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
+//    "Divine Vessel" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11))
   )
 
   val BAD_LEAGUESTONE_COLUMN = 11

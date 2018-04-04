@@ -23,8 +23,9 @@ object InventoryManager {
     dumpCurrencies()
     dumpEssences()
     dumpDivinationCards()
-
     dumpMaps()
+    dumpFragments()
+
     dumpLeaguestones()
     dumpTalismans()
 
@@ -122,6 +123,15 @@ object InventoryManager {
       val allocation = allocationOption.get
       Stash.activateTab(allocation, Mode.READ_POSITIONS)
       Inventory.sendItemToAllocation(item, allocation)
+    })
+  }
+
+  private def dumpFragments(): Unit = {
+    val fragments = Inventory.fragments
+    if (fragments.isEmpty) return
+    fragments.foreach((item: ScreenItem) => {
+      Stash.activateTab(TabContents.FRAGMENT, Mode.NO_READ, false)
+      Inventory.ctrlClickItem(item)
     })
   }
 
