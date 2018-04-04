@@ -123,10 +123,14 @@ object Inventory extends Container {
     "Sacrifice at Dawn",
     "Sacrifice at Noon",
     "Divine Vessel",
-    // TODO missing 2
+    "Mortal Grief",
+    "Mortal Rage",
     "Mortal Hope",
     "Mortal Ignorance",
-    // TODO what are the others?
+    "Volkuur's Key",
+    "Eber's Key",
+    "Yriel's Key",
+    "Inya's Key",
     "Fragment of the Minotaur",
     "Fragment of the Chimera",
     "Fragment of the Phoenix",
@@ -136,7 +140,6 @@ object Inventory extends Container {
     "Splinter of Xoph",
     "Splinter of Esh",
     "Splinter of Uul-Netol",
-    // TODO is this right?
     "Chayula's Breachstone",
     "Tul's Breachstone",
     "Xoph's Breachstone",
