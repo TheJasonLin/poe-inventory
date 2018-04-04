@@ -561,7 +561,7 @@ object InventoryManager {
     Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, use75Allocations = false)
     val currencyPosition: PixelPosition = CurrencyTabConfig.CURRENCY_TAB_POSITIONS(currency)
     Clicker.rightClick(currencyPosition)
-    Thread sleep 200
+    Thread sleep 500
     val itemPositionOption: Option[Position] = item.position
     if (itemPositionOption.isEmpty) {
       log.warn("item position was empty when trying to use currency")

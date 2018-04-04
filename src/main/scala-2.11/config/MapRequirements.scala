@@ -17,7 +17,8 @@ object MapRequirements {
   val minQuality: Int = 0
 
   val blacklistMods: Seq[String] = Seq(
-    "Monsters reflect #% of Elemental Damage"
+    "Monsters reflect #% of Elemental Damage",
+    "Players are Cursed with Temporal Chains"
   )
 
   private val references: Seq[String] = Seq(
