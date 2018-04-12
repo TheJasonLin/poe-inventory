@@ -26,6 +26,16 @@ object MapRequirements {
     "Monsters have #% chance to Avoid Elemental Ailments",
     "Cannot Leech Life from Monsters",
     "Cannot Leech Mana from Monsters",
-    "Players are Cursed with Temporal Chains"
+    "Players are Cursed with Temporal Chains",
+    "Monsters reflect #% of Physical Damage",
+    // Unlikely
+    "Monsters have #% increased Accuracy Rating",
+    "Monsters gain a Frenzy Charge on Hit",
+    "Monsters have a #% chance to avoid Poison, Blind, and Bleeding",
+    "Player Dodge chance is Unlucky",
+    "Area contains many Totems",
+    "Players have Elemental Equilibrium",
+    "Players are Cursed with Elemental Weakness",
+    "Monsters gain a Power Charge on Hit"
   )
 }

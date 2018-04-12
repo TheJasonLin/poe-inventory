@@ -340,21 +340,20 @@ object InventoryManager {
   }
 
   private def rollMapInPosition(tab: Tab, position: Position): Unit = {
-    val item = tab.readAndRecordItem(position)
+    var item = tab.readAndRecordItem(position)
     if (!item.data.isInstanceOf[MapItem]) {
       return
     }
 
-    var map: MapItem = item.data.asInstanceOf[MapItem]
     var shouldRoll = true
     while (shouldRoll) {
+      val map: MapItem = item.data.asInstanceOf[MapItem]
       val issues = getIssues(map)
       if (issues.isEmpty) {
         shouldRoll = false
       } else {
         rerollMap(tab, item, issues)
-        val newScreenItem = tab.readAndRecordItem(item.position.get)
-        map = newScreenItem.data.asInstanceOf[MapItem]
+        item = tab.readAndRecordItem(item.position.get)
       }
     }
   }
