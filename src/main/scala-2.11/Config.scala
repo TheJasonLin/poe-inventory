@@ -5,18 +5,18 @@ import config.ScreenResolution
 object Config {
   val SAFE_MODE: Boolean = false
   val SPECIAL_MAP_TAB: Boolean = true
-  val TAB_CHANGE_DELAY: Int = 700
+  val TAB_CHANGE_DELAY: Int = 1200
   val QUICK_SLEEP: Int = 50
   // the amount of time to let the user let go of the hotkey
   val USER_KEY_RELEASE_DELAY: Int = 300
-  val RESOLUTION: ScreenResolution = ScreenResolution.P1080
+  val RESOLUTION: ScreenResolution = ScreenResolution.P1440
 
   /**
     * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
    */
   val SEPARATE_REGAL: Boolean = false
-  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(4)
-  val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(5)
+  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(5)
+  val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(9)
 
   /**
     * Ignore this. This is a helper
@@ -138,7 +138,7 @@ object Config {
   val AMULET_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 5, 11, 7))
   val BELT_75_ALLOCATION: Allocation = a(REGAL_JEWELRY_75_TAB, NORMAL, r(0, 8, 11, 11))
 
-  // 1080p
+  // 1080p Default
   var NORMAL_TAB_TOP_LEFT_COORD: (Int, Int) = (42, 188)
   var NORMAL_TAB_BOTTOM_RIGHT_COORD: (Int, Int) = (622, 767)
   var QUAD_TAB_TOP_LEFT_COORD: (Int, Int) = (30, 175)
@@ -146,6 +146,8 @@ object Config {
   var INVENTORY_TOP_LEFT_COORD: (Int, Int) = (1350, 615)
   var INVENTORY_BOTTOM_RIGHT_COORD: (Int, Int) = (1878, 825)
   var CENTER: (Int, Int) = (953, 452)
+  var NORMAL_TAB_CELL_RADIUS: Int = 20
+  var QUAD_TAB_CELL_RADIUS: Int = 10
 
   // 1200p
   if (RESOLUTION == ScreenResolution.P1200) {
@@ -156,16 +158,25 @@ object Config {
     INVENTORY_TOP_LEFT_COORD = (1350, 615)
     INVENTORY_BOTTOM_RIGHT_COORD = (1877, 825)
     CENTER = (953, 452)
+    NORMAL_TAB_CELL_RADIUS = 20
+    QUAD_TAB_CELL_RADIUS = 10
+  } else if (RESOLUTION == ScreenResolution.P1440) {
+    NORMAL_TAB_TOP_LEFT_COORD = (58, 251)
+    NORMAL_TAB_BOTTOM_RIGHT_COORD = (831, 1024)
+    QUAD_TAB_TOP_LEFT_COORD = (40, 233)
+    QUAD_TAB_BOTTOM_RIGHT_COORD = (846, 1041)
+    INVENTORY_TOP_LEFT_COORD = (1801, 820)
+    INVENTORY_BOTTOM_RIGHT_COORD = (2503, 1100)
+    CENTER = (1330, 660)
+    NORMAL_TAB_CELL_RADIUS = 31
+    QUAD_TAB_CELL_RADIUS = 13
   }
-
 
   val NORMAL_TAB_WIDTH: Int = 12
   val NORMAL_TAB_HEIGHT: Int = 12
-  val NORMAL_TAB_CELL_RADIUS: Int = 20
 
   val QUAD_TAB_WIDTH: Int = 24
   val QUAD_TAB_HEIGHT: Int = 24
-  val QUAD_TAB_CELL_RADIUS: Int = 10
 
   val INVENTORY_HEIGHT: Int = 5
   val INVENTORY_WIDTH: Int = 11
