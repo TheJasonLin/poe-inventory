@@ -1,5 +1,6 @@
 import com.melloware.jintellitype
 import com.melloware.jintellitype.JIntellitype
+import config.{ConfigKeys, IniConfig}
 import screen.Screen
 
 object Main extends jintellitype.HotkeyListener {
@@ -37,6 +38,7 @@ object Main extends jintellitype.HotkeyListener {
   def main(args: Array[String]): Unit = {
     registerHotkeys()
     println("Script Loaded Successfully")
+    println("safeMode: " + IniConfig.getBool(ConfigKeys.generalSection, ConfigKeys.safeMode))
   }
 
   def registerHotkeys(): Unit = {
