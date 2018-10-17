@@ -3,7 +3,7 @@ import java.awt.{Color, Robot}
 import com.poe.parser.ItemFactory
 import com.poe.parser.item.Item
 import screen.Screen
-import structures.{PixelPosition, Position, ScreenItem}
+import structures.{Allocation, PixelPosition, Position, ScreenItem}
 
 import scala.collection.mutable.ListBuffer
 

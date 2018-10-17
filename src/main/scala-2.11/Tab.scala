@@ -1,5 +1,5 @@
-import TabType._
-import structures.Position
+import structures.TabType._
+import structures.{Position, TabType}
 
 class Tab(
            val index: Int,

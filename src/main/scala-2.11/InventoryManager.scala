@@ -9,7 +9,7 @@ import com.poe.parser.item.{CraftableItem, Item, MapItem, Mod}
 import com.typesafe.scalalogging.Logger
 import config._
 import screen.Screen
-import structures.{PixelPosition, Position, ScreenItem}
+import structures._
 
 object InventoryManager {
   val log = Logger("InventoryManager")
@@ -98,11 +98,7 @@ object InventoryManager {
   }
 
   private def dumpMaps(): Unit = {
-    if (Config.SPECIAL_MAP_TAB) {
-      dumpMapsSpecial()
-    } else {
-      dumpMapsNonSpecial()
-    }
+    dumpMapsSpecial()
   }
 
   private def dumpMapsSpecial(): Unit = {
@@ -114,6 +110,7 @@ object InventoryManager {
     })
   }
 
+  // deprecated
   private def dumpMapsNonSpecial(): Unit = {
     val maps = Inventory.maps
     if(maps.isEmpty) return
@@ -510,10 +507,6 @@ object InventoryManager {
   }
 
   def countMapValues(): Unit = {
-    if (Config.SPECIAL_MAP_TAB) {
-      log.warn("special map tab not supported")
-      return
-    }
     userReleaseSleep()
 
     Stash.resetTab()

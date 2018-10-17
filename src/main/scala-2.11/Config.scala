@@ -1,22 +1,27 @@
-import structures.{Position, Region}
-import TabType._
-import config.ScreenResolution
+import config.{IniReader, ScreenResolution}
+import structures.{Allocation, Position, Region, TabType}
+import structures.TabType._
 
 object Config {
-  val SAFE_MODE: Boolean = false
-  val SPECIAL_MAP_TAB: Boolean = true
-  val TAB_CHANGE_DELAY: Int = 1200
-  val QUICK_SLEEP: Int = 50
+  val SAFE_MODE: Boolean = IniReader.getBool("general", "safeMode")
+  val TAB_CHANGE_DELAY: Int = IniReader.getInt("general", "tabChangeDelay")
+  val QUICK_SLEEP: Int = IniReader.getInt("general", "quickSleep")
   // the amount of time to let the user let go of the hotkey
-  val USER_KEY_RELEASE_DELAY: Int = 300
-  val RESOLUTION: ScreenResolution = ScreenResolution.P1440
+  val USER_KEY_RELEASE_DELAY: Int = IniReader.getInt("general", "userKeyReleaseDelay")
 
-  /**
-    * If SEPARATE_REGAL is true, tabs for Regal Gear and Jewelry should be set
-   */
-  val SEPARATE_REGAL: Boolean = false
-  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(5)
-  val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(9)
+  val RESOLUTION_STRING = IniReader.getString("general", "resolution")
+  var RESOLUTION: ScreenResolution = ScreenResolution.P1080
+  if (RESOLUTION_STRING == "1080p") {
+    RESOLUTION = ScreenResolution.P1080
+  } else if (RESOLUTION_STRING == "1200p") {
+    RESOLUTION = ScreenResolution.P1200
+  } else if (RESOLUTION_STRING == "1440p") {
+    RESOLUTION = ScreenResolution.P1440
+  }
+
+  val SEPARATE_REGAL: Boolean = IniReader.getBool("general", "separateRegalRecipe")
+  val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(IniReader.getInt("general", "calibrationNormalTabIndex"))
+  val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(IniReader.getInt("general", "calibrationQuadTabIndex"))
 
   /**
     * Ignore this. This is a helper
@@ -46,17 +51,17 @@ object Config {
   val REGAL_GEAR_75_TAB: Int = CATCH_ALL
   val REGAL_JEWELRY_75_TAB: Int = CATCH_ALL
 
-  val CURRENCY_ALLOCATION: Allocation = a(CURRENCY_TAB, SPECIAL)
-  val ESSENCE_ALLOCATION: Allocation = a(ESSENCE_TAB, SPECIAL)
-  val DIVINATION_ALLOCATION: Allocation = a(DIVINATION_TAB, SPECIAL)
-  val SPECIAL_MAP_ALLOCATION: Allocation = a(MAP_TAB, SPECIAL)
-  val FRAGMENT_ALLOCATION: Allocation = a(FRAGMENT_TAB, SPECIAL)
-  val DUMP_ALLOCATION: Allocation = a(DUMP_TAB, QUAD, r(0, 0, 23, 23))
+  val CURRENCY_ALLOCATION: Allocation = a(CURRENCY_TAB, TabType.SPECIAL)
+  val ESSENCE_ALLOCATION: Allocation = a(ESSENCE_TAB, TabType.SPECIAL)
+  val DIVINATION_ALLOCATION: Allocation = a(DIVINATION_TAB, TabType.SPECIAL)
+  val SPECIAL_MAP_ALLOCATION: Allocation = a(MAP_TAB, TabType.SPECIAL)
+  val FRAGMENT_ALLOCATION: Allocation = a(FRAGMENT_TAB, TabType.SPECIAL)
+  val DUMP_ALLOCATION: Allocation = a(DUMP_TAB, TabType.QUAD, r(0, 0, 23, 23))
 
-  val RUN_MAP_ALLOCATION: Allocation = a(RUN_TAB, NORMAL, r(0, 0, 11, 11))
+  val RUN_MAP_ALLOCATION: Allocation = a(RUN_TAB, TabType.NORMAL, r(0, 0, 11, 11))
 
-  val QUALITY_FLASK_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, NORMAL, r(0, 0, 11, 5))
-  val QUALITY_GEM_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, NORMAL, r(0, 6, 11, 11))
+  val QUALITY_FLASK_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, TabType.NORMAL, r(0, 0, 11, 5))
+  val QUALITY_GEM_ALLOCATION: Allocation = a(QUALITY_FLASK_TAB, TabType.NORMAL, r(0, 6, 11, 11))
 
   val MISC_ALLOCATION: Map[String, Allocation] = collection.immutable.HashMap(
 //    "Offering to the Goddess" -> a(FRAGMENT_TAB, NORMAL, r(0, 0, 11, 11)),
