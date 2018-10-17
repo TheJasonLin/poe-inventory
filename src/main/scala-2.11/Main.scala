@@ -1,6 +1,5 @@
 import com.melloware.jintellitype
 import com.melloware.jintellitype.JIntellitype
-import config.IniReader
 import screen.Screen
 
 object Main extends jintellitype.HotkeyListener {
@@ -12,8 +11,7 @@ object Main extends jintellitype.HotkeyListener {
   val EVENT_GET_REGAL_SET: Int = 6
   val EVENT_ROLL_MAPS: Int = 7
   val EVENT_COUNT_CURRENCY: Int = 8
-  val EVENT_COUNT_MAP_VALUES: Int = 9
-  val EVENT_ID_AND_DUMP: Int = 10
+  val EVENT_ID_AND_DUMP: Int = 9
 
   override def onHotKey(identifier: Int): Unit = {
     identifier match {
@@ -24,7 +22,6 @@ object Main extends jintellitype.HotkeyListener {
       case EVENT_EMPTY_INVENTORY => InventoryManager.emptyInventory()
       case EVENT_ROLL_MAPS => InventoryManager.rollMaps()
       case EVENT_COUNT_CURRENCY => InventoryManager.countCurrencyValues()
-      case EVENT_COUNT_MAP_VALUES => InventoryManager.countMapValues()
       case EVENT_ID_AND_DUMP => InventoryManager.idAndDump()
       case EVENT_CALIBRATE => calibrate()
     }
@@ -38,8 +35,6 @@ object Main extends jintellitype.HotkeyListener {
   def main(args: Array[String]): Unit = {
     registerHotkeys()
     println("Script Loaded Successfully")
-    println("safeMode: " + IniReader.getBool("general", "safeMode"))
-    println("tabChangeDelay: " + Config.TAB_CHANGE_DELAY)
   }
 
   def registerHotkeys(): Unit = {
@@ -50,7 +45,6 @@ object Main extends jintellitype.HotkeyListener {
     JIntellitype.getInstance().registerHotKey(EVENT_CALIBRATE, ctrlShift, 'T')
     JIntellitype.getInstance().registerHotKey(EVENT_ROLL_MAPS, ctrlShift, 'M')
     JIntellitype.getInstance().registerHotKey(EVENT_COUNT_CURRENCY, ctrlShift, '4')
-    JIntellitype.getInstance().registerHotKey(EVENT_COUNT_MAP_VALUES, ctrlShift, '5')
 
     if (!Config.SAFE_MODE) {
       JIntellitype.getInstance().registerHotKey(EVENT_STORE_INVENTORY, ctrlShift, 'B')

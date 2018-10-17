@@ -26,9 +26,6 @@ object InventoryManager {
     dumpMaps()
     dumpFragments()
 
-    dumpLeaguestones()
-    dumpTalismans()
-
     dumpQualityFlasks()
     dumpQualityGems()
 
@@ -39,8 +36,6 @@ object InventoryManager {
     } else {
       dumpFullSetEquipment(chaos = true, regal = true)
     }
-
-    dumpMisc()
 
     markContainersOutOfDate()
   }
@@ -110,49 +105,12 @@ object InventoryManager {
     })
   }
 
-  // deprecated
-  private def dumpMapsNonSpecial(): Unit = {
-    val maps = Inventory.maps
-    if(maps.isEmpty) return
-    maps.foreach((item: ScreenItem) => {
-      val allocationOption: Option[Allocation] = Stash.findMapAllocation(item)
-      if(allocationOption.isEmpty) return
-      val allocation = allocationOption.get
-      Stash.activateTab(allocation, Mode.READ_POSITIONS)
-      Inventory.sendItemToAllocation(item, allocation)
-    })
-  }
-
   private def dumpFragments(): Unit = {
     val fragments = Inventory.fragments
     if (fragments.isEmpty) return
     fragments.foreach((item: ScreenItem) => {
       Stash.activateTab(TabContents.FRAGMENT, Mode.NO_READ, false)
       Inventory.ctrlClickItem(item)
-    })
-  }
-
-  private def dumpLeaguestones(): Unit = {
-    val leaguestones = Inventory.leaguestones
-    if(leaguestones.isEmpty) return
-    leaguestones.foreach((item: ScreenItem) => {
-      val allocationOption: Option[Allocation] = Stash.findLeaguestoneAllocation(item)
-      if(allocationOption.isEmpty) return
-      val allocation = allocationOption.get
-      Stash.activateTab(allocation, Mode.READ_POSITIONS)
-      Inventory.sendItemToAllocation(item, allocation)
-    })
-  }
-
-  private def dumpTalismans(): Unit = {
-    val talismans = Inventory.talismans
-    if(talismans.isEmpty) return
-    talismans.foreach((item: ScreenItem) => {
-      val allocationOption: Option[Allocation] = Stash.findTalismanAllocation(item)
-      if(allocationOption.isEmpty) return
-      val allocation = allocationOption.get
-      Stash.activateTab(allocation, Mode.READ_POSITIONS)
-      Inventory.sendItemToAllocation(item, allocation)
     })
   }
 
@@ -173,16 +131,6 @@ object InventoryManager {
     Stash.activateTab(allocation, Mode.READ_POSITIONS)
     qualityGems.foreach((item: ScreenItem) => {
       Inventory.sendItemToAllocation(item, Stash.qualityGemAllocations)
-    })
-  }
-
-  private def dumpMisc(): Unit = {
-    val miscItems = Inventory.miscItems
-    if(miscItems.isEmpty) return
-    miscItems.foreach((item: ScreenItem) => {
-      val allocation: Allocation = Stash.findMiscAllocation(item)
-      Stash.activateTab(allocation, Mode.READ_POSITIONS)
-      Inventory.sendItemToAllocation(item, allocation)
     })
   }
 
@@ -504,40 +452,6 @@ object InventoryManager {
     }
 
     log.info(s"Net Liquid Worth: $total")
-  }
-
-  def countMapValues(): Unit = {
-    userReleaseSleep()
-
-    Stash.resetTab()
-
-    var total: Double = 0.0
-
-    for (tier <- MapValues.MinMapTierWithValue to MapValues.MaxMapTier) {
-      val allocation: Allocation = Config.MAP_ALLOCATION(tier)
-      Stash.activateTab(allocation, Mode.READ_POSITIONS)
-      val currentTabOption: Option[Tab] = Stash.currentTab()
-      if (currentTabOption.isEmpty) throw new IllegalStateException("current tab not found")
-      val currentTab: Tab = currentTabOption.get
-      var tierTotal: Double = 0.0
-      val positions = Stash.currentTab().get.positionsInAllocation(allocation)
-      positions.filter((position: Position) => {
-        position.occupied
-      }).map((position) => {
-        currentTab.readAndRecordItem(position)
-      }).foreach((item) => {
-        val pairOption: Option[(String, Double)] = MapValues.values.find((pair: (String, Double)) => {
-          item.data.typeLine.contains(pair._1)
-        })
-        if (pairOption.isDefined) {
-          val pair = pairOption.get
-          tierTotal += pair._2
-        }
-      })
-      log.info(s"Tier $tier: $tierTotal")
-      total += tierTotal
-    }
-    log.info(s"Total: $total")
   }
 
   private def userReleaseSleep(): Unit = {

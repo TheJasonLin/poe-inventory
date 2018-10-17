@@ -83,7 +83,7 @@ object Clicker {
 
   // moves the mouse to the center of the screen to avoid any tooltip from blocking the screen
   def center(): Unit = {
-    robot mouseMove(Config.CENTER._1, Config.CENTER._2)
+    robot mouseMove(Config.CENTER.x, Config.CENTER.y)
     quickSleep()
   }
 

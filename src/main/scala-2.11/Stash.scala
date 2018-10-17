@@ -47,18 +47,12 @@ object Stash {
     TabContents.BELT -> Config.BELT_75_ALLOCATION
   )
 
-  val mapAllocations = Config.MAP_ALLOCATION
-  val leaguestoneAllocations = Config.LEAGUESTONE_ALLOCATION
-  val talismanAllocations = Config.TALISMAN_ALLOCATION
-
   val runMapAllocation = Config.RUN_MAP_ALLOCATION
 
   val qualityFlaskAllocations = Config.QUALITY_FLASK_ALLOCATION
   val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
 
   val dumpAllocation = Config.DUMP_ALLOCATION
-
-  val miscAllocations = Config.MISC_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -145,41 +139,6 @@ object Stash {
     }
   }
 
-  def findMapAllocation(item: ScreenItem): Option[Allocation] = {
-    val pair: Option[(Int, Allocation)] = mapAllocations
-        .find((pair: (Int, Allocation)) => {
-          item.data.asInstanceOf[MapItem].tier == pair._1
-        })
-    if(pair.isEmpty) return None
-    val allocation: Allocation = pair.get._2
-    Option(allocation)
-  }
-
-  def findLeaguestoneAllocation(item: ScreenItem): Option[Allocation] = {
-    val pair: Option[(String, Allocation)] = leaguestoneAllocations
-      .find((pair: (String, Allocation)) => {
-        item.data.typeLine.contains(pair._1)
-      })
-    if(pair.isEmpty) return None
-    val allocation: Allocation = pair.get._2
-    Option(allocation)
-  }
-
-  def findTalismanAllocation(item: ScreenItem): Option[Allocation] = {
-    val pair: Option[(Int, Allocation)] = talismanAllocations
-      .find((pair: (Int, Allocation)) => {
-        item.data.asInstanceOf[Talisman].talismanTier == pair._1
-      })
-    if(pair.isEmpty) return None
-    val allocation: Allocation = pair.get._2
-    Option(allocation)
-  }
-
-  def findMiscAllocation(item: ScreenItem): Allocation = {
-    val baseName = item.data.typeLine
-    miscAllocations(baseName)
-  }
-
   def nextTab(): Unit = {
     robot.keyPress(KeyEvent.VK_RIGHT)
     Thread sleep 5
@@ -209,11 +168,6 @@ object Stash {
 
     addAllocation[TabContents](_generalAllocations)
     addAllocation[TabContents](_chaos75Allocations)
-
-    addAllocation[Int](mapAllocations)
-    addAllocation[String](leaguestoneAllocations)
-    addAllocation[Int](talismanAllocations)
-    addAllocation[String](miscAllocations)
 
     tabInfos += (runMapAllocation.tabIndex, runMapAllocation.tabType).asInstanceOf[(Int, TabType)]
     tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]

@@ -8,14 +8,14 @@ import com.poe.parser.item.equipment.weapon.{Dagger, Wand}
 import structures.{Allocation, PixelPosition, Position, ScreenItem}
 
 object Inventory extends Container {
-  val xCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._1
-  val yCeil: Int = Config.INVENTORY_BOTTOM_RIGHT_COORD._2
+  val xCeil: Int = Config.INVENTORY_REGION_COORDS.bottomRight.x
+  val yCeil: Int = Config.INVENTORY_REGION_COORDS.bottomRight.y
   val pixelWidth: Int = xCeil - xBase().get
   val pixelHeight: Int = yCeil - yBase().get
 
-  override def xBase(): Option[Int] = Option(Config.INVENTORY_TOP_LEFT_COORD._1)
+  override def xBase(): Option[Int] = Option(Config.INVENTORY_REGION_COORDS.topLeft.x)
 
-  override def yBase() = Option(Config.INVENTORY_TOP_LEFT_COORD._2)
+  override def yBase() = Option(Config.INVENTORY_REGION_COORDS.topLeft.y)
 
   override def cellRadius() = Option(Config.INVENTORY_CELL_RADIUS)
 
@@ -106,13 +106,6 @@ object Inventory extends Container {
     }).filter((item: ScreenItem) => {
       val gem = item.data.asInstanceOf[Gem]
       gem.quality.isDefined && gem.quality.get > 0
-    })
-  }
-
-  def miscItems: Seq[ScreenItem] = {
-    val keys: Seq[String] = Stash.miscAllocations.keys.toList
-    items.filter((item: ScreenItem) => {
-      keys.contains(item.data.typeLine)
     })
   }
 
