@@ -1,5 +1,5 @@
-import TabType._
-import structures.Position
+import structures.TabType._
+import structures.{Position, TabType}
 
 class Tab(
            val index: Int,
@@ -8,14 +8,14 @@ class Tab(
   extends Container {
 
   val xCeil: Option[Int] = tabType match {
-    case NORMAL => Option(Config.NORMAL_TAB_BOTTOM_RIGHT_COORD._1)
-    case QUAD => Option(Config.QUAD_TAB_BOTTOM_RIGHT_COORD._1)
+    case NORMAL => Option(Config.NORMAL_TAB_REGION_COORDS.bottomRight.x)
+    case QUAD => Option(Config.QUAD_TAB_REGION_COORDS.bottomRight.x)
     case SPECIAL => None
   }
 
   val yCeil: Option[Int] = tabType match {
-    case NORMAL => Option(Config.NORMAL_TAB_BOTTOM_RIGHT_COORD._2)
-    case QUAD => Option(Config.QUAD_TAB_BOTTOM_RIGHT_COORD._2)
+    case NORMAL => Option(Config.NORMAL_TAB_REGION_COORDS.bottomRight.y)
+    case QUAD => Option(Config.QUAD_TAB_REGION_COORDS.bottomRight.y)
     case SPECIAL => None
   }
 
@@ -24,14 +24,14 @@ class Tab(
 
   val specialTabAccessError = "Attempting to access Special Tab dimensions"
   override def xBase(): Option[Int] = tabType match {
-    case NORMAL => Option(Config.NORMAL_TAB_TOP_LEFT_COORD._1)
-    case QUAD => Option(Config.QUAD_TAB_TOP_LEFT_COORD._1)
+    case NORMAL => Option(Config.NORMAL_TAB_REGION_COORDS.topLeft.x)
+    case QUAD => Option(Config.QUAD_TAB_REGION_COORDS.topLeft.x)
     case SPECIAL => throw new IllegalStateException(specialTabAccessError)
   }
 
   override def yBase(): Option[Int] = tabType match {
-    case NORMAL => Option(Config.NORMAL_TAB_TOP_LEFT_COORD._2)
-    case QUAD => Option(Config.QUAD_TAB_TOP_LEFT_COORD._2)
+    case NORMAL => Option(Config.NORMAL_TAB_REGION_COORDS.topLeft.y)
+    case QUAD => Option(Config.QUAD_TAB_REGION_COORDS.topLeft.y)
     case SPECIAL => throw new IllegalStateException(specialTabAccessError)
   }
 
