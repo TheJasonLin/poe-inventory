@@ -1,9 +1,10 @@
 package config
 
 import java.io.File
+import collection.JavaConverters._
 
 import structures._
-import org.ini4j.Ini
+import org.ini4j.{Ini, Profile}
 
 object IniReader {
   final val iniFilename = "config.ini"
@@ -90,5 +91,10 @@ object IniReader {
     }
 
     Option(new PixelPosition(positionParts(0), positionParts(1)))
+  }
+
+  def getStrings(section: String, key: String): Seq[String] = {
+    val sections: Profile.Section = ini.get(section)
+    sections.getAll(key).asScala
   }
 }
