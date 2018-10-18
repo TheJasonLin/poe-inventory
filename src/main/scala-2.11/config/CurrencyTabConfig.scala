@@ -1,6 +1,6 @@
 package config
 
-import structures.PixelPosition
+import screen.PixelPosition
 
 object CurrencyTabConfig {
   val SHORT_HORIZONTAL_GAP: Int = 60

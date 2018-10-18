@@ -1,4 +1,6 @@
-package config
+package maps
+
+import config.CurrencyValues
 
 object MapValues {
   val MaxMapTier: Int = 16

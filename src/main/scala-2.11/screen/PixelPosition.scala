@@ -1,5 +1,4 @@
-package structures
-
+package screen
 
 class PixelPosition(
                      val x: Int,

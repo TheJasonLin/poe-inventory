@@ -1,9 +1,10 @@
+package containers
+
 import java.awt.{Color, Robot}
 
 import com.poe.parser.ItemFactory
 import com.poe.parser.item.Item
-import screen.Screen
-import structures.{Allocation, PixelPosition, Position, ScreenItem}
+import screen.{PixelPosition, Screen}
 
 import scala.collection.mutable.ListBuffer
 

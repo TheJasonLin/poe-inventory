@@ -3,9 +3,8 @@ package screen
 import java.awt.image.BufferedImage
 import java.awt.{Color, Rectangle, Robot, Toolkit}
 import java.io.File
-import javax.imageio.ImageIO
 
-import structures.PixelPosition
+import javax.imageio.ImageIO
 
 /**
   * Reference: http://stackoverflow.com/questions/6524196/java-get-pixel-array-from-image

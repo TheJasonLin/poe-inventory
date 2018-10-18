@@ -1,5 +1,7 @@
-import config.{IniReader, ScreenResolution}
-import structures._
+package config
+
+import containers.Allocation
+import screen.{PixelPosition, PixelRegion}
 
 object Config {
   val SAFE_MODE: Boolean = IniReader.getBool("general", "safeMode")

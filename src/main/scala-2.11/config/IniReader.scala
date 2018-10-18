@@ -1,10 +1,12 @@
 package config
 
 import java.io.File
-import collection.JavaConverters._
 
-import structures._
+import containers.{Allocation, Position, Region, TabType}
 import org.ini4j.{Ini, Profile}
+import screen.{PixelPosition, PixelRegion}
+
+import scala.collection.JavaConverters._
 
 object IniReader {
   final val iniFilename = "config.ini"

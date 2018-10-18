@@ -1,5 +1,6 @@
-import structures.TabType._
-import structures.{Position, TabType}
+import config.Config
+import containers.{Container, Position, TabType}
+import containers.TabType._
 
 class Tab(
            val index: Int,

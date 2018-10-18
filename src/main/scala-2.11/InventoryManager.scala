@@ -1,15 +1,15 @@
 import com.poe.constants.Rarity
 import com.poe.parser.ItemFactory
 import com.poe.parser.item.currency.{BasicCurrency, Currency}
-import com.poe.parser.item.equipment.Equipment
 import com.poe.parser.item.equipment.accessory.{Amulet, Belt, Ring}
 import com.poe.parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
 import com.poe.parser.item.equipment.weapon.Weapon
 import com.poe.parser.item.{CraftableItem, Item, MapItem, Mod}
 import com.typesafe.scalalogging.Logger
 import config._
-import screen.Screen
-import structures._
+import containers._
+import maps.{MapIssue, MapRequirements}
+import screen.{PixelPosition, Screen}
 
 object InventoryManager {
   val log = Logger("InventoryManager")

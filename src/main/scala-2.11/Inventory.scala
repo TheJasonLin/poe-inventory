@@ -5,7 +5,9 @@ import com.poe.parser.item.equipment.accessory.{Accessory, Quiver, Talisman}
 import com.poe.parser.item._
 import com.poe.parser.item.equipment.armour.{Armour, Shield}
 import com.poe.parser.item.equipment.weapon.{Dagger, Wand}
-import structures.{Allocation, PixelPosition, Position, ScreenItem}
+import config.Config
+import containers._
+import screen.PixelPosition
 
 object Inventory extends Container {
   val xCeil: Int = Config.INVENTORY_REGION_COORDS.bottomRight.x

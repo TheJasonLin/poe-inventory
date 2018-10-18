@@ -1,9 +1,9 @@
-package structures
+package containers
 
 import com.poe.parser.item.Item
 
 /**
-  * structures.ScreenItem contains the poe item as well as additional data for inventory management
+  * containers.ScreenItem contains the poe item as well as additional data for inventory management
   * @param data
   * @param positions
   */

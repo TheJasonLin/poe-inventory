@@ -1,4 +1,4 @@
-package structures
+package containers
 
 class Position(
                 val row: Int,

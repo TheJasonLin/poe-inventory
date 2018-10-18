@@ -1,5 +1,7 @@
 import com.melloware.jintellitype
 import com.melloware.jintellitype.JIntellitype
+import config.Config
+import containers.Mode
 import screen.Screen
 
 object Main extends jintellitype.HotkeyListener {

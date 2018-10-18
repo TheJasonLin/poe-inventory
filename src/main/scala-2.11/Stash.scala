@@ -3,8 +3,9 @@ import java.awt.event.KeyEvent
 
 import com.poe.parser.item.equipment.accessory.Talisman
 import com.poe.parser.item.{Leaguestone, MapItem}
+import config.Config
+import containers.{ScreenItem, _}
 import screen.Screen
-import structures.{Allocation, ScreenItem, TabContents, TabType}
 
 import scala.collection.mutable
 

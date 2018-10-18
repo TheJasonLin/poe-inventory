@@ -1,4 +1,4 @@
-package structures
+package screen
 
 class PixelRegion(
                  val topLeft: PixelPosition,

@@ -1,8 +1,11 @@
-import java.awt.datatransfer.{Clipboard, DataFlavor}
-import java.awt.{Robot, Toolkit}
-import java.awt.event.{InputEvent, KeyEvent}
+package containers
 
-import structures.PixelPosition
+import java.awt.datatransfer.{Clipboard, DataFlavor}
+import java.awt.event.{InputEvent, KeyEvent}
+import java.awt.{Robot, Toolkit}
+
+import config.Config
+import screen.PixelPosition
 
 object Clicker {
   val robot: Robot = new Robot()

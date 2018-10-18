@@ -1,4 +1,4 @@
-package structures
+package containers
 
 class Region(
             val topLeft: Position,

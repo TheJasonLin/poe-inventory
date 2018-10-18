@@ -1,6 +1,7 @@
-package config
+package maps
 
 import com.poe.constants.Rarity
+import config.IniReader
 
 object MapRequirements {
   val rollRarity: Rarity = IniReader.getString("mapRequirements", "rollRarity") match {
