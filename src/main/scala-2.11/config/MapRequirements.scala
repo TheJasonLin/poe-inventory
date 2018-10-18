@@ -3,19 +3,24 @@ package config
 import com.poe.constants.Rarity
 
 object MapRequirements {
-  IniReader.getString("mapRequirements", "rollRarity")
-  val rollRarity: Rarity = Rarity.RARE
+  val rollRarity: Rarity = IniReader.getString("mapRequirements", "rollRarity") match {
+    case "normal" => Rarity.NORMAL
+    case "magic" => Rarity.MAGIC
+    case "rare" => Rarity.RARE
+    case _ => Rarity.NORMAL
+  }
+
   // prefix IIQ range: [6, 20]
   // suffix IIQ range: [6, 20] + 25 (no leech)
-  val minItemQuantity: Int = 0
+  val minItemQuantity: Int = IniReader.getInt("mapRequirements", "minItemQuantity")
 
   // prefix IIR range: [3, 10]
   // suffix IIR range: [5, 15]
-  val minItemRarity: Int = 0
+  val minItemRarity: Int = IniReader.getInt("mapRequirements", "minItemRarity")
 
   // suffix Pack Size range: [0, 16]
-  val minPackSize: Int = 15
-  val minQuality: Int = 0
+  val minPackSize: Int = IniReader.getInt("mapRequirements", "minPackSize")
+  val minQuality: Int = IniReader.getInt("mapRequirements", "minQuality")
 
-  val blacklistMods = IniReader.getStrings("mapRequirements", "blacklist")
+  val blacklistMods: Seq[String] = IniReader.getStrings("mapRequirements", "blacklist")
 }
