@@ -41,18 +41,18 @@ object Config {
   val HELMET_ALLOCATION: Allocation = createGearAllocation("chaosGearAllocation", "fullSetQuadAllocation", "helmetAllocation").get
   val BODY_ALLOCATION: Allocation = createGearAllocation("chaosGearAllocation", "fullSetQuadAllocation", "bodyAllocation").get
   val WEAPON_ALLOCATION: Allocation = createGearAllocation("chaosGearAllocation", "fullSetQuadAllocation", "weaponAllocation").get
-  val RING_ALLOCATION: Allocation = createGearAllocation("chaosJewelryAllocation", "fullSetNormalAllocation", "bootAllocation").get
-  val AMULET_ALLOCATION: Allocation = createGearAllocation("chaosJewelryAllocation", "fullSetNormalAllocation", "bootAllocation").get
-  val BELT_ALLOCATION: Allocation = createGearAllocation("chaosJewelryAllocation", "fullSetNormalAllocation", "bootAllocation").get
+  val RING_ALLOCATION: Allocation = createGearAllocation("chaosJewelryAllocation", "fullSetNormalAllocation", "ringAllocation").get
+  val AMULET_ALLOCATION: Allocation = createGearAllocation("chaosJewelryAllocation", "fullSetNormalAllocation", "amuletAllocation").get
+  val BELT_ALLOCATION: Allocation = createGearAllocation("chaosJewelryAllocation", "fullSetNormalAllocation", "beltAllocation").get
 
   val BOOT_75_ALLOCATION: Allocation = createGearAllocation("regalGearAllocation", "fullSetNormalAllocation", "bootAllocation").get
   val GLOVE_75_ALLOCATION: Allocation = createGearAllocation("regalGearAllocation", "fullSetNormalAllocation", "gloveAllocation").get
   val HELMET_75_ALLOCATION: Allocation = createGearAllocation("regalGearAllocation", "fullSetNormalAllocation", "helmetAllocation").get
   val BODY_75_ALLOCATION: Allocation = createGearAllocation("regalGearAllocation", "fullSetNormalAllocation", "bodyAllocation").get
   val WEAPON_75_ALLOCATION: Allocation = createGearAllocation("regalGearAllocation", "fullSetNormalAllocation", "weaponAllocation").get
-  val RING_75_ALLOCATION: Allocation = createGearAllocation("regalJewelryAllocation", "fullSetNormalAllocation", "bootAllocation").get
-  val AMULET_75_ALLOCATION: Allocation = createGearAllocation("regalJewelryAllocation", "fullSetNormalAllocation", "bootAllocation").get
-  val BELT_75_ALLOCATION: Allocation = createGearAllocation("regalJewelryAllocation", "fullSetNormalAllocation", "bootAllocation").get
+  val RING_75_ALLOCATION: Allocation = createGearAllocation("regalJewelryAllocation", "fullSetNormalAllocation", "ringAllocation").get
+  val AMULET_75_ALLOCATION: Allocation = createGearAllocation("regalJewelryAllocation", "fullSetNormalAllocation", "amuletAllocation").get
+  val BELT_75_ALLOCATION: Allocation = createGearAllocation("regalJewelryAllocation", "fullSetNormalAllocation", "beltAllocation").get
 
   def createGearAllocation(allocationSection: String, setTypeSection: String, key: String): Option[Allocation] = {
     val setTypeAllocationOption = IniReader.getAllocation("allocation", allocationSection)
