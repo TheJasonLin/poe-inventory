@@ -19,4 +19,4 @@ libraryDependencies += "org.ini4j" % "ini4j" % "0.5.1"
 
 libraryDependencies += "default" % "poe-constants_2.11" % "0.0.6"
 
-libraryDependencies += "default" % "poe-parser_2.11" % "0.1.13"
+libraryDependencies += "default" % "poe-parser_2.11" % "0.1.14"
