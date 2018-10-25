@@ -70,9 +70,13 @@ abstract class Container {
     items += item
     // mark positions
     // get covered positions
-    val coveredPositions: Seq[Position] = getAdjacentPositions(item, position, positions()).get
+    val coveredPositions = getAdjacentPositions(item, position, positions())
+    if (coveredPositions.isEmpty) {
+      throw new IllegalStateException("Couldn't get adjacent positions")
+    }
+
     // mark positions
-    item.positions = coveredPositions
+    item.positions = coveredPositions.get
     item.positions.foreach((position) => {
       position.item = Option(item)
     })
