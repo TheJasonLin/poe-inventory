@@ -29,12 +29,13 @@ object InventoryManager {
     dumpQualityFlasks()
     dumpQualityGems()
 
-
-    if(Config.SEPARATE_REGAL) {
-      dumpFullSetEquipment(chaos = true, regal = false)
-      dumpFullSetEquipment(chaos = false, regal = true)
-    } else {
-      dumpFullSetEquipment(chaos = true, regal = true)
+    if (Config.CHAOS_RECIPE) {
+      if (Config.SEPARATE_REGAL) {
+        dumpFullSetEquipment(chaos = true, regal = false)
+        dumpFullSetEquipment(chaos = false, regal = true)
+      } else {
+        dumpFullSetEquipment(chaos = true, regal = true)
+      }
     }
 
     markContainersOutOfDate()
@@ -308,6 +309,7 @@ object InventoryManager {
     val map: MapItem = item.data.asInstanceOf[MapItem]
 
     if (issues.contains(MapIssue.UNIDENTIFIED)) {
+      log.debug("ID'ing Map")
       // just id and consider it rerolled
       useCurrencyFromInventoryOnItemInTab(item, tab, "Scroll of Wisdom")
       return
@@ -325,6 +327,8 @@ object InventoryManager {
 
     // scour
     if (map.rarity == Rarity.MAGIC || map.rarity == Rarity.RARE) {
+      log.debug("Scouring Map")
+      log.debug(item.toString)
       useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Scouring")
     }
 
@@ -348,6 +352,7 @@ object InventoryManager {
       useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Transmutation")
     } else if (rarity == Rarity.RARE) {
       // use alch
+      log.debug("Alch'ing Map")
       useCurrencyFromInventoryOnItemInTab(item, tab, "Orb of Alchemy")
     } else {
       throw new IllegalArgumentException(s"unrecognized roll rarity $rarity")
@@ -402,28 +407,39 @@ object InventoryManager {
       issues += MapIssue.QUALITY_LOW
     }
 
-    val badIIQ = map.itemQuantity < MapRequirements.minItemQuantity
-    val badIIR = map.itemRarity < MapRequirements.minItemRarity
-    val badPackSize = map.packSize < MapRequirements.minPackSize
-    if (badIIQ || badIIR || badPackSize) {
-      issues += MapIssue.BAD_ATTRIBUTES
+    val iiq = map.itemQuantity
+    val iir = map.itemRarity
+    val packSize = map.packSize
+
+    if (iiq < MapRequirements.minItemQuantity) {
+      log.debug(s"BadIIQ: $iiq")
+      issues += MapIssue.QUALITY_LOW
+    } else if (iir < MapRequirements.minItemRarity) {
+      log.debug(s"BadIIR: $iir")
+      issues += MapIssue.QUALITY_LOW
+    } else if (packSize < MapRequirements.minPackSize) {
+      log.debug(s"PackSize: $packSize")
+      issues += MapIssue.QUALITY_LOW
     }
 
     // check mods
-    if (hasBlacklistMods(map.explicits, MapRequirements.blacklistMods)) {
+    val mods = map.explicits ++ map.implicits
+
+    val foundBlacklistMod = findBlacklistMod(mods)
+    if (foundBlacklistMod.isDefined) {
       issues += MapIssue.BAD_ATTRIBUTES
-    } else if (hasBlacklistMods(map.implicits, MapRequirements.blacklistMods)) {
-      issues += MapIssue.BAD_ATTRIBUTES
+      log.debug("Bad Mod: " + foundBlacklistMod.get.text)
     }
 
     issues
   }
 
-  private def hasBlacklistMods(mods: Seq[Mod], blacklistMods: Seq[String]): Boolean = {
+  private def findBlacklistMod(mods: Seq[Mod]): Option[Mod] = {
     val matchOption = mods.find((mod: Mod) => {
-      blacklistMods.contains(mod.text)
+      MapRequirements.blacklistMods.contains(mod.text)
     })
-    matchOption.isDefined
+
+    matchOption
   }
 
   def countCurrencyValues(): Unit = {
@@ -458,11 +474,11 @@ object InventoryManager {
     Thread sleep Config.USER_KEY_RELEASE_DELAY
   }
 
-  def idAndDump(): Unit = {
+  def idForQuickSell(): Unit = {
     userReleaseSleep()
     prepareInventoryAction()
     idItems()
-    dumpInventoryToDumpAllocation()
+    dumpInventoryToQuickSellAllocation()
   }
 
   private def idItems(): Unit = {
@@ -487,8 +503,8 @@ object InventoryManager {
     Clicker.click(pixelPosition)
   }
 
-  private def dumpInventoryToDumpAllocation(): Unit = {
-    Stash.activateTab(Config.DUMP_ALLOCATION, Mode.NO_READ)
+  private def dumpInventoryToQuickSellAllocation(): Unit = {
+    Stash.activateTab(Config.QUICK_SELL_ALLOCATION, Mode.NO_READ)
     Inventory.items.foreach((item: ScreenItem) => {
       Inventory.ctrlClickItem(item)
       Stash.currentTab().get.upToDate = false

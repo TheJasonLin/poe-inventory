@@ -18,6 +18,7 @@ object Config {
     case _ => ScreenResolution.P1080
   }
 
+  val CHAOS_RECIPE: Boolean = IniReader.getBool("general", "chaosRecipe")
   val SEPARATE_REGAL: Boolean = IniReader.getBool("general", "separateRegalRecipe")
   val CALIBRATION_NORMAL_TAB_INDEX: Option[Int] = Option(IniReader.getInt("developer", "calibrationNormalTabIndex"))
   val CALIBRATION_QUAD_TAB_INDEX: Option[Int] = Option(IniReader.getInt("developer", "calibrationQuadTabIndex"))
@@ -31,6 +32,7 @@ object Config {
   val DUMP_ALLOCATION: Allocation = IniReader.getAllocation("allocation", "dumpAllocation").get
   val QUALITY_FLASK_ALLOCATION: Allocation = IniReader.getAllocation("allocation", "qualityFlaskAllocation").get
   val QUALITY_GEM_ALLOCATION: Allocation = IniReader.getAllocation("allocation", "qualityGemAllocation").get
+  val QUICK_SELL_ALLOCATION: Allocation = IniReader.getAllocation("allocation", "quickSellAllocation").get
 
   /**
     * Full Set Recipe

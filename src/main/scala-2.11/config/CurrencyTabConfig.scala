@@ -3,21 +3,22 @@ package config
 import screen.PixelPosition
 
 object CurrencyTabConfig {
-  val SHORT_HORIZONTAL_GAP: Int = 60
-  val SHORT_VERTICAL_GAP: Int = 53
-  val LONG_HORIZONTAL_GAP: Int = 70
+  val resolutionSection: String = Config.RESOLUTION_SECTION
+  val SHORT_HORIZONTAL_GAP: Int = IniReader.getInt(resolutionSection, "currencyShortHorizontalGap")
+  val SHORT_VERTICAL_GAP: Int = IniReader.getInt(resolutionSection, "currencyShortVerticalGap")
+  val LONG_HORIZONTAL_GAP: Int = IniReader.getInt(resolutionSection, "currencyLongHorizontalGap")
 
-  val SCROLL_FRAGMENT_COORDS: (Int, Int) = (56, 254)
-  val WHETSTONE_COORDS: (Int, Int) = (375, 255)
-  val TRANSMUTATION_COORDS: (Int, Int) = (56, 332)
-  val JEWELLERS_COORDS: (Int, Int) = (114, 477)
-  val SCOURING_COORDS: (Int, Int) = (430, 476)
+  val SCROLL_FRAGMENT_COORDS: PixelPosition = IniReader.getPixelPosition(resolutionSection, "currencyScrollFragmentCoords").get
+  val WHETSTONE_COORDS: PixelPosition = IniReader.getPixelPosition(resolutionSection, "currencyWhetstoneCoords").get
+  val TRANSMUTATION_COORDS: PixelPosition = IniReader.getPixelPosition(resolutionSection, "currencyTransmuteCoords").get
+  val JEWELLERS_COORDS: PixelPosition = IniReader.getPixelPosition(resolutionSection, "currencyJewellersCoords").get
+  val SCOURING_COORDS: PixelPosition = IniReader.getPixelPosition(resolutionSection, "currencyScouringCoords").get
 
   private val shg: Int = SHORT_HORIZONTAL_GAP
   private val svg = SHORT_VERTICAL_GAP
   private val lhg = LONG_HORIZONTAL_GAP
   // section starts
-  private val ss: Seq[(Int, Int)] = Seq(
+  private val ss: Seq[PixelPosition] = Seq(
     SCROLL_FRAGMENT_COORDS,
     WHETSTONE_COORDS,
     TRANSMUTATION_COORDS,
@@ -26,7 +27,7 @@ object CurrencyTabConfig {
   )
 
   def getCoords(section: Int, shortHorizontalOffsets: Int, longHorizontalOffsets: Int, verticalOffsets: Int): PixelPosition = {
-    new PixelPosition(ss(section)._1 + shortHorizontalOffsets*shg + longHorizontalOffsets*lhg, ss(section)._2 + verticalOffsets*svg)
+    new PixelPosition(ss(section).x + shortHorizontalOffsets*shg + longHorizontalOffsets*lhg, ss(section).y + verticalOffsets*svg)
   }
 
   val CURRENCY_TAB_POSITIONS: Map[String, PixelPosition] = Map[String, PixelPosition](

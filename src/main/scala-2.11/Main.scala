@@ -24,7 +24,7 @@ object Main extends jintellitype.HotkeyListener {
       case EVENT_EMPTY_INVENTORY => InventoryManager.emptyInventory()
       case EVENT_ROLL_MAPS => InventoryManager.rollMaps()
       case EVENT_COUNT_CURRENCY => InventoryManager.countCurrencyValues()
-      case EVENT_ID_AND_DUMP => InventoryManager.idAndDump()
+      case EVENT_ID_AND_DUMP => InventoryManager.idForQuickSell()
       case EVENT_CALIBRATE => calibrate()
     }
   }
@@ -50,10 +50,10 @@ object Main extends jintellitype.HotkeyListener {
 
     if (!Config.SAFE_MODE) {
       JIntellitype.getInstance().registerHotKey(EVENT_STORE_INVENTORY, ctrlShift, 'B')
-      JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'F')
-      JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
+//      JIntellitype.getInstance().registerHotKey(EVENT_GET_CHAOS_SET, ctrlShift, 'F')
+//      JIntellitype.getInstance().registerHotKey(EVENT_GET_REGAL_SET, ctrlShift, 'G')
       JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
-      JIntellitype.getInstance().registerHotKey(EVENT_ID_AND_DUMP, ctrlShift, 'N')
+      JIntellitype.getInstance().registerHotKey(EVENT_ID_AND_DUMP, ctrlShift, 'L')
     }
   }
 

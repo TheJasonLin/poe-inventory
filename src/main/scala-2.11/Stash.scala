@@ -54,6 +54,7 @@ object Stash {
   val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
 
   val dumpAllocation = Config.DUMP_ALLOCATION
+  val quickSellAllocation = Config.QUICK_SELL_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -174,6 +175,7 @@ object Stash {
     tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]
     tabInfos += (qualityGemAllocations.tabIndex, qualityGemAllocations.tabType).asInstanceOf[(Int, TabType)]
     tabInfos += (dumpAllocation.tabIndex, dumpAllocation.tabType).asInstanceOf[(Int, TabType)]
+    tabInfos += (quickSellAllocation.tabIndex, quickSellAllocation.tabType).asInstanceOf[(Int, TabType)]
 
     tabInfos.toList.map((tabInfo: (Int, TabType)) => {
       val index = tabInfo._1
