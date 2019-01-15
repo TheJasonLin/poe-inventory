@@ -403,7 +403,9 @@ object InventoryManager {
     }
 
     // check thresholds
-    if (map.quality.getOrElse(0) < MapRequirements.minQuality) {
+    val quality = map.quality.getOrElse(0)
+    if (quality < MapRequirements.minQuality) {
+      log.debug(s"Quality: $quality")
       issues += MapIssue.QUALITY_LOW
     }
 
