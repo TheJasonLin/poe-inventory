@@ -1,12 +1,12 @@
-import com.poe.constants.Rarity
-import com.poe.parser.item.currency.{BasicCurrency, Currency, Essence}
-import com.poe.parser.item.equipment.{Equipment, Flask}
-import com.poe.parser.item.equipment.accessory.{Accessory, Quiver, Talisman}
-import com.poe.parser.item._
-import com.poe.parser.item.equipment.armour.{Armour, Shield}
-import com.poe.parser.item.equipment.weapon.{Dagger, Wand}
 import config.Config
+import constants.Rarity
 import containers._
+import parser.item._
+import parser.item.currency._
+import parser.item.equipment._
+import parser.item.equipment.accessory._
+import parser.item.equipment.armour._
+import parser.item.equipment.weapon._
 import screen.PixelPosition
 
 object Inventory extends Container {

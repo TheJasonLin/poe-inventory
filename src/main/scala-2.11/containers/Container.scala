@@ -2,8 +2,8 @@ package containers
 
 import java.awt.{Color, Robot}
 
-import com.poe.parser.ItemFactory
-import com.poe.parser.item.Item
+import parser.ItemFactory
+import parser.item.Item
 import screen.{PixelPosition, Screen}
 
 import scala.collection.mutable.ListBuffer

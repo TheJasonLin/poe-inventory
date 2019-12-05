@@ -1,8 +1,8 @@
 import java.awt.Robot
 import java.awt.event.KeyEvent
 
-import com.poe.parser.item.equipment.accessory.Talisman
-import com.poe.parser.item.{Leaguestone, MapItem}
+import parser.item.equipment.accessory.Talisman
+import parser.item.{Leaguestone, MapItem}
 import config.Config
 import containers.{ScreenItem, _}
 import screen.Screen

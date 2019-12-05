@@ -1,6 +1,6 @@
 package maps
 
-import com.poe.constants.Rarity
+import constants.Rarity
 import config.IniReader
 
 object MapRequirements {
