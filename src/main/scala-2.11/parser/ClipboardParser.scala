@@ -316,11 +316,11 @@ object ClipboardParser {
       log.warn(s"found more than 2 sections: $section")
       return None
     }
-    val size = Integer.parseInt(valueStrings(0))
-    val max = Integer.parseInt(valueStrings(1))
 
-//    val size = Integer.parseInt(sizeString)
-//    val max = Integer.parseInt(maxString)
+    def cleanIntString(value: String): String = value.replace(",", "")
+    val size = Integer.parseInt(cleanIntString(valueStrings(0)))
+    val max = Integer.parseInt(cleanIntString(valueStrings(1)))
+
     Option(StackSize(size, max))
   }
 

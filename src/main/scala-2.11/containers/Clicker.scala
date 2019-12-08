@@ -27,6 +27,7 @@ object Clicker {
     click()
     Thread sleep 20
     if(ctrlMod) robot keyRelease KeyEvent.VK_CONTROL
+    Thread sleep 100
     val colorPostClick = robot getPixelColor(x, y)
     !colorPreClick.equals(colorPostClick)
   }

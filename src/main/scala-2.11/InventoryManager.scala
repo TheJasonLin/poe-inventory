@@ -24,6 +24,8 @@ object InventoryManager {
     dumpDelve()
     dumpMiscItems()
 
+    dumpRemainingInventory()
+
     markContainersOutOfDate()
   }
 
@@ -358,6 +360,14 @@ object InventoryManager {
     Inventory.items.foreach((item: ScreenItem) => {
       Inventory.ctrlClickItem(item)
       Stash.currentTab().get.upToDate = false
+    })
+  }
+
+  private def dumpRemainingInventory(): Unit = {
+    if (Inventory.items.isEmpty) return
+    if (!Stash.activateTab(Config.DUMP_ALLOCATION, Mode.NO_READ)) return
+    Inventory.items.foreach((item: ScreenItem) => {
+      Inventory.ctrlClickItem(item)
     })
   }
 }
