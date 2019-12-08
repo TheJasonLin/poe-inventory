@@ -12,49 +12,15 @@ import scala.collection.mutable
 object Stash {
   val robot = new Robot
 
-  val helmetAllocation: Allocation = Config.HELMET_ALLOCATION
-  val bootAllocation: Allocation = Config.BOOT_ALLOCATION
-  val gloveAllocation: Allocation = Config.GLOVE_ALLOCATION
-  val bodyAllocation: Allocation = Config.BODY_ALLOCATION
-  val weaponAllocation: Allocation = Config.WEAPON_ALLOCATION
-  val ringAllocation: Allocation = Config.RING_ALLOCATION
-  val amuletAllocation: Allocation = Config.AMULET_ALLOCATION
-  val beltAllocation: Allocation = Config.BELT_ALLOCATION
-
   private val _generalAllocations = collection.immutable.HashMap(
     TabContents.CURRENCY -> Config.CURRENCY_ALLOCATION,
     TabContents.ESSENCE -> Config.ESSENCE_ALLOCATION,
     TabContents.DIVINATION -> Config.DIVINATION_ALLOCATION,
-    TabContents.MAP -> Config.SPECIAL_MAP_ALLOCATION,
+    TabContents.MAP -> Config.MAP_ALLOCATION,
     TabContents.FRAGMENT -> Config.FRAGMENT_ALLOCATION,
-    TabContents.HELMET -> Config.HELMET_ALLOCATION,
-    TabContents.BOOT -> Config.BOOT_ALLOCATION,
-    TabContents.GLOVE -> Config.GLOVE_ALLOCATION,
-    TabContents.BODY -> Config.BODY_ALLOCATION,
-    TabContents.WEAPON -> Config.WEAPON_ALLOCATION,
-    TabContents.RING -> Config.RING_ALLOCATION,
-    TabContents.AMULET -> Config.AMULET_ALLOCATION,
-    TabContents.BELT -> Config.BELT_ALLOCATION
+    TabContents.DELVE -> Config.DELVE_ALLOCATION,
+    TabContents.MISC -> Config.MISC_ALLOCATION
   )
-
-  private val _chaos75Allocations = collection.immutable.HashMap(
-    TabContents.HELMET -> Config.HELMET_75_ALLOCATION,
-    TabContents.BOOT -> Config.BOOT_75_ALLOCATION,
-    TabContents.GLOVE -> Config.GLOVE_75_ALLOCATION,
-    TabContents.BODY -> Config.BODY_75_ALLOCATION,
-    TabContents.WEAPON -> Config.WEAPON_75_ALLOCATION,
-    TabContents.RING -> Config.RING_75_ALLOCATION,
-    TabContents.AMULET -> Config.AMULET_75_ALLOCATION,
-    TabContents.BELT -> Config.BELT_75_ALLOCATION
-  )
-
-  val runMapAllocation = Config.RUN_MAP_ALLOCATION
-
-  val qualityFlaskAllocations = Config.QUALITY_FLASK_ALLOCATION
-  val qualityGemAllocations = Config.QUALITY_GEM_ALLOCATION
-
-  val dumpAllocation = Config.DUMP_ALLOCATION
-  val quickSellAllocation = Config.QUICK_SELL_ALLOCATION
 
   val tabs: Seq[Tab] = createTabs()
   var currentTabIndex: Int = 0
@@ -63,12 +29,8 @@ object Stash {
     tab.index == currentTabIndex
   })
 
-  def getAllocation(tabContents: TabContents, level75: Boolean = false): Allocation = {
-    if(!level75) {
+  def getAllocation(tabContents: TabContents): Option[Allocation] = {
       _generalAllocations(tabContents)
-    } else {
-      _chaos75Allocations(tabContents)
-    }
   }
 
   /**
@@ -77,20 +39,22 @@ object Stash {
     * @param tabContents
     * @param mode
     */
-  def activateTab(tabContents: TabContents, mode: Mode, use75Allocations: Boolean): Unit = {
-    var allocation: Allocation = null
-    if(use75Allocations) allocation = _chaos75Allocations(tabContents)
-    else allocation = _generalAllocations(tabContents)
+  def activateTab(tabContents: TabContents, mode: Mode): Boolean = {
+    val allocation = _generalAllocations(tabContents)
+    if (allocation.isEmpty) return false
     activateTab(allocation, mode)
+    true
   }
 
   /**
     * Activates the tab for an allocation
     * @param allocation
     */
-  def activateTab(allocation: Allocation, mode: Mode): Unit = {
-    val tabIndex: Int = allocation.tabIndex
+  def activateTab(allocation: Option[Allocation], mode: Mode): Boolean = {
+    if (allocation.isEmpty)return false
+    val tabIndex: Int = allocation.get.tabIndex
     activateTab(tabIndex, mode)
+    true
   }
 
   /**
@@ -155,27 +119,26 @@ object Stash {
     currentTabIndex -= 1
   }
 
-  //@TODO: Merge the general and map allocations
   def createTabs(): Seq[Tab] = {
     // using a set to avoid duplicates
     val tabInfos: mutable.HashSet[(Int, TabType)] = new mutable.HashSet[(Int, TabType)]
 
-    def addAllocation[K](allocations: Map[K, Allocation]): Unit = {
-      allocations.foreach((pair) => {
-        val allocation: Allocation = pair._2
-        val tabInfo: (Int, TabType) = (allocation.tabIndex, allocation.tabType)
-        tabInfos += tabInfo
-      })
+    def addAllocation(allocation: Option[Allocation]): Unit = {
+      if (allocation.isEmpty) return
+      tabInfos += (allocation.get.tabIndex, allocation.get.tabType).asInstanceOf[(Int, TabType)]
     }
 
-    addAllocation[TabContents](_generalAllocations)
-    addAllocation[TabContents](_chaos75Allocations)
+    def addAllocations(allocations: Map[TabContents, Option[Allocation]]): Unit = {
+      allocations.foreach((pair) => {
+        val allocation = pair._2
+        addAllocation(allocation)
+      })
+    }
+    addAllocations(_generalAllocations)
 
-    tabInfos += (runMapAllocation.tabIndex, runMapAllocation.tabType).asInstanceOf[(Int, TabType)]
-    tabInfos += (qualityFlaskAllocations.tabIndex, qualityFlaskAllocations.tabType).asInstanceOf[(Int, TabType)]
-    tabInfos += (qualityGemAllocations.tabIndex, qualityGemAllocations.tabType).asInstanceOf[(Int, TabType)]
-    tabInfos += (dumpAllocation.tabIndex, dumpAllocation.tabType).asInstanceOf[(Int, TabType)]
-    tabInfos += (quickSellAllocation.tabIndex, quickSellAllocation.tabType).asInstanceOf[(Int, TabType)]
+    addAllocation(Config.RUN_ALLOCATION)
+    addAllocation(Config.DUMP_ALLOCATION)
+    addAllocation(Config.QUICK_SELL_ALLOCATION)
 
     tabInfos.toList.map((tabInfo: (Int, TabType)) => {
       val index = tabInfo._1

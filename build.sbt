@@ -10,9 +10,9 @@ libraryDependencies += "org.scalactic" %% "scalactic" % "3.0.1"
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
-// https://github.com/typesafehub/scala-logging
+// https://github.com/lightbend/scala-logging
 libraryDependencies += "ch.qos.logback" % "logback-classic" % "1.2.3"
-libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.7.2"
+libraryDependencies += "com.typesafe.scala-logging" %% "scala-logging" % "3.9.2"
 
 // https://mvnrepository.com/artifact/com.melloware/jintellitype
 libraryDependencies += "com.melloware" % "jintellitype" % "1.3.9"

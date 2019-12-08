@@ -1,8 +1,8 @@
 package parser.knowninfo
 
 import constants.Rarity
-import parser.item.currency.BasicCurrency
-import parser.item.{OwnerInfo, StackSize}
+import parser.item.currency.{BasicCurrency, Oil}
+import parser.item.{Fragment, OwnerInfo, StackSize}
 
 
 /**
@@ -37,6 +37,10 @@ class KnownInfo (var typeLine: String, var rarity: Rarity) {
   def isLeaguestone: Boolean = typeLine.contains("Leaguestone")
   def isEssence: Boolean = typeLine.contains("Essence")
   def isBasicCurrency: Boolean = BasicCurrency.identifiers.indexOf(typeLine) >= 0
+  def isFossil: Boolean = typeLine.contains("Fossil")
+  def isResonator: Boolean = typeLine.contains("Resonator")
+  def isFragment: Boolean = typeLine.contains("Scarab") || Fragment.typeLines.contains(typeLine)
+  def isOil: Boolean = Oil.typeLines.contains(typeLine)
 
   /**
     * These methods should only be called after validating that the item is an equipment

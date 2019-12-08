@@ -3,12 +3,8 @@ import config._
 import constants.Rarity
 import containers._
 import maps.{MapIssue, MapRequirements}
-import parser.ItemFactory
-import parser.item.currency.{BasicCurrency, Currency}
-import parser.item.equipment.accessory.{Amulet, Belt, Ring}
-import parser.item.equipment.armour.{BodyArmour, Boot, Glove, Helmet}
-import parser.item.equipment.weapon.Weapon
-import parser.item.{CraftableItem, Item, MapItem, Mod}
+import parser.item.currency.Currency
+import parser.item.{CraftableItem, MapItem, Mod}
 import screen.{PixelPosition, Screen}
 
 object InventoryManager {
@@ -25,18 +21,8 @@ object InventoryManager {
     dumpDivinationCards()
     dumpMaps()
     dumpFragments()
-
-    dumpQualityFlasks()
-    dumpQualityGems()
-
-    if (Config.CHAOS_RECIPE) {
-      if (Config.SEPARATE_REGAL) {
-        dumpFullSetEquipment(chaos = true, regal = false)
-        dumpFullSetEquipment(chaos = false, regal = true)
-      } else {
-        dumpFullSetEquipment(chaos = true, regal = true)
-      }
-    }
+    dumpDelve()
+    dumpMiscItems()
 
     markContainersOutOfDate()
   }
@@ -69,8 +55,8 @@ object InventoryManager {
   private def dumpCurrencies(): Unit = {
     val currencies = Inventory.basicCurrencies
     if(currencies.isEmpty) return
+    if (!Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ)) return
     currencies.foreach((item: ScreenItem) => {
-      Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, false)
       Inventory.ctrlClickItem(item)
     })
   }
@@ -78,8 +64,8 @@ object InventoryManager {
   private def dumpEssences(): Unit = {
     val essences = Inventory.essences
     if(essences.isEmpty) return
+    if (!Stash.activateTab(TabContents.ESSENCE, Mode.NO_READ)) return
     essences.foreach((item: ScreenItem) => {
-      Stash.activateTab(TabContents.ESSENCE, Mode.NO_READ, false)
       Inventory.ctrlClickItem(item)
     })
   }
@@ -87,8 +73,8 @@ object InventoryManager {
   private def dumpDivinationCards(): Unit = {
     val divinationCards = Inventory.divinationCards
     if(divinationCards.isEmpty) return
+    if (!Stash.activateTab(TabContents.DIVINATION, Mode.NO_READ)) return
     divinationCards.foreach((item: ScreenItem) => {
-      Stash.activateTab(TabContents.DIVINATION, Mode.NO_READ, false)
       Inventory.ctrlClickItem(item)
     })
   }
@@ -100,8 +86,9 @@ object InventoryManager {
   private def dumpMapsSpecial(): Unit = {
     val maps = Inventory.maps
     if (maps.isEmpty) return
+
+    if (!Stash.activateTab(TabContents.MAP, Mode.NO_READ)) return
     maps.foreach((item: ScreenItem) => {
-      Stash.activateTab(TabContents.MAP, Mode.NO_READ, false)
       Inventory.ctrlClickItem(item)
     })
   }
@@ -109,129 +96,33 @@ object InventoryManager {
   private def dumpFragments(): Unit = {
     val fragments = Inventory.fragments
     if (fragments.isEmpty) return
+    if (!Stash.activateTab(TabContents.FRAGMENT, Mode.NO_READ)) return
     fragments.foreach((item: ScreenItem) => {
-      Stash.activateTab(TabContents.FRAGMENT, Mode.NO_READ, false)
       Inventory.ctrlClickItem(item)
     })
   }
 
-  private def dumpQualityFlasks(): Unit = {
-    val qualityFlasks = Inventory.qualityFlasks
-    if(qualityFlasks.isEmpty) return
-    val allocation: Allocation = Stash.qualityFlaskAllocations
-    Stash.activateTab(allocation, Mode.READ_POSITIONS)
-    qualityFlasks.foreach((item: ScreenItem) => {
-      Inventory.sendItemToAllocation(item, Stash.qualityFlaskAllocations)
+  private def dumpDelve(): Unit = {
+    val delves = Inventory.delves
+    if (delves.isEmpty) return
+    if (!Stash.activateTab(TabContents.DELVE, Mode.NO_READ)) return
+    delves.foreach((item: ScreenItem) => {
+      Inventory.ctrlClickItem(item)
     })
   }
 
-  private def dumpQualityGems(): Unit = {
-    val qualityGems = Inventory.qualityGems
-    if(qualityGems.isEmpty) return
-    val allocation: Allocation = Stash.qualityGemAllocations
-    Stash.activateTab(allocation, Mode.READ_POSITIONS)
-    qualityGems.foreach((item: ScreenItem) => {
-      Inventory.sendItemToAllocation(item, Stash.qualityGemAllocations)
+  private def dumpMiscItems(): Unit = {
+    val miscItems = Inventory.miscDesirableItems
+    if (miscItems.isEmpty) return
+    if (!Stash.activateTab(TabContents.MISC, Mode.NO_READ)) return
+    miscItems.foreach((item: ScreenItem) => {
+      Inventory.ctrlClickItem(item)
     })
-  }
-
-  private def dumpFullSetEquipment(chaos: Boolean, regal: Boolean): Unit = {
-    val useRegalTab: Boolean = regal && !chaos
-
-    val chaosEquipment: Seq[ScreenItem] = Inventory.fullSetEquipment(chaos, regal)
-    val helmets: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Helmet])
-    val boots: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Boot])
-    val gloves: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Glove])
-    val bodyArmours: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[BodyArmour])
-    val weapons: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Weapon])
-    val rings: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Ring])
-    val amulets: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Amulet])
-    val belts: Seq[ScreenItem] = chaosEquipment.filter((item) => item.data.isInstanceOf[Belt])
-
-    if (helmets.nonEmpty) {
-      println("Dumping Helmets")
-      Stash.activateTab(TabContents.HELMET, Mode.READ_POSITIONS, useRegalTab)
-      helmets.foreach((helmet: ScreenItem) => Inventory.sendItemToAllocation(helmet, Stash.helmetAllocation))
-    }
-
-    if (boots.nonEmpty) {
-      println("Dumping Boots")
-      Stash.activateTab(TabContents.BOOT, Mode.READ_POSITIONS, useRegalTab)
-      boots.foreach((boot: ScreenItem) => Inventory.sendItemToAllocation(boot, Stash.bootAllocation))
-    }
-
-    if (gloves.nonEmpty) {
-      println("Dumping Gloves")
-      Stash.activateTab(TabContents.GLOVE, Mode.READ_POSITIONS, useRegalTab)
-      gloves.foreach((glove: ScreenItem) => Inventory.sendItemToAllocation(glove, Stash.gloveAllocation))
-    }
-
-    if (bodyArmours.nonEmpty) {
-      println("Dumping Body Armours")
-      Stash.activateTab(TabContents.BODY, Mode.READ_POSITIONS, useRegalTab)
-      bodyArmours.foreach((bodyArmour: ScreenItem) => Inventory.sendItemToAllocation(bodyArmour, Stash.bodyAllocation))
-    }
-
-    if (weapons.nonEmpty) {
-      println("Dumping Weapons")
-      Stash.activateTab(TabContents.WEAPON, Mode.READ_POSITIONS, useRegalTab)
-      weapons.foreach((weapon: ScreenItem) => Inventory.sendItemToAllocation(weapon, Stash.weaponAllocation))
-    }
-
-    if (rings.nonEmpty) {
-      println("Dumping Rings")
-      Stash.activateTab(TabContents.RING, Mode.READ_POSITIONS, useRegalTab)
-      rings.foreach((ring: ScreenItem) => Inventory.sendItemToAllocation(ring, Stash.ringAllocation))
-    }
-
-    if (amulets.nonEmpty) {
-      println("Dumping Amulets")
-      Stash.activateTab(TabContents.AMULET, Mode.READ_POSITIONS, useRegalTab)
-      amulets.foreach((amulet: ScreenItem) => Inventory.sendItemToAllocation(amulet, Stash.amuletAllocation))
-    }
-
-    if (belts.nonEmpty) {
-      println("Dumping Belts")
-      Stash.activateTab(TabContents.BELT, Mode.READ_POSITIONS, useRegalTab)
-      belts.foreach((belt: ScreenItem) => Inventory.sendItemToAllocation(belt, Stash.beltAllocation))
-    }
   }
 
   private def markContainersOutOfDate(): Unit = {
     Inventory.upToDate = false
     Stash.markTabsOutOfDate()
-  }
-
-  def extractFullSet(level75: Boolean): Unit = {
-    userReleaseSleep()
-    Stash.resetTab()
-    extractItemsFromTab(TabContents.HELMET, 1, level75)
-    extractItemsFromTab(TabContents.BOOT, 1, level75)
-    extractItemsFromTab(TabContents.GLOVE, 1, level75)
-    extractItemsFromTab(TabContents.BODY, 1, level75)
-    extractItemsFromTab(TabContents.WEAPON, 2, level75)
-    extractItemsFromTab(TabContents.RING, 2, level75)
-    extractItemsFromTab(TabContents.AMULET, 1, level75)
-    extractItemsFromTab(TabContents.BELT, 1, level75)
-
-    markContainersOutOfDate()
-  }
-
-  def extractItemsFromTab(tabType: TabContents, count: Int, level75: Boolean): Unit = {
-    val allocation: Allocation = Stash.getAllocation(tabType, level75)
-    Stash.activateTab(tabType, Mode.READ_POSITIONS, use75Allocations = level75)
-    val tab = Stash.currentTab().get
-    var extractedCount = 0
-    tab.positionsInAllocation(allocation)
-      .filter(_.occupied == true)
-      .foreach((position: Position) => {
-        // make sure it's still occupied
-        if(extractedCount < count && position.occupied) {
-          val item = tab.readAndRecordItem(position)
-          tab.ctrlClickItem(item)
-          extractedCount += 1
-        }
-      })
   }
 
   /**
@@ -240,12 +131,10 @@ object InventoryManager {
     */
   def rollMaps(): Unit = {
     userReleaseSleep()
-    if (Config.SAFE_MODE) {
-      Stash.resetTab()
-    } else {
-      prepareInventoryAction()
-    }
-    Stash.activateTab(Config.RUN_MAP_ALLOCATION, Mode.READ_POSITIONS)
+    prepareInventoryAction()
+
+    if (!Stash.activateTab(Config.RUN_ALLOCATION, Mode.READ_POSITIONS)) return
+
     if (Stash.currentTab.isEmpty) {
       throw new IllegalStateException("RUN_TAB not defined")
     }
@@ -261,25 +150,12 @@ object InventoryManager {
           return
         }
 
-        if (Config.SAFE_MODE) {
-          val item: ScreenItem = tab.readAndRecordItem(position)
-
-          val issues: Set[MapIssue] = getIssues(item.data.asInstanceOf[MapItem])
-          if (issues.nonEmpty) {
+        try {
+          rollMapInPosition(tab, position)
+        } catch {
+          case e: Exception => {
+            log.warn(s"stopped rolling maps due to: ${e.getMessage}")
             keepRolling = false
-            log.info("stopped rolling due to the following issues:")
-            if (issues.contains(MapIssue.UNIDENTIFIED)) log.info("map is unidentified")
-            if (issues.contains(MapIssue.BAD_ATTRIBUTES)) log.info("map has bad attributes")
-            if (issues.contains(MapIssue.QUALITY_LOW)) log.info("map has low quality")
-          }
-        } else {
-          try {
-            rollMapInPosition(tab, position)
-          } catch {
-            case e: Exception => {
-              log.warn(s"stopped rolling maps due to: ${e.getMessage}")
-              keepRolling = false
-            }
           }
         }
       })
@@ -444,34 +320,6 @@ object InventoryManager {
     matchOption
   }
 
-  def countCurrencyValues(): Unit = {
-    userReleaseSleep()
-
-    Stash.resetTab()
-    Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, use75Allocations = false)
-
-    var total: Double = 0
-    // read the stack size for every currency
-    for ((typeLine: String, position: PixelPosition) <- CurrencyTabConfig.CURRENCY_TAB_POSITIONS) {
-      val clipboard: String = Clicker.getItemInfo(position)
-      try {
-        val item: Item = ItemFactory.create(clipboard)
-        if (item.typeLine.equals(typeLine)) {
-          val currency: BasicCurrency = item.asInstanceOf[BasicCurrency]
-          val stackSize = currency.stackSize.get.size
-          val currencyValue: Double = CurrencyValues.values(typeLine)
-          val value: Double = currencyValue * stackSize
-          log.info(s"$typeLine: $stackSize ($value)")
-          total += value
-        }
-      } catch {
-        case _: RuntimeException => log.warn(s"$typeLine: 0 (0)")
-      }
-    }
-
-    log.info(s"Net Liquid Worth: $total")
-  }
-
   private def userReleaseSleep(): Unit = {
     Thread sleep Config.USER_KEY_RELEASE_DELAY
   }
@@ -492,7 +340,7 @@ object InventoryManager {
   }
 
   private def useCurrencyFromTabOnItemInInventory(item: ScreenItem, currency: String): Unit = {
-    Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ, use75Allocations = false)
+    Stash.activateTab(TabContents.CURRENCY, Mode.NO_READ)
     val currencyPosition: PixelPosition = CurrencyTabConfig.CURRENCY_TAB_POSITIONS(currency)
     Clicker.rightClick(currencyPosition)
     Thread sleep 500
@@ -506,7 +354,7 @@ object InventoryManager {
   }
 
   private def dumpInventoryToQuickSellAllocation(): Unit = {
-    Stash.activateTab(Config.QUICK_SELL_ALLOCATION, Mode.NO_READ)
+    if (!Stash.activateTab(Config.QUICK_SELL_ALLOCATION, Mode.NO_READ)) return
     Inventory.items.foreach((item: ScreenItem) => {
       Inventory.ctrlClickItem(item)
       Stash.currentTab().get.upToDate = false

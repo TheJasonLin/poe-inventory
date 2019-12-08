@@ -6,12 +6,6 @@ public enum TabContents {
     DIVINATION,
     MAP,
     FRAGMENT,
-    HELMET,
-    BOOT,
-    GLOVE,
-    BODY,
-    WEAPON,
-    RING,
-    AMULET,
-    BELT
+    DELVE,
+    MISC,
 }

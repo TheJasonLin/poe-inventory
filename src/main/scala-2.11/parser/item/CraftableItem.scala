@@ -19,6 +19,11 @@ abstract class CraftableItem(
     })
   }
 
+  def qualityValue(): Int = {
+    if (quality.isEmpty) 0
+    else quality.get
+  }
+
   override def toString: String = super.toString() + s"[ilvl: $itemLevel, id: $identified, quality: $quality]"
 
   override def asDBItem: DBItem = {

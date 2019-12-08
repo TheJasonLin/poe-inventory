@@ -81,16 +81,30 @@ object Inventory extends Container {
     })
   }
 
-  def leaguestones: Seq[ScreenItem] = {
+  def delves: Seq[ScreenItem] = {
     items.filter((item: ScreenItem) => {
-      item.data.isInstanceOf[Leaguestone]
+      item.data.isInstanceOf[Delve]
     })
   }
 
-  def talismans: Seq[ScreenItem] = {
+  def fragments: Seq[ScreenItem] = {
     items.filter((item: ScreenItem) => {
-      item.data.isInstanceOf[Talisman]
+      item.data.isInstanceOf[Fragment]
     })
+  }
+
+  /**************************************************************
+    * Start Misc Desirable Items
+   ***************************************************************/
+  def miscDesirableItems: Seq[ScreenItem] = {
+    var items = Seq[ScreenItem]()
+    items ++= Inventory.qualityGems
+    items ++= Inventory.qualityFlasks
+    items ++= Inventory.talismans
+    items ++= Inventory.leaguestones
+    items ++= Inventory.oils
+
+    items
   }
 
   def qualityFlasks: Seq[ScreenItem] = {
@@ -107,77 +121,30 @@ object Inventory extends Container {
       item.data.isInstanceOf[Gem]
     }).filter((item: ScreenItem) => {
       val gem = item.data.asInstanceOf[Gem]
-      gem.quality.isDefined && gem.quality.get > 0
+      gem.qualityValue() > 0
     })
   }
 
-  final private val fragmentTypelines: Seq[String] = Seq[String](
-    "Offering to the Goddess",
-    "Sacrifice at Dusk",
-    "Sacrifice at Midnight",
-    "Sacrifice at Dawn",
-    "Sacrifice at Noon",
-    "Divine Vessel",
-    "Mortal Grief",
-    "Mortal Rage",
-    "Mortal Hope",
-    "Mortal Ignorance",
-    "Volkuur's Key",
-    "Eber's Key",
-    "Yriel's Key",
-    "Inya's Key",
-    "Fragment of the Minotaur",
-    "Fragment of the Chimera",
-    "Fragment of the Phoenix",
-    "Fragment of the Hydra",
-    "Splinter of Chayula",
-    "Splinter of Tul",
-    "Splinter of Xoph",
-    "Splinter of Esh",
-    "Splinter of Uul-Netol",
-    "Chayula's Breachstone",
-    "Tul's Breachstone",
-    "Xoph's Breachstone",
-    "Esh's Breachstone",
-    "Uul-Netol's Breachstone"
-  )
-
-  // TODO make this based on parser results
-  def fragments: Seq[ScreenItem] = {
+  def leaguestones: Seq[ScreenItem] = {
     items.filter((item: ScreenItem) => {
-      fragmentTypelines.contains(item.data.typeLine)
+      item.data.isInstanceOf[Leaguestone]
     })
   }
 
-  def fullSetEquipment(chaos: Boolean, regal: Boolean): Seq[ScreenItem] = {
-    if (!chaos && !regal) throw new IllegalArgumentException("Need at least one to be true")
-    val min = if (chaos) 60 else 75
-    val max = if (!regal) 75 else 100
-
-    items
-      // make sure it's rare
-      .filter((item: ScreenItem) => item.data.rarity == Rarity.RARE)
-      // make sure it's equipment
-      .filter((item: ScreenItem) => item.data.isInstanceOf[Equipment])
-      // make sure within item level range
-      .filter((item: ScreenItem) => {
-      val equipment: Equipment = item.data.asInstanceOf[Equipment]
-      equipment.itemLevel >= min && equipment.itemLevel <= max
-    })
-      // make sure its unidentified
-      .filter((item: ScreenItem) => {
-      val equipment: Equipment = item.data.asInstanceOf[Equipment]
-      !equipment.identified
-    })
-      // make sure it's desired for chaos recipe
-      .filter((item: ScreenItem) => {
-      val equipment: Equipment = item.data.asInstanceOf[Equipment]
-      val isArmour: Boolean = equipment.isInstanceOf[Armour] && !equipment.isInstanceOf[Shield]
-      val isAccessory: Boolean = equipment.isInstanceOf[Accessory] && !equipment.isInstanceOf[Quiver]
-      val isSmallWeapon: Boolean = equipment.isInstanceOf[Dagger] || equipment.isInstanceOf[Wand]
-      isArmour || isAccessory || isSmallWeapon
+  def talismans: Seq[ScreenItem] = {
+    items.filter((item: ScreenItem) => {
+      item.data.isInstanceOf[Talisman]
     })
   }
+
+  def oils: Seq[ScreenItem] = {
+    items.filter((item: ScreenItem) => {
+      item.data.isInstanceOf[Oil]
+    })
+  }
+  /***************************************************************
+   * End Misc Desirable Items
+   ***************************************************************/
 
   def findCurrency(name: String): Option[ScreenItem] = {
     basicCurrencies.find((item: ScreenItem) => {

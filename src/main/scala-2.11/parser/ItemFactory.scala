@@ -10,27 +10,22 @@ object ItemFactory {
   def create(knownInfo: KnownInfo): Item = {
     implicit
     val typeLineWords = knownInfo.typeLine.split(' ')
-    if (knownInfo.isGem) {
-      return new Gem(knownInfo)
-    } else if (knownInfo.isDivinationCard) {
-      return new DivinationCard(knownInfo)
-    } else if (knownInfo.isMap) {
-        return new MapItem(knownInfo)
-    } else if (knownInfo.isTalisman) {
-      return new Talisman(knownInfo)
-    } else if (knownInfo.isLeaguestone) {
-      return new Leaguestone(knownInfo)
-    }
+    if (knownInfo.isGem) return new Gem(knownInfo)
+    else if (knownInfo.isDivinationCard) return new DivinationCard(knownInfo)
+    else if (knownInfo.isMap) return new MapItem(knownInfo)
+    else if (knownInfo.isTalisman) return new Talisman(knownInfo)
+    else if (knownInfo.isLeaguestone) return new Leaguestone(knownInfo)
+    else if (knownInfo.isFragment) return new Fragment(knownInfo)
 
     var itemOption: Option[Item] = None
 
     itemOption = CurrencyFactory.create(knownInfo)
-    if(itemOption.isDefined) return itemOption.get
+    if (itemOption.isDefined) return itemOption.get
 
     // All parser.item.equipment.Equipment has itemLevel
-    if(knownInfo.itemLevel.isDefined) {
+    if (knownInfo.itemLevel.isDefined) {
       itemOption = EquipmentFactory.create(knownInfo)
-      if(itemOption.isDefined) return itemOption.get
+      if (itemOption.isDefined) return itemOption.get
     }
 
     new UnknownItem(knownInfo)

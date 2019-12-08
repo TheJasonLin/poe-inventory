@@ -18,7 +18,6 @@ object Clicker {
     * @return if the color changed after the click
     */
   def click(pixelPosition: PixelPosition, ctrlMod: Boolean = false): Boolean = {
-    if (Config.SAFE_MODE) throw new IllegalStateException("attempted to click in safe mode")
     val x = pixelPosition.x
     val y = pixelPosition.y
     val colorPreClick = robot.getPixelColor(x, y)
@@ -34,7 +33,6 @@ object Clicker {
 
   // TODO add validation of a successful right click
   def rightClick(pixelPosition: PixelPosition): Unit = {
-    if (Config.SAFE_MODE) throw new IllegalStateException("attempted to right click in safe mode")
     val x = pixelPosition.x
     val y = pixelPosition.y
 
