@@ -1,6 +1,7 @@
 import config.Config
 import constants.Rarity
 import containers._
+import maps.MapCurrency
 import parser.item._
 import parser.item.currency._
 import parser.item.equipment._
@@ -121,7 +122,7 @@ object Inventory extends Container {
       item.data.isInstanceOf[Gem]
     }).filter((item: ScreenItem) => {
       val gem = item.data.asInstanceOf[Gem]
-      gem.qualityValue() > 0
+      gem.quality.getOrElse(0) > 0
     })
   }
 
@@ -150,5 +151,11 @@ object Inventory extends Container {
     basicCurrencies.find((item: ScreenItem) => {
       item.data.typeLine == name
     })
+  }
+
+  def hasScouringAndAlchemy: Boolean = {
+    val hasScouring: Boolean = basicCurrencies.exists((item: ScreenItem) => item.data.typeLine == MapCurrency.ORB_OF_SCOURING.getName)
+    val hasAlchemy: Boolean = basicCurrencies.exists((item: ScreenItem) => item.data.typeLine == MapCurrency.ORB_OF_ALCHEMY.getName)
+    hasScouring && hasAlchemy
   }
 }

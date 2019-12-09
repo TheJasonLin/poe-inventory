@@ -26,44 +26,4 @@ public enum Rarity {
                 .filter(rarity -> rarity.key == key)
                 .findFirst();
     }
-
-//    public static Optional<Rarity> getByString(String key) {
-//        Rarity rarity;
-//        switch (key) {
-//            case "Normal":
-//                rarity = NORMAL;
-//                break;
-//            case "Magic":
-//                rarity = MAGIC;
-//                break;
-//            case "Rare":
-//                rarity = RARE;
-//                break;
-//            case "Unique":
-//                rarity = UNIQUE;
-//                break;
-//            case "Gem":
-//                rarity = GEM;
-//                break;
-//            case "Currency":
-//                rarity = CURRENCY;
-//                break;
-//            case "Divination Card":
-//                rarity = DIVINATION_CARD;
-//                break;
-//            case "Quest Item":
-//                rarity = QUEST_ITEM;
-//                break;
-//            case "Prophecy":
-//                rarity = PROPHECY;
-//                break;
-//            case "Relic":
-//                rarity = RELIC;
-//                break;
-//            default:
-//                return Optional.empty();
-//        }
-//
-//        return Optional.of(rarity);
-//    }
 }

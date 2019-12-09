@@ -4,5 +4,6 @@ package maps;
 public enum MapIssue {
     UNIDENTIFIED,
     QUALITY_LOW,
-    BAD_ATTRIBUTES
+    BAD_PROPERTIES,
+    BAD_MODS,
 }
