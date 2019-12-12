@@ -53,4 +53,9 @@ object Config {
   val INVENTORY_HEIGHT: Int = IniReader.getInt("tabConstants", "inventoryWidth")
   val INVENTORY_WIDTH: Int = IniReader.getInt("tabConstants", "inventoryHeight")
   val INVENTORY_CELL_RADIUS: Int = NORMAL_TAB_CELL_RADIUS
+
+  val TRADE_WINDOW_COORDS: PixelRegion = IniReader.getPixelRegion(RESOLUTION_SECTION, "tradeWindowCoords").get
+  val TRADE_WINDOW_WIDTH: Int = IniReader.getInt("tabConstants", "tradeWindowWidth")
+  val TRADE_WINDOW_HEIGHT: Int = IniReader.getInt("tabConstants", "tradeWindowHeight")
+  val TRADE_WINDOW_ACCEPT: PixelPosition = IniReader.getPixelPosition(RESOLUTION_SECTION, "tradeWindowAccept").get
 }

@@ -89,17 +89,21 @@ object Clicker {
     quickSleep()
   }
 
+  def hover(pixelPosition: PixelPosition): Unit = {
+    robot mouseMove(pixelPosition.x, pixelPosition.y)
+  }
+
   private def click(): Unit = {
     robot mousePress InputEvent.BUTTON1_MASK
-    quickSleep
+    quickSleep()
     robot mouseRelease InputEvent.BUTTON1_MASK
   }
 
   private def rightClick(): Unit = {
     robot mousePress InputEvent.BUTTON3_MASK
-    quickSleep
+    quickSleep()
     robot mouseRelease InputEvent.BUTTON3_MASK
   }
 
-  private def quickSleep() = Thread sleep Config.QUICK_SLEEP
+  private def quickSleep(): Unit = Thread sleep Config.QUICK_SLEEP
 }

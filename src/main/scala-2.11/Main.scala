@@ -15,6 +15,7 @@ object Main extends jintellitype.HotkeyListener {
   val EVENT_GET_REGAL_SET: Int = 6
   val EVENT_ROLL_MAPS: Int = 7
   val EVENT_ID_AND_DUMP: Int = 8
+  val EVENT_ACCEPT_TRADE: Int = 9
 
   override def onHotKey(identifier: Int): Unit = {
     identifier match {
@@ -24,6 +25,7 @@ object Main extends jintellitype.HotkeyListener {
       case EVENT_ROLL_MAPS => InventoryManager.rollMaps()
       case EVENT_ID_AND_DUMP => InventoryManager.idForQuickSell()
       case EVENT_CALIBRATE => calibrate()
+      case EVENT_ACCEPT_TRADE => InventoryManager.acceptTrade()
     }
   }
 
@@ -48,6 +50,7 @@ object Main extends jintellitype.HotkeyListener {
     JIntellitype.getInstance().registerHotKey(EVENT_STORE_INVENTORY, ctrlShift, 'B')
     JIntellitype.getInstance().registerHotKey(EVENT_EMPTY_INVENTORY, ctrlShift, 'V')
     JIntellitype.getInstance().registerHotKey(EVENT_ID_AND_DUMP, ctrlShift, 'L')
+    JIntellitype.getInstance().registerHotKey(EVENT_ACCEPT_TRADE, ctrlShift, 'U')
   }
 
   def calibrate(): Unit = {

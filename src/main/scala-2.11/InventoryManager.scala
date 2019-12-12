@@ -1,10 +1,7 @@
 import com.typesafe.scalalogging.Logger
 import config._
-import constants.Rarity
 import containers._
-import maps.{MapIssue, MapRequirements}
-import parser.item.currency.Currency
-import parser.item.{CraftableItem, MapItem, Mod}
+import parser.item.CraftableItem
 import screen.{PixelPosition, Screen}
 
 object InventoryManager {
@@ -178,5 +175,21 @@ object InventoryManager {
     Inventory.items.foreach((item: ScreenItem) => {
       Inventory.ctrlClickItem(item)
     })
+  }
+
+  def acceptTrade(): Unit = {
+    val widthSegments = Config.TRADE_WINDOW_WIDTH - 1
+    val heightSegments = Config.TRADE_WINDOW_HEIGHT - 1
+    val segmentLength = (Config.TRADE_WINDOW_COORDS.bottomRight.x - Config.TRADE_WINDOW_COORDS.topLeft.x) / widthSegments
+    val start = Config.TRADE_WINDOW_COORDS.topLeft
+
+    for (xIndex <- 0 to widthSegments; yIndex <- 0 to heightSegments) {
+      val x = start.x + segmentLength*xIndex
+      val y = start.y + segmentLength*yIndex
+      Clicker.hover(new PixelPosition(x, y))
+      Thread sleep 20
+    }
+
+    Clicker.click(Config.TRADE_WINDOW_ACCEPT)
   }
 }
